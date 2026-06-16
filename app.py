@@ -1,100 +1,112 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-import os, json
+import os, json, sqlite3
 
 app = Flask(__name__, static_folder='static')
 CORS(app)
 
-# ── Database: PostgreSQL se disponibile, SQLite come fallback locale ──────────
 DATABASE_URL = os.environ.get('DATABASE_URL', '')
 
-if DATABASE_URL:
+# Render fornisce URL con prefisso "postgres://" ma psycopg2 vuole "postgresql://"
+if DATABASE_URL.startswith('postgres://'):
+    DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+
+USE_PG = bool(DATABASE_URL)
+
+if USE_PG:
     import psycopg2
     from psycopg2.extras import RealDictCursor
 
-    def get_db():
-        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-        return conn
+    def get_conn():
+        return psycopg2.connect(DATABASE_URL)
 
     def init_db():
-        with get_db() as conn:
-            with conn.cursor() as cur:
-                cur.execute('''CREATE TABLE IF NOT EXISTS storage (
-                    key TEXT PRIMARY KEY,
-                    value TEXT NOT NULL,
-                    updated_at TIMESTAMP DEFAULT NOW()
-                )''')
-            conn.commit()
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute('''CREATE TABLE IF NOT EXISTS storage (
+            key TEXT PRIMARY KEY,
+            value TEXT NOT NULL,
+            updated_at TIMESTAMP DEFAULT NOW()
+        )''')
+        conn.commit()
+        cur.close()
+        conn.close()
 
     def db_get(key):
-        with get_db() as conn:
-            with conn.cursor(cursor_factory=RealDictCursor) as cur:
-                cur.execute('SELECT value FROM storage WHERE key = %s', (key,))
-                row = cur.fetchone()
-                return row['value'] if row else None
+        conn = get_conn()
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+        cur.execute('SELECT value FROM storage WHERE key = %s', (key,))
+        row = cur.fetchone()
+        cur.close(); conn.close()
+        return row['value'] if row else None
 
     def db_set(key, value):
-        with get_db() as conn:
-            with conn.cursor() as cur:
-                cur.execute('''INSERT INTO storage (key, value) VALUES (%s, %s)
-                    ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = NOW()''',
-                    (key, value))
-            conn.commit()
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute('''INSERT INTO storage (key, value) VALUES (%s, %s)
+            ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = NOW()''',
+            (key, value))
+        conn.commit()
+        cur.close(); conn.close()
 
     def db_delete(key):
-        with get_db() as conn:
-            with conn.cursor() as cur:
-                cur.execute('DELETE FROM storage WHERE key = %s', (key,))
-            conn.commit()
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute('DELETE FROM storage WHERE key = %s', (key,))
+        conn.commit()
+        cur.close(); conn.close()
 
     def db_list(prefix):
-        with get_db() as conn:
-            with conn.cursor(cursor_factory=RealDictCursor) as cur:
-                cur.execute('SELECT key FROM storage WHERE key LIKE %s', (prefix + '%',))
-                return [r['key'] for r in cur.fetchall()]
+        conn = get_conn()
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+        cur.execute('SELECT key FROM storage WHERE key LIKE %s', (prefix + '%',))
+        rows = cur.fetchall()
+        cur.close(); conn.close()
+        return [r['key'] for r in rows]
 
 else:
-    import sqlite3
-
-    def get_db():
+    def get_conn():
         conn = sqlite3.connect('spese.db')
         conn.row_factory = sqlite3.Row
         return conn
 
     def init_db():
-        with get_db() as db:
-            db.execute('''CREATE TABLE IF NOT EXISTS storage (
-                key TEXT PRIMARY KEY,
-                value TEXT NOT NULL,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            )''')
-            db.commit()
+        conn = get_conn()
+        conn.execute('''CREATE TABLE IF NOT EXISTS storage (
+            key TEXT PRIMARY KEY,
+            value TEXT NOT NULL,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )''')
+        conn.commit()
+        conn.close()
 
     def db_get(key):
-        db = get_db()
-        row = db.execute('SELECT value FROM storage WHERE key = ?', (key,)).fetchone()
+        conn = get_conn()
+        row = conn.execute('SELECT value FROM storage WHERE key = ?', (key,)).fetchone()
+        conn.close()
         return row['value'] if row else None
 
     def db_set(key, value):
-        with get_db() as db:
-            db.execute('''INSERT INTO storage (key, value) VALUES (?, ?)
-                ON CONFLICT(key) DO UPDATE SET value=excluded.value, updated_at=CURRENT_TIMESTAMP''',
-                (key, value))
-            db.commit()
+        conn = get_conn()
+        conn.execute('''INSERT INTO storage (key, value) VALUES (?, ?)
+            ON CONFLICT(key) DO UPDATE SET value=excluded.value''', (key, value))
+        conn.commit()
+        conn.close()
 
     def db_delete(key):
-        with get_db() as db:
-            db.execute('DELETE FROM storage WHERE key = ?', (key,))
-            db.commit()
+        conn = get_conn()
+        conn.execute('DELETE FROM storage WHERE key = ?', (key,))
+        conn.commit()
+        conn.close()
 
     def db_list(prefix):
-        db = get_db()
-        rows = db.execute('SELECT key FROM storage WHERE key LIKE ?', (prefix + '%',)).fetchall()
+        conn = get_conn()
+        rows = conn.execute('SELECT key FROM storage WHERE key LIKE ?', (prefix + '%',)).fetchall()
+        conn.close()
         return [r['key'] for r in rows]
 
 init_db()
 
-# ── Routes ────────────────────────────────────────────────────────────────────
 @app.route('/')
 def index():
     return send_from_directory('static', 'index.html')
