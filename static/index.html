@@ -9,8 +9,6 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,sans-serif;background:#e8eef7;color:#1a1a1a;font-size:15px;transition:background .3s}
 body.anna{background:#faeaf0}
-
-/* HEADER */
 .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;gap:12px}
 .header h1{font-size:20px;font-weight:500;display:flex;align-items:center;gap:8px}
 .profile-switch{display:flex;align-items:center;gap:0;background:#e8e8e2;border-radius:10px;padding:3px;transition:background .3s}
@@ -18,15 +16,12 @@ body.anna .profile-switch{background:#f5dce8}
 .profile-btn{padding:7px 16px;border-radius:8px;border:none;font-size:13px;font-weight:500;cursor:pointer;background:transparent;color:#666;transition:all .2s;display:flex;align-items:center;gap:5px}
 .profile-btn.active-marco{background:#1a3a6e;color:#fff}
 .profile-btn.active-anna{background:#a0325a;color:#fff}
-
-/* ACCENT COLORS */
 .app{max-width:960px;margin:0 auto;padding:1.5rem 1rem}
 .tabs{display:flex;gap:2px;margin-bottom:1.5rem;border-bottom:1px solid rgba(0,0,0,.15);overflow-x:auto}
 .tab{padding:8px 14px;cursor:pointer;font-size:13px;border:none;background:none;color:#666;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;display:flex;align-items:center;gap:5px}
 .tab.active{font-weight:500}
 body:not(.anna) .tab.active{color:#1a3a6e;border-bottom-color:#1a3a6e}
 body.anna .tab.active{color:#a0325a;border-bottom-color:#a0325a}
-
 .card{background:#fff;border:0.5px solid rgba(0,0,0,.15);border-radius:12px;padding:1.25rem}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .form-group{display:flex;flex-direction:column;gap:4px}
@@ -36,12 +31,10 @@ input,select{width:100%;padding:8px 10px;border:0.5px solid rgba(0,0,0,.3);borde
 input:focus,select:focus{box-shadow:0 0 0 3px rgba(0,0,0,.06)}
 body:not(.anna) input:focus,body:not(.anna) select:focus{border-color:#1a3a6e}
 body.anna input:focus,body.anna select:focus{border-color:#a0325a}
-
 .bp-box{background:#f0f0ea;border-radius:10px;padding:12px;margin-top:4px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;align-items:end}
 body.anna .bp-box{background:#fceef4}
 .bp-result{font-size:13px;color:#666;padding-bottom:9px}
 .bp-result span{font-weight:500;color:#1a1a1a}
-
 .btn{padding:9px 18px;border-radius:8px;border:0.5px solid rgba(0,0,0,.3);background:transparent;color:#1a1a1a;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
 .btn:hover{background:#f0f0ea}
 body.anna .btn:hover{background:#fceef4}
@@ -60,7 +53,6 @@ body.anna .btn.partner:hover{background:#8a2a4e}
 .btn.danger{color:#a32d2d;border-color:transparent}
 .btn.danger:hover{background:#fcebeb}
 .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:1rem}
-
 .month-section{margin-bottom:1.5rem}
 .month-header{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(0,0,0,.15);margin-bottom:.75rem}
 .month-header h2{font-size:16px;font-weight:500}
@@ -79,7 +71,6 @@ body.anna .cat-header{background:#fceef4}
 .exp-delete{opacity:0;transition:opacity .15s;cursor:pointer;background:none;border:none;color:#a32d2d;font-size:16px;padding:2px 4px}
 .expense-row:hover .exp-delete,.income-row:hover .exp-delete,.anna-row:hover .exp-delete{opacity:1}
 .empty{text-align:center;padding:3rem 1rem;color:#666;font-size:14px}
-
 .summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1.5rem}
 .metric{background:#f0f0ea;border-radius:8px;padding:12px}
 body.anna .metric{background:#fceef4}
@@ -98,7 +89,6 @@ body:not(.anna) .metric.accent .metric-value{color:#1a3a6e}
 body.anna .metric.accent{background:#f9dcea}
 body.anna .metric.accent .metric-label{color:#a0325a}
 body.anna .metric.accent .metric-value{color:#a0325a}
-
 .filter-bar{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;align-items:center}
 .filter-bar select{max-width:160px;padding:6px 10px;font-size:13px}
 .flag-partner{display:flex;align-items:center;gap:8px;padding:10px 12px;background:#f0f0ea;border-radius:8px;cursor:pointer;user-select:none;font-size:13px}
@@ -106,39 +96,32 @@ body.anna .flag-partner{background:#fceef4}
 .flag-partner input[type=checkbox]{width:16px;height:16px;cursor:pointer}
 body:not(.anna) .flag-partner input{accent-color:#1a3a6e}
 body.anna .flag-partner input{accent-color:#a0325a}
-
 .partner-saldo-box{border-radius:12px;padding:1.25rem;margin-bottom:1.5rem;background:#fff;border:0.5px solid rgba(0,0,0,.15)}
 .partner-saldo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1rem}
-
 #page-add,#page-income,#page-list,#page-summary,#page-partner{display:none}
 #page-add.visible,#page-income.visible,#page-list.visible,#page-summary.visible,#page-partner.visible{display:block}
-
 .toast{position:fixed;bottom:1.5rem;right:1.5rem;color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:99}
 body:not(.anna) .toast{background:#1a3a6e}
 body.anna .toast{background:#a0325a}
 .toast.show{opacity:1}
-
 .partner-badge{display:inline-flex;align-items:center;gap:3px;padding:1px 6px;border-radius:5px;font-size:10px;font-weight:500;margin-left:4px}
 body:not(.anna) .partner-badge{background:#dde8f5;color:#1a3a6e}
 body.anna .partner-badge{background:#f9dcea;color:#a0325a}
-
 .pay-section{border-radius:12px;padding:1.25rem;margin-bottom:1.5rem;border:0.5px solid #E1F5EE;background:#fff}
+.loading-bar{position:fixed;top:0;left:0;height:2px;background:#1a3a6e;width:0;transition:width .3s;z-index:999}
+body.anna .loading-bar{background:#a0325a}
 </style>
 </head>
 <body>
+<div class="loading-bar" id="loading-bar"></div>
 <div class="app">
   <div class="header">
     <h1 id="app-title"><i class="ti ti-wallet"></i> Gestore Spese</h1>
     <div class="profile-switch">
-      <button class="profile-btn active-marco" id="btn-marco" onclick="switchProfile('marco')">
-        <i class="ti ti-user"></i> Marco
-      </button>
-      <button class="profile-btn" id="btn-anna" onclick="switchProfile('anna')">
-        <i class="ti ti-user"></i> Anna
-      </button>
+      <button class="profile-btn active-marco" id="btn-marco" onclick="switchProfile('marco')"><i class="ti ti-user"></i> Marco</button>
+      <button class="profile-btn" id="btn-anna" onclick="switchProfile('anna')"><i class="ti ti-user"></i> Anna</button>
     </div>
   </div>
-
   <div class="tabs">
     <button class="tab active" onclick="showTab('add')"><i class="ti ti-minus"></i> Nuova spesa</button>
     <button class="tab" onclick="showTab('income')"><i class="ti ti-plus"></i> Nuova entrata</button>
@@ -147,22 +130,12 @@ body.anna .partner-badge{background:#f9dcea;color:#a0325a}
     <button class="tab" id="tab-partner" onclick="showTab('partner')"><i class="ti ti-users"></i> <span id="partner-tab-label">Debiti/Crediti Anna</span></button>
   </div>
 
-  <!-- NUOVA SPESA -->
   <div id="page-add" class="visible">
     <div class="card">
       <div class="form-grid">
-        <div class="form-group">
-          <label>Importo (€)</label>
-          <input type="number" id="inp-amount" min="0" step="0.01" placeholder="0,00">
-        </div>
-        <div class="form-group">
-          <label>Data</label>
-          <input type="date" id="inp-date">
-        </div>
-        <div class="form-group full">
-          <label>Descrizione</label>
-          <input type="text" id="inp-desc" placeholder="Es. Visita medica, Carburante...">
-        </div>
+        <div class="form-group"><label>Importo (€)</label><input type="number" id="inp-amount" min="0" step="0.01" placeholder="0,00"></div>
+        <div class="form-group"><label>Data</label><input type="date" id="inp-date"></div>
+        <div class="form-group full"><label>Descrizione</label><input type="text" id="inp-desc" placeholder="Es. Visita medica, Carburante..."></div>
         <div class="form-group full">
           <label>Categoria</label>
           <select id="inp-cat" onchange="toggleBP()">
@@ -182,16 +155,9 @@ body.anna .partner-badge{background:#f9dcea;color:#a0325a}
           </div>
         </div>
         <div class="form-group full">
-          <label id="split-label">Da spartire con Anna</label>
-          <label class="flag-partner">
-            <input type="checkbox" id="inp-partner">
-            <span id="split-flag-text">Da spartire con Anna</span>
-          </label>
+          <label class="flag-partner"><input type="checkbox" id="inp-partner"><span id="split-flag-text">Da spartire con Anna</span></label>
         </div>
-        <div class="form-group full">
-          <label>Note (opzionale)</label>
-          <input type="text" id="inp-note" placeholder="Informazioni aggiuntive...">
-        </div>
+        <div class="form-group full"><label>Note (opzionale)</label><input type="text" id="inp-note" placeholder="Informazioni aggiuntive..."></div>
       </div>
       <div class="actions">
         <button class="btn" onclick="clearExpForm()"><i class="ti ti-refresh"></i> Cancella</button>
@@ -200,7 +166,6 @@ body.anna .partner-badge{background:#f9dcea;color:#a0325a}
     </div>
   </div>
 
-  <!-- NUOVA ENTRATA -->
   <div id="page-income">
     <div class="card">
       <div class="form-grid">
@@ -224,7 +189,6 @@ body.anna .partner-badge{background:#f9dcea;color:#a0325a}
     </div>
   </div>
 
-  <!-- STORICO -->
   <div id="page-list">
     <div class="filter-bar">
       <select id="f-month" onchange="renderList()"><option value="">Tutti i mesi</option></select>
@@ -241,10 +205,8 @@ body.anna .partner-badge{background:#f9dcea;color:#a0325a}
     <div id="list-container"></div>
   </div>
 
-  <!-- RIEPILOGO -->
   <div id="page-summary"><div id="summary-container"></div></div>
 
-  <!-- DEBITI/CREDITI PARTNER -->
   <div id="page-partner">
     <div class="partner-saldo-box">
       <div class="partner-saldo-grid">
@@ -253,7 +215,6 @@ body.anna .partner-badge{background:#f9dcea;color:#a0325a}
         <div class="metric accent"><div class="metric-label">Saldo netto</div><div class="metric-value" id="p-saldo">€ 0,00</div></div>
       </div>
     </div>
-    <!-- Pagamento partner -->
     <div class="pay-section">
       <div style="font-size:13px;font-weight:500;color:#0F6E56;margin-bottom:12px;display:flex;align-items:center;gap:6px"><i class="ti ti-cash"></i> Registra pagamento di <span id="p-pay-label">Anna</span></div>
       <div class="form-grid">
@@ -262,7 +223,6 @@ body.anna .partner-badge{background:#f9dcea;color:#a0325a}
       </div>
       <div class="actions"><button class="btn success" onclick="addPartnerPay()"><i class="ti ti-check"></i> Registra pagamento</button></div>
     </div>
-    <!-- Aggiungi debito -->
     <div class="card" style="margin-bottom:1.5rem">
       <div style="font-size:13px;font-weight:500;margin-bottom:12px;display:flex;align-items:center;gap:6px" id="p-debt-title"><i class="ti ti-user-plus"></i> Aggiungi debito verso Anna</div>
       <div class="form-grid">
@@ -298,11 +258,31 @@ body.anna .partner-badge{background:#f9dcea;color:#a0325a}
 var MONTHS=['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
 var CAT_COLORS={'Utenze':'#185FA5','Spese Mediche':'#0F6E56','Viaggi':'#534AB7','Auto':'#993C1D','Casa':'#854F0B','Pasti fuori':'#993556','Spesa alimentare':'#3B6D11','Shopping':'#5F5E5A','Svago':'#534AB7','Cane':'#BA7517','Regali':'#D4537E','Alice':'#378ADD','Mutuo':'#3C3489'};
 var TABS=['add','income','list','summary','partner'];
-
 var currentProfile='marco';
 var expenses=[],incomes=[],partnerItems=[];
 
-/* ---- PRELOADED DATA (Marco only) ---- */
+// ── Storage API → backend ────────────────────────────────────────────────────
+var storage={
+  get:function(key){
+    return fetch('/api/storage/'+encodeURIComponent(key))
+      .then(function(r){return r.ok?r.json():null;})
+      .catch(function(){return null;});
+  },
+  set:function(key,value){
+    return fetch('/api/storage/'+encodeURIComponent(key),{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({value:value})
+    }).then(function(r){return r.json();}).catch(function(){return null;});
+  }
+};
+
+function loading(show){
+  var b=document.getElementById('loading-bar');
+  b.style.width=show?'70%':'100%';
+  if(!show) setTimeout(function(){b.style.width='0';},300);
+}
+
 var PRELOADED_MARCO=[
   {id:1000001,date:'2026-01-01',cat:'Utenze',desc:'Elettricità',amount:27.90,note:'',bp:null},
   {id:1000002,date:'2026-01-01',cat:'Utenze',desc:'Internet',amount:10.45,note:'',bp:null},
@@ -601,7 +581,6 @@ var PRELOADED_INCOMES_MARCO=[
   {id:2000051,date:'2026-06-01',desc:'BBVA 2%',amount:18.66,note:'',bp:null}
 ];
 
-/* ---- HELPERS ---- */
 function fmt(n){return Number(n).toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function monthKey(date){var d=new Date(date);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');}
 function monthLabel(key){var p=key.split('-');return MONTHS[parseInt(p[1])-1]+' '+p[0];}
@@ -611,12 +590,10 @@ function expKey(){return 'expenses_'+currentProfile;}
 function incKey(){return 'incomes_'+currentProfile;}
 function prtKey(){return 'partner_'+currentProfile;}
 
-/* ---- STORAGE ---- */
-function saveExp(){window.storage.set(expKey(),JSON.stringify(expenses)).catch(function(){});}
-function saveInc(){window.storage.set(incKey(),JSON.stringify(incomes)).catch(function(){});}
-function savePartner(){window.storage.set(prtKey(),JSON.stringify(partnerItems)).catch(function(){});}
+function saveExp(){storage.set(expKey(),JSON.stringify(expenses));}
+function saveInc(){storage.set(incKey(),JSON.stringify(incomes));}
+function savePartner(){storage.set(prtKey(),JSON.stringify(partnerItems));}
 
-/* ---- PROFILE SWITCH ---- */
 function switchProfile(p){
   currentProfile=p;
   document.body.classList.toggle('anna',p==='anna');
@@ -630,29 +607,34 @@ function switchProfile(p){
   document.getElementById('p-debt-title').innerHTML='<i class="ti ti-user-plus"></i> Aggiungi debito verso '+pn;
   document.getElementById('p-btn-add').textContent='Aggiungi debito verso '+pn;
   document.getElementById('split-flag-text').textContent='Da spartire con '+pn;
-  document.getElementById('app-title').innerHTML='<i class="ti ti-wallet"></i> Gestore Spese — '+( p==='marco'?'Marco':'Anna');
+  document.getElementById('app-title').innerHTML='<i class="ti ti-wallet"></i> Gestore Spese — '+(p==='marco'?'Marco':'Anna');
   expenses=[];incomes=[];partnerItems=[];
   loadProfile();
   showTab('add');
 }
 
-/* ---- LOAD ---- */
 function loadProfile(){
   var today=new Date().toISOString().slice(0,10);
   document.getElementById('inp-date').value=today;
   document.getElementById('inc-date').value=today;
-  window.storage.get(expKey()).then(function(r){
-    if(r&&r.value){try{expenses=JSON.parse(r.value);}catch(e){expenses=[];}}
-    if(currentProfile==='marco') loadPreloadedMarco();
-    else populateMonthFilter();
-  }).catch(function(){expenses=[];if(currentProfile==='marco')loadPreloadedMarco();else populateMonthFilter();});
-  window.storage.get(incKey()).then(function(r){
-    if(r&&r.value){try{incomes=JSON.parse(r.value);}catch(e){incomes=[];}}
-    if(currentProfile==='marco') loadPreloadedIncomesMarco();
-  }).catch(function(){incomes=[];if(currentProfile==='marco')loadPreloadedIncomesMarco();});
-  window.storage.get(prtKey()).then(function(r){
-    if(r&&r.value){try{partnerItems=JSON.parse(r.value);}catch(e){partnerItems=[];}}
-  }).catch(function(){partnerItems=[];});
+  loading(true);
+  Promise.all([
+    storage.get(expKey()),
+    storage.get(incKey()),
+    storage.get(prtKey())
+  ]).then(function(res){
+    var re=res[0],ri=res[1],rp=res[2];
+    if(re&&re.value){try{expenses=JSON.parse(re.value);}catch(e){expenses=[];}}
+    if(ri&&ri.value){try{incomes=JSON.parse(ri.value);}catch(e){incomes=[];}}
+    if(rp&&rp.value){try{partnerItems=JSON.parse(rp.value);}catch(e){partnerItems=[];}}
+    if(currentProfile==='marco'){loadPreloadedMarco();loadPreloadedIncomesMarco();}
+    else{populateMonthFilter();}
+    loading(false);
+  }).catch(function(){
+    if(currentProfile==='marco'){loadPreloadedMarco();loadPreloadedIncomesMarco();}
+    else{populateMonthFilter();}
+    loading(false);
+  });
 }
 
 function loadPreloadedMarco(){
@@ -669,7 +651,6 @@ function loadPreloadedIncomesMarco(){
   if(added>0){incomes.sort(function(a,b){return new Date(b.date)-new Date(a.date);});saveInc();}
 }
 
-/* ---- FORM HELPERS ---- */
 function toggleBP(){
   var show=document.getElementById('inp-cat').value==='Spesa alimentare';
   document.getElementById('bp-section').style.display=show?'block':'none';
@@ -692,7 +673,6 @@ function calcIncBP(){
   }
 }
 
-/* ---- ADD EXPENSE ---- */
 function addExpense(){
   var amount=parseFloat(document.getElementById('inp-amount').value);
   var date=document.getElementById('inp-date').value;
@@ -723,10 +703,9 @@ function addExpense(){
     savePartner();
   }
   saveExp();populateMonthFilter();clearExpForm();
-  toast(splitPartner?'Spesa salvata: metà in storico, metà come credito verso '+partnerName()+' ✓':'Spesa salvata ✓');
+  toast(splitPartner?'Spesa salvata: metà come credito verso '+partnerName()+' ✓':'Spesa salvata ✓');
 }
 
-/* ---- ADD INCOME ---- */
 function addIncome(){
   var amount=parseFloat(document.getElementById('inc-amount').value);
   var date=document.getElementById('inc-date').value;
@@ -745,7 +724,6 @@ function addIncome(){
   toast('Entrata salvata ✓');
 }
 
-/* ---- PARTNER PAY ---- */
 function calcPartnerPay(){
   var amount=parseFloat(document.getElementById('p-pay-amount').value)||0;
   var crediti=partnerItems.filter(function(a){return a.type==='credito';}).reduce(function(s,a){return s+a.amount;},0);
@@ -765,18 +743,15 @@ function addPartnerPay(){
   var now=new Date();
   var dd=String(now.getDate()).padStart(2,'0');
   var mm=String(now.getMonth()+1).padStart(2,'0');
-  var yy=now.getFullYear();
-  partnerItems.push({id:Date.now(),desc:'Pagamento alla data '+dd+'.'+mm+'.'+yy,amount:amount,cat:'',date:now.toISOString().slice(0,10),type:'pagamento',expId:null,note:''});
+  partnerItems.push({id:Date.now(),desc:'Pagamento alla data '+dd+'.'+mm+'.'+now.getFullYear(),amount:amount,cat:'',date:now.toISOString().slice(0,10),type:'pagamento',expId:null,note:''});
   partnerItems.sort(function(a,b){return new Date(b.date)-new Date(a.date);});
   savePartner();
   document.getElementById('p-pay-amount').value='';
   document.getElementById('p-pay-preview').textContent='— inserisci importo';
   document.getElementById('p-pay-preview').style.color='#666';
-  renderPartner();
-  toast('Pagamento registrato ✓');
+  renderPartner();toast('Pagamento registrato ✓');
 }
 
-/* ---- PARTNER DEBT ---- */
 function addPartnerDebt(){
   var desc=document.getElementById('p-desc').value.trim();
   var amount=parseFloat(document.getElementById('p-amount').value);
@@ -800,7 +775,6 @@ function addPartnerDebt(){
   toast('Debito verso '+partnerName()+' aggiunto ✓');
 }
 
-/* ---- DELETE ---- */
 function deleteExpense(id){
   var exp=expenses.filter(function(e){return e.id===id;})[0];
   expenses=expenses.filter(function(e){return e.id!==id;});
@@ -824,7 +798,6 @@ function deletePartner(id){
   savePartner();renderPartner();renderList();toast('Voce eliminata');
 }
 
-/* ---- CLEAR FORMS ---- */
 function clearExpForm(){
   ['inp-amount','inp-desc','inp-note'].forEach(function(id){document.getElementById(id).value='';});
   document.getElementById('inp-cat').value='';
@@ -843,26 +816,21 @@ function clearIncForm(){
   document.getElementById('inc-date').value=new Date().toISOString().slice(0,10);
 }
 
-/* ---- POPULATE MONTH FILTER ---- */
 function populateMonthFilter(){
-  var seen={};var keys=[];
+  var seen={},keys=[];
   expenses.forEach(function(e){var k=monthKey(e.date);if(!seen[k]){seen[k]=1;keys.push(k);}});
   incomes.forEach(function(i){var k=monthKey(i.date);if(!seen[k]){seen[k]=1;keys.push(k);}});
   keys.sort().reverse();
-  var sel=document.getElementById('f-month');
-  var cur=sel.value;
+  var sel=document.getElementById('f-month'),cur=sel.value;
   sel.innerHTML='<option value="">Tutti i mesi</option>'+keys.map(function(k){return '<option value="'+k+'">'+monthLabel(k)+'</option>';}).join('');
   if(cur) sel.value=cur;
 }
 
-/* ---- RENDER LIST ---- */
 function renderList(){
-  var mf=document.getElementById('f-month').value;
-  var cf=document.getElementById('f-cat').value;
+  var mf=document.getElementById('f-month').value,cf=document.getElementById('f-cat').value;
   var exps=expenses.filter(function(e){return(!mf||monthKey(e.date)===mf)&&(!cf||e.cat===cf);});
   var incs=incomes.filter(function(i){return!mf||monthKey(i.date)===mf;});
-  var cont=document.getElementById('list-container');
-  var seen={};var allKeys=[];
+  var cont=document.getElementById('list-container'),seen={},allKeys=[];
   exps.forEach(function(e){var k=monthKey(e.date);if(!seen[k]){seen[k]=1;allKeys.push(k);}});
   if(!cf) incs.forEach(function(i){var k=monthKey(i.date);if(!seen[k]){seen[k]=1;allKeys.push(k);}});
   allKeys.sort().reverse();
@@ -889,7 +857,6 @@ function renderList(){
   }).join('');
 }
 
-/* ---- RENDER SUMMARY ---- */
 function renderSummary(){
   var cont=document.getElementById('summary-container');
   var totE=expenses.reduce(function(s,e){return s+e.amount;},0);
@@ -922,14 +889,7 @@ function renderSummary(){
         var spH=e.splitPartner?'<span class="partner-badge"><i class="ti ti-users" style="font-size:10px"></i> 50%</span>':'';
         return '<div class="expense-row"><span class="exp-date">'+fmtDate(e.date)+'</span><span>'+e.desc+bpH+spH+'</span><span class="exp-amount">€ '+fmt(e.amount)+'</span><button class="exp-delete btn danger" onclick="deleteExpense('+e.id+')"><i class="ti ti-trash"></i></button></div>';
       }).join('');
-      return '<div class="cat-block">'
-        +'<div class="cat-header" style="cursor:pointer" onclick="toggleCat(\''+uid+'\')">'
-        +'<div class="cat-label"><span style="width:10px;height:10px;border-radius:50%;background:'+(CAT_COLORS[cat]||'#888')+';display:inline-block"></span>'+cat+bpN+'</div>'
-        +'<div style="display:flex;align-items:center;gap:12px"><span style="font-size:12px;color:#666">'+pct+'%</span><span style="font-weight:500;font-size:13px">€ '+fmt(tC)+'</span>'
-        +'<i class="ti ti-chevron-down" id="ico-'+uid+'" style="font-size:14px;color:#666;transition:transform .2s"></i>'
-        +'</div></div>'
-        +'<div id="'+uid+'" style="display:none;padding:0 4px">'+rows+'</div>'
-        +'</div>';
+      return '<div class="cat-block"><div class="cat-header" style="cursor:pointer" onclick="toggleCat(\''+uid+'\')"><div class="cat-label"><span style="width:10px;height:10px;border-radius:50%;background:'+(CAT_COLORS[cat]||'#888')+';display:inline-block"></span>'+cat+bpN+'</div><div style="display:flex;align-items:center;gap:12px"><span style="font-size:12px;color:#666">'+pct+'%</span><span style="font-weight:500;font-size:13px">€ '+fmt(tC)+'</span><i class="ti ti-chevron-down" id="ico-'+uid+'" style="font-size:14px;color:#666;transition:transform .2s"></i></div></div><div id="'+uid+'" style="display:none;padding:0 4px">'+rows+'</div></div>';
     }).join('');
     var incBlock='';
     if(mi.length){
@@ -945,9 +905,7 @@ function renderSummary(){
   cont.innerHTML=html;
 }
 
-/* ---- RENDER PARTNER ---- */
 function renderPartner(){
-  var pn=partnerName();
   var debiti=partnerItems.filter(function(a){return a.type==='debito';}).reduce(function(s,a){return s+a.amount;},0);
   var crediti=partnerItems.filter(function(a){return a.type==='credito';}).reduce(function(s,a){return s+a.amount;},0);
   var pagamenti=partnerItems.filter(function(a){return a.type==='pagamento';}).reduce(function(s,a){return s+a.amount;},0);
@@ -968,8 +926,7 @@ function renderPartner(){
     var sMes=mCre-mDeb-mPay;
     var rows=items.map(function(a){
       var isPay=a.type==='pagamento',isD=a.type==='debito';
-      var color=isD?'#a32d2d':'#085041';
-      var sign=isD?'- ':'+ ';
+      var color=isD?'#a32d2d':'#085041',sign=isD?'- ':'+ ';
       var badge=isD?'<span style="font-size:10px;background:#FCEBEB;color:#a32d2d;padding:1px 6px;border-radius:5px;font-weight:500">Debito</span>':(isPay?'<span style="font-size:10px;background:#E1F5EE;color:#085041;padding:1px 6px;border-radius:5px;font-weight:500">Pagamento</span>':'<span style="font-size:10px;background:#E1F5EE;color:#085041;padding:1px 6px;border-radius:5px;font-weight:500">Credito</span>');
       var catB=a.cat?'<span style="display:inline-block;margin-left:4px;padding:1px 6px;border-radius:5px;font-size:10px;font-weight:500;background:'+(CAT_COLORS[a.cat]||'#888')+'22;color:'+(CAT_COLORS[a.cat]||'#888')+'">'+a.cat+'</span>':'';
       return '<div class="anna-row"><span class="exp-date">'+fmtDate(a.date)+'</span><span>'+a.desc+catB+(a.note?'<span style="color:#666;font-size:11px"> — '+a.note+'</span>':'')+'</span><span>'+badge+'</span><span class="exp-amount" style="color:'+color+'">'+sign+'€ '+fmt(a.amount)+'</span><button class="exp-delete btn danger" onclick="deletePartner('+a.id+')"><i class="ti ti-trash"></i></button></div>';
@@ -980,18 +937,15 @@ function renderPartner(){
 }
 
 function toggleCat(uid){
-  var el=document.getElementById(uid);
-  var ico=document.getElementById('ico-'+uid);
+  var el=document.getElementById(uid),ico=document.getElementById('ico-'+uid);
   if(!el) return;
   var open=el.style.display==='block';
   el.style.display=open?'none':'block';
   if(ico) ico.style.transform=open?'':'rotate(180deg)';
 }
 
-/* ---- EXPORT CSV ---- */
 function exportCSV(){
-  var mf=document.getElementById('f-month').value;
-  var cf=document.getElementById('f-cat').value;
+  var mf=document.getElementById('f-month').value,cf=document.getElementById('f-cat').value;
   var exps=expenses.filter(function(e){return(!mf||monthKey(e.date)===mf)&&(!cf||e.cat===cf);});
   var incs=cf?[]:incomes.filter(function(i){return!mf||monthKey(i.date)===mf;});
   if(!exps.length&&!incs.length){toast('Nessun dato da esportare');return;}
@@ -1005,7 +959,6 @@ function exportCSV(){
   toast('CSV scaricato');
 }
 
-/* ---- TABS ---- */
 function showTab(t){
   TABS.forEach(function(id,idx){
     document.getElementById('page-'+id).classList.toggle('visible',id===t);
@@ -1022,7 +975,6 @@ function toast(msg){
   setTimeout(function(){el.classList.remove('show');},2500);
 }
 
-/* ---- INIT ---- */
 switchProfile('marco');
 </script>
 </body>
