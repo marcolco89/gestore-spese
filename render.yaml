@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: gestore-spese
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    disk:
+      name: db
+      mountPath: /opt/render/project/src
+      sizeGB: 1
