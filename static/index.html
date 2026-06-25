@@ -4,841 +4,699 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gestore Spese</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:system-ui,sans-serif;background:#e8eef7;color:#1a1a1a;font-size:15px;transition:background .3s}
-body.anna{background:#faeaf0}
-.app{max-width:960px;margin:0 auto;padding:1.5rem 1rem}
-.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;gap:12px}
-.header h1{font-size:20px;font-weight:500;display:flex;align-items:center;gap:8px}
-.profile-switch{display:flex;align-items:center;background:#e8e8e2;border-radius:10px;padding:3px}
-body.anna .profile-switch{background:#f5dce8}
-.profile-btn{padding:7px 16px;border-radius:8px;border:none;font-size:13px;font-weight:500;cursor:pointer;background:transparent;color:#666;transition:all .2s;display:flex;align-items:center;gap:5px}
-.profile-btn.active-marco{background:#1a3a6e;color:#fff}
-.profile-btn.active-anna{background:#a0325a;color:#fff}
-.tabs{display:flex;gap:2px;margin-bottom:1.5rem;border-bottom:1px solid rgba(0,0,0,.15);overflow-x:auto}
-.tab{padding:8px 14px;cursor:pointer;font-size:13px;border:none;background:none;color:#666;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;display:flex;align-items:center;gap:5px}
-.tab.active{font-weight:500}
-body:not(.anna) .tab.active{color:#1a3a6e;border-bottom-color:#1a3a6e}
-body.anna .tab.active{color:#a0325a;border-bottom-color:#a0325a}
-.card{background:#fff;border:0.5px solid rgba(0,0,0,.15);border-radius:12px;padding:1.25rem}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.form-group{display:flex;flex-direction:column;gap:4px}
-.form-group.full{grid-column:1/-1}
-label{font-size:11px;color:#666;font-weight:500;text-transform:uppercase;letter-spacing:.04em}
-input,select{width:100%;padding:8px 10px;border:0.5px solid rgba(0,0,0,.3);border-radius:8px;font-size:14px;background:#fff;color:#1a1a1a;outline:none}
-body:not(.anna) input:focus,body:not(.anna) select:focus{border-color:#1a3a6e;box-shadow:0 0 0 3px rgba(26,58,110,.08)}
-body.anna input:focus,body.anna select:focus{border-color:#a0325a;box-shadow:0 0 0 3px rgba(160,50,90,.08)}
-.bp-box{background:#f0f0ea;border-radius:10px;padding:12px;margin-top:4px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;align-items:end}
-body.anna .bp-box{background:#fceef4}
-.bp-result{font-size:13px;color:#666;padding-bottom:9px}
-.bp-result span{font-weight:500;color:#1a1a1a}
-.btn{padding:9px 18px;border-radius:8px;border:0.5px solid rgba(0,0,0,.3);background:transparent;color:#1a1a1a;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
-.btn:hover{background:#f0f0ea}
-body.anna .btn:hover{background:#fceef4}
-.btn.primary{border-color:transparent;color:#fff}
-body:not(.anna) .btn.primary{background:#1a3a6e}
-body:not(.anna) .btn.primary:hover{background:#142e58}
-body.anna .btn.primary{background:#a0325a}
-body.anna .btn.primary:hover{background:#8a2a4e}
-.btn.success{background:#0F6E56;color:#fff;border-color:transparent}
-.btn.success:hover{opacity:.85}
-.btn.partner{color:#fff;border-color:transparent}
-body:not(.anna) .btn.partner{background:#1a3a6e}
-body:not(.anna) .btn.partner:hover{background:#142e58}
-body.anna .btn.partner{background:#a0325a}
-body.anna .btn.partner:hover{background:#8a2a4e}
-.btn.danger{color:#a32d2d;border-color:transparent}
-.btn.danger:hover{background:#fcebeb}
-.actions{display:flex;justify-content:flex-end;gap:8px;margin-top:1rem}
-.month-section{margin-bottom:1.5rem}
-.month-header{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(0,0,0,.15);margin-bottom:.75rem}
-.month-header h2{font-size:16px;font-weight:500}
-.cat-block{margin-bottom:.75rem}
-.cat-header{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:#f0f0ea;border-radius:8px;margin-bottom:4px;font-size:13px;font-weight:500}
-body.anna .cat-header{background:#fceef4}
-.cat-label{display:flex;align-items:center;gap:6px}
-.expense-row{display:grid;grid-template-columns:72px 1fr auto auto;gap:8px;align-items:center;padding:6px 10px;font-size:13px;border-bottom:0.5px solid rgba(0,0,0,.1)}
-.expense-row:last-child,.income-row:last-child,.anna-row:last-child{border-bottom:none}
-.income-row{display:grid;grid-template-columns:72px 1fr auto auto;gap:8px;align-items:center;padding:6px 10px;font-size:13px;border-bottom:0.5px solid rgba(0,0,0,.1)}
-.anna-row{display:grid;grid-template-columns:80px 1fr 90px auto auto;gap:8px;align-items:center;padding:8px 10px;font-size:13px;border-bottom:0.5px solid rgba(0,0,0,.1)}
-.exp-date{color:#666;font-size:12px}
-.exp-amount{font-weight:500;white-space:nowrap}
-.exp-delete{opacity:0;transition:opacity .15s;cursor:pointer;background:none;border:none;color:#a32d2d;font-size:16px;padding:2px 4px}
-.expense-row:hover .exp-delete,.income-row:hover .exp-delete,.anna-row:hover .exp-delete{opacity:1}
-.empty{text-align:center;padding:3rem 1rem;color:#666;font-size:14px}
-.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1.5rem}
-.metric{background:#f0f0ea;border-radius:8px;padding:12px}
-body.anna .metric{background:#fceef4}
-.metric-label{font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
-.metric-value{font-size:20px;font-weight:500}
-.metric.green{background:#E1F5EE}.metric.green .metric-label{color:#0F6E56}.metric.green .metric-value{color:#085041}
-.metric.red{background:#FCEBEB}.metric.red .metric-label{color:#993C1D}.metric.red .metric-value{color:#711B0B}
-.metric.accent{border-radius:8px;padding:12px}
-body:not(.anna) .metric.accent{background:#dde8f5}
-body:not(.anna) .metric.accent .metric-label{color:#1a3a6e}
-body:not(.anna) .metric.accent .metric-value{color:#1a3a6e}
-body.anna .metric.accent{background:#f9dcea}
-body.anna .metric.accent .metric-label{color:#a0325a}
-body.anna .metric.accent .metric-value{color:#a0325a}
-.filter-bar{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;align-items:center}
-.filter-bar select{max-width:160px;padding:6px 10px;font-size:13px}
-.flag-partner{display:flex;align-items:center;gap:8px;padding:10px 12px;background:#f0f0ea;border-radius:8px;cursor:pointer;user-select:none;font-size:13px}
-body.anna .flag-partner{background:#fceef4}
-.flag-partner input[type=checkbox]{width:16px;height:16px;cursor:pointer}
-body:not(.anna) .flag-partner input{accent-color:#1a3a6e}
-body.anna .flag-partner input{accent-color:#a0325a}
-.partner-saldo-box{border-radius:12px;padding:1.25rem;margin-bottom:1.5rem;background:#fff;border:0.5px solid rgba(0,0,0,.15)}
-.partner-saldo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1rem}
-.pay-section{border-radius:12px;padding:1.25rem;margin-bottom:1.5rem;border:0.5px solid #E1F5EE;background:#fff}
-#page-add,#page-income,#page-list,#page-summary,#page-partner{display:none}
-#page-add.visible,#page-income.visible,#page-list.visible,#page-summary.visible,#page-partner.visible{display:block}
-.toast{position:fixed;bottom:1.5rem;right:1.5rem;color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:99}
-body:not(.anna) .toast{background:#1a3a6e}
-body.anna .toast{background:#a0325a}
-.toast.show{opacity:1}
-.partner-badge{display:inline-flex;align-items:center;gap:3px;padding:1px 6px;border-radius:5px;font-size:10px;font-weight:500;margin-left:4px}
-body:not(.anna) .partner-badge{background:#dde8f5;color:#1a3a6e}
-body.anna .partner-badge{background:#f9dcea;color:#a0325a}
-.loading-bar{position:fixed;top:0;left:0;height:2px;width:0;transition:width .3s;z-index:999}
-body:not(.anna) .loading-bar{background:#1a3a6e}
-body.anna .loading-bar{background:#a0325a}
+body{font-family:system-ui,-apple-system,sans-serif;font-size:15px}
+input,select,button,textarea{font-family:inherit}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:3px}
 </style>
 </head>
 <body>
-<div class="loading-bar" id="loading-bar"></div>
-<div class="app">
-  <div class="header">
-    <h1 id="app-title"><i class="ti ti-wallet"></i> Gestore Spese — Marco</h1>
-    <div class="profile-switch">
-      <button class="profile-btn active-marco" id="btn-marco" onclick="switchProfile('marco')"><i class="ti ti-user"></i> Marco</button>
-      <button class="profile-btn" id="btn-anna" onclick="switchProfile('anna')"><i class="ti ti-user"></i> Anna</button>
-    </div>
-  </div>
-  <div class="tabs">
-    <button class="tab active" onclick="showTab('add')"><i class="ti ti-minus"></i> Nuova spesa</button>
-    <button class="tab" onclick="showTab('income')"><i class="ti ti-plus"></i> Nuova entrata</button>
-    <button class="tab" onclick="showTab('list')"><i class="ti ti-list"></i> Storico</button>
-    <button class="tab" onclick="showTab('summary')"><i class="ti ti-chart-bar"></i> Riepilogo</button>
-    <button class="tab" onclick="showTab('partner')"><i class="ti ti-users"></i> <span id="partner-tab-label">Debiti/Crediti Anna</span></button>
-  </div>
-
-  <div id="page-add" class="visible">
-    <div class="card">
-      <div class="form-grid">
-        <div class="form-group"><label>Importo (€)</label><input type="number" id="inp-amount" min="0" step="0.01" placeholder="0,00"></div>
-        <div class="form-group"><label>Data</label><input type="date" id="inp-date"></div>
-        <div class="form-group full"><label>Descrizione</label><input type="text" id="inp-desc" placeholder="Es. Visita medica..."></div>
-        <div class="form-group full">
-          <label>Categoria</label>
-          <select id="inp-cat" onchange="toggleBP()">
-            <option value="">— Seleziona categoria —</option>
-            <option>Utenze</option><option>Spese Mediche</option><option>Viaggi</option><option>Auto</option>
-            <option>Casa</option><option>Pasti fuori</option><option>Spesa alimentare</option>
-            <option>Shopping</option><option>Svago</option><option>Cane</option>
-            <option>Regali</option><option>Alice</option><option>Mutuo</option>
-          </select>
-        </div>
-        <div class="form-group full" id="bp-section" style="display:none">
-          <label>Buoni pasto</label>
-          <div class="bp-box">
-            <div class="form-group"><label>N° buoni</label><input type="number" id="inp-bp-num" min="0" step="1" placeholder="0" oninput="calcBP()"></div>
-            <div class="form-group"><label>Valore buono (€)</label><input type="number" id="inp-bp-val" min="0" step="0.01" value="8" oninput="calcBP()"></div>
-            <div class="bp-result" id="bp-result">Sconto: <span>€ 0,00</span></div>
-          </div>
-        </div>
-        <div class="form-group full">
-          <label class="flag-partner"><input type="checkbox" id="inp-partner"><span id="split-flag-text">Da spartire con Anna</span></label>
-        </div>
-        <div class="form-group full"><label>Note (opzionale)</label><input type="text" id="inp-note" placeholder="Informazioni aggiuntive..."></div>
-      </div>
-      <div class="actions">
-        <button class="btn" onclick="clearExpForm()"><i class="ti ti-refresh"></i> Cancella</button>
-        <button class="btn primary" onclick="addExpense()"><i class="ti ti-check"></i> Salva spesa</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="page-income">
-    <div class="card">
-      <div class="form-grid">
-        <div class="form-group"><label>Importo (€)</label><input type="number" id="inc-amount" min="0" step="0.01" placeholder="0,00"></div>
-        <div class="form-group"><label>Data</label><input type="date" id="inc-date"></div>
-        <div class="form-group full"><label>Descrizione</label><input type="text" id="inc-desc" placeholder="Es. Stipendio..."></div>
-        <div class="form-group full">
-          <label>Buoni pasto (opzionale)</label>
-          <div class="bp-box">
-            <div class="form-group"><label>N° buoni</label><input type="number" id="inc-bp-num" min="0" step="1" placeholder="0" oninput="calcIncBP()"></div>
-            <div class="form-group"><label>Valore buono (€)</label><input type="number" id="inc-bp-val" min="0" step="0.01" value="8" oninput="calcIncBP()"></div>
-            <div class="bp-result" id="inc-bp-result">Totale: <span>€ 0,00</span></div>
-          </div>
-        </div>
-        <div class="form-group full"><label>Note (opzionale)</label><input type="text" id="inc-note" placeholder="Informazioni aggiuntive..."></div>
-      </div>
-      <div class="actions">
-        <button class="btn" onclick="clearIncForm()"><i class="ti ti-refresh"></i> Cancella</button>
-        <button class="btn success" onclick="addIncome()"><i class="ti ti-check"></i> Salva entrata</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="page-list">
-    <div class="filter-bar">
-      <select id="f-month" onchange="renderList()"><option value="">Tutti i mesi</option></select>
-      <select id="f-cat" onchange="renderList()">
-        <option value="">Tutte le categorie</option>
-        <option>Utenze</option><option>Spese Mediche</option><option>Viaggi</option><option>Auto</option>
-        <option>Casa</option><option>Pasti fuori</option><option>Spesa alimentare</option>
-        <option>Shopping</option><option>Svago</option><option>Cane</option>
-        <option>Regali</option><option>Alice</option><option>Mutuo</option>
-      </select>
-      <div style="flex:1"></div>
-      <button class="btn" onclick="exportCSV()"><i class="ti ti-download"></i> Esporta CSV</button>
-    </div>
-    <div id="list-container"></div>
-  </div>
-
-  <div id="page-summary"><div id="summary-container"></div></div>
-
-  <div id="page-partner">
-    <div class="partner-saldo-box">
-      <div class="partner-saldo-grid">
-        <div class="metric red"><div class="metric-label">Tu devi a <span id="p-label-devi">Anna</span></div><div class="metric-value" id="p-debito">€ 0,00</div></div>
-        <div class="metric green"><div class="metric-label"><span id="p-label-deve">Anna</span> ti deve</div><div class="metric-value" id="p-credito">€ 0,00</div></div>
-        <div class="metric accent"><div class="metric-label">Saldo netto</div><div class="metric-value" id="p-saldo">€ 0,00</div></div>
-      </div>
-    </div>
-    <div class="pay-section">
-      <div style="font-size:13px;font-weight:500;color:#0F6E56;margin-bottom:12px;display:flex;align-items:center;gap:6px"><i class="ti ti-cash"></i> Registra pagamento di <span id="p-pay-label">Anna</span></div>
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Importo (€) — positivo se Anna paga te, negativo se tu paghi Anna</label>
-          <input type="number" id="p-pay-amount" step="0.01" placeholder="es. 25,00 o -10,00" oninput="calcPartnerPay()">
-        </div>
-        <div class="form-group"><label>Saldo dopo pagamento</label><div id="p-pay-preview" style="padding:9px 10px;background:#f0f0ea;border-radius:8px;font-size:14px;color:#666">— inserisci importo</div></div>
-        <div class="form-group full"><label>Descrizione (opzionale)</label><input type="text" id="p-pay-desc" placeholder="Es. Bonifico, Contanti..."></div>
-      </div>
-      <div class="actions"><button class="btn success" onclick="addPartnerPay()"><i class="ti ti-check"></i> Registra pagamento</button></div>
-    </div>
-    <div class="card" style="margin-bottom:1.5rem">
-      <div style="font-size:13px;font-weight:500;margin-bottom:12px;color:#666;display:flex;align-items:center;gap:6px"><i class="ti ti-user-plus"></i> <span id="p-debt-title">Aggiungi debito/credito verso Anna</span></div>
-      <div class="form-grid">
-        <div class="form-group full">
-          <label>Tipo</label>
-          <div style="display:flex;gap:8px">
-            <button id="btn-tipo-debito" class="btn partner" style="flex:1;justify-content:center" onclick="setTipoPartner('debito')"><i class="ti ti-arrow-up-circle"></i> Debito (tu devi)</button>
-            <button id="btn-tipo-credito" class="btn" style="flex:1;justify-content:center;opacity:.5" onclick="setTipoPartner('credito')"><i class="ti ti-arrow-down-circle"></i> Credito (ti deve)</button>
-          </div>
-        </div>
-        <div class="form-group full"><label>Descrizione</label><input type="text" id="p-desc-field" placeholder="Es. Spesa supermercato..."></div>
-        <div class="form-group"><label>Importo (€)</label><input type="number" id="p-amount-field" min="0" step="0.01" placeholder="0,00"></div>
-        <div class="form-group">
-          <label>Mese</label>
-          <select id="p-month-field">
-            <option value="2026-01">Gennaio 2026</option><option value="2026-02">Febbraio 2026</option>
-            <option value="2026-03">Marzo 2026</option><option value="2026-04">Aprile 2026</option>
-            <option value="2026-05">Maggio 2026</option><option value="2026-06" selected>Giugno 2026</option>
-          </select>
-        </div>
-        <div class="form-group full">
-          <label>Categoria</label>
-          <select id="p-cat-field">
-            <option value="">— Seleziona categoria —</option>
-            <option>Utenze</option><option>Spese Mediche</option><option>Viaggi</option><option>Auto</option>
-            <option>Casa</option><option>Pasti fuori</option><option>Spesa alimentare</option>
-            <option>Shopping</option><option>Svago</option><option>Cane</option>
-            <option>Regali</option><option>Alice</option><option>Mutuo</option>
-          </select>
-        </div>
-        <div class="form-group full">
-          <label class="flag-partner"><input type="checkbox" id="p-storico-flag" checked><span>Imputare spesa nello storico</span></label>
-        </div>
-      </div>
-      <div class="actions">
-        <button class="btn partner" id="p-btn-add-action" onclick="addPartnerDebt()"><i class="ti ti-user-plus"></i> <span id="p-btn-add">Aggiungi debito verso Anna</span></button>
-      </div>
-    </div>
-    <div id="partner-container"></div>
-  </div>
-</div>
-<div class="toast" id="toast"></div>
-
-<script>
-var MONTHS=['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
-var CAT_COLORS={'Utenze':'#185FA5','Spese Mediche':'#0F6E56','Viaggi':'#534AB7','Auto':'#993C1D','Casa':'#854F0B','Pasti fuori':'#993556','Spesa alimentare':'#3B6D11','Shopping':'#5F5E5A','Svago':'#534AB7','Cane':'#BA7517','Regali':'#D4537E','Alice':'#378ADD','Mutuo':'#3C3489'};
-var TABS=['add','income','list','summary','partner'];
-var currentProfile='marco';
-var currentPartnerTipo='debito';
-var expenses=[],incomes=[],partnerItems=[];
+<div id="root"></div>
+<script type="text/babel">
+const {useState, useMemo, useEffect, useRef} = React;
 
 // ── Storage API → backend Render ─────────────────────────────────────────────
-var storage={
-  get:function(key){
-    return fetch('/api/storage/'+encodeURIComponent(key))
-      .then(function(r){return r.ok?r.json():null;})
-      .catch(function(){return null;});
+const storage = {
+  get: function(key) {
+    return fetch('/api/storage/' + encodeURIComponent(key))
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .catch(function() { return null; });
   },
-  set:function(key,value){
-    return fetch('/api/storage/'+encodeURIComponent(key),{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({value:value})
-    }).then(function(r){return r.json();}).catch(function(){return null;});
+  set: function(key, value) {
+    return fetch('/api/storage/' + encodeURIComponent(key), {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({value: value})
+    }).then(function(r) { return r.json(); }).catch(function() { return null; });
   }
 };
 
-function loading(show){
-  var b=document.getElementById('loading-bar');
-  b.style.width=show?'70%':'100%';
-  if(!show) setTimeout(function(){b.style.width='0';},300);
+const MONTHS=['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+const CAT_COLORS={
+  'Utenze':'#185FA5','Spese Mediche':'#0F6E56','Viaggi':'#534AB7',
+  'Auto':'#993C1D','Casa':'#854F0B','Pasti fuori':'#993556',
+  'Spesa alimentare':'#3B6D11','Shopping':'#5F5E5A','Svago':'#7B5EA7',
+  'Cane':'#BA7517','Regali':'#D4537E','Alice':'#378ADD','Mutuo':'#3C3489'
+};
+const CATS=Object.keys(CAT_COLORS);
+const THEME={
+  marco:{bg:'#EEF3FB',accent:'#1a3a6e',accentLight:'#dde8f5'},
+  anna: {bg:'#FBF0F4',accent:'#a0325a',accentLight:'#f9dcea'},
+};
+const TABS=['Nuova spesa','Nuova entrata','Storico','Riepilogo','Debiti/Crediti','Andamenti'];
+
+const RAW_EXPENSES=[{"id":1782104851453,"amount":97.24,"date":"2026-08-29","desc":"Volo Vienna Cagliari (50%)","cat":"Viaggi","note":"","bp":null,"splitPartner":true},{"id":1782104794223,"amount":67.99,"date":"2026-08-22","desc":"Volo per Salisburgo (50%)","cat":"Viaggi","note":"","bp":null,"splitPartner":true},{"id":1782365346566,"amount":12.5,"date":"2026-06-25","desc":"Pensione paquito (50%)","cat":"Cane","note":"","bp":null,"splitPartner":true},{"id":1782289874170,"amount":10.5,"date":"2026-06-24","desc":"Tassa di soggiorno + cocktail (50%)","cat":"Viaggi","note":"","bp":null,"splitPartner":true},{"id":1782199971104,"amount":24.5,"date":"2026-06-23","desc":"Benzina cardedu (50%)","cat":"Auto","note":"","bp":null,"splitPartner":true},{"id":1782199983674,"amount":1.55,"date":"2026-06-23","desc":"Hardis (50%)","cat":"Spesa alimentare","note":"","bp":null,"splitPartner":true},{"id":1782104686275,"amount":2.38,"date":"2026-06-22","desc":"Ikea (50%)","cat":"Casa","note":"","bp":null,"splitPartner":true},{"id":1782160035570,"amount":7.2,"date":"2026-06-22","desc":"Caddozzo","cat":"Pasti fuori","note":"","bp":null,"splitPartner":false},{"id":1782042787109,"amount":125,"date":"2026-06-21","desc":"Perdepera (50%)","cat":"Viaggi","note":"","bp":null,"splitPartner":true},{"id":1781945868384,"amount":8.6,"date":"2026-06-20","desc":"Coop (50%)","cat":"Spesa alimentare","note":"","bp":{"num":2,"val":8,"total":16},"splitPartner":true},{"id":1781960496222,"amount":23.8,"date":"2026-06-20","desc":"Conad (50%)","cat":"Spesa alimentare","note":"","bp":{"num":4,"val":8,"total":32},"splitPartner":true},{"id":1781972904505,"amount":31.59,"date":"2026-06-20","desc":"Lidl (50%)","cat":"Spesa alimentare","note":"","bp":{"num":4,"val":8,"total":32},"splitPartner":true},{"id":1781977117626,"amount":13.99,"date":"2026-06-20","desc":"Alcott","cat":"Shopping","note":"","bp":null,"splitPartner":false},{"id":1781977172652,"amount":76.3,"date":"2026-06-20","desc":"Rata ikea (50%)","cat":"Casa","note":"","bp":null,"splitPartner":true},{"id":1781873795456,"amount":5.73,"date":"2026-06-19","desc":"Ikea (50%)","cat":"Casa","note":"","bp":null,"splitPartner":true},{"id":1781666379526,"amount":166.33,"date":"2026-06-17","desc":"Televisore","cat":"Casa","note":"1 rata di 3","bp":null,"splitPartner":false},{"id":1781618622624,"amount":152.5,"date":"2026-06-16","desc":"Cambio tenda solare (50%)","cat":"Casa","note":"","bp":null,"splitPartner":true},{"id":1781619700522,"amount":19,"date":"2026-06-16","desc":"Benzina Sassari (50%)","cat":"Auto","note":"","bp":null,"splitPartner":true},{"id":1781619717994,"amount":9.75,"date":"2026-06-16","desc":"Benzina scooter","cat":"Auto","note":"","bp":null,"splitPartner":false},{"id":1781619769848,"amount":8,"date":"2026-06-16","desc":"Cellulare","cat":"Utenze","note":"","bp":null,"splitPartner":false},{"id":1781619793992,"amount":11.3,"date":"2026-06-16","desc":"Old","cat":"Pasti fuori","note":"","bp":null,"splitPartner":false},{"id":1781619834786,"amount":5.67,"date":"2026-06-16","desc":"Pan 12 (50%)","cat":"Spesa alimentare","note":"buoni pasto di anna","bp":null,"splitPartner":true},{"id":1781619891480,"amount":15.1,"date":"2026-06-16","desc":"Lidl 12 (50%)","cat":"Spesa alimentare","note":"","bp":{"num":3,"val":8,"total":24},"splitPartner":true},{"id":1781619983154,"amount":30.43,"date":"2026-06-16","desc":"Pan 15 (50%)","cat":"Spesa alimentare","note":"","bp":{"num":3,"val":8,"total":24},"splitPartner":true},{"id":1781620013042,"amount":6.25,"date":"2026-06-16","desc":"Vino Sassari (50%)","cat":"Spesa alimentare","note":"","bp":{"num":1,"val":8,"total":8},"splitPartner":true},{"id":1781620887621,"amount":15,"date":"2026-06-16","desc":"Regalo Francesco Anni (50%)","cat":"Regali","note":"","bp":null,"splitPartner":true},{"id":1000501,"date":"2026-06-01","cat":"Utenze","desc":"Elettricità","amount":31.45,"note":"","bp":null},{"id":1000502,"date":"2026-06-01","cat":"Utenze","desc":"Acqua","amount":87.42,"note":"","bp":null},{"id":1000503,"date":"2026-06-01","cat":"Utenze","desc":"Cellulare","amount":4,"note":"","bp":null},{"id":1000504,"date":"2026-06-01","cat":"Utenze","desc":"Pulizia","amount":20,"note":"","bp":null},{"id":1000505,"date":"2026-06-01","cat":"Viaggi","desc":"Londra","amount":321.6,"note":"","bp":null},{"id":1000506,"date":"2026-06-01","cat":"Casa","desc":"Temu","amount":15.3,"note":"","bp":null},{"id":1000507,"date":"2026-06-01","cat":"Spesa alimentare","desc":"Lidl 3","amount":14.04,"note":"","bp":null},{"id":1000508,"date":"2026-06-01","cat":"Spesa alimentare","desc":"Pan 4","amount":9.08,"note":"","bp":null},{"id":1000509,"date":"2026-06-01","cat":"Spesa alimentare","desc":"Lidl 5","amount":9.62,"note":"","bp":null},{"id":1000510,"date":"2026-06-01","cat":"Spesa alimentare","desc":"Reso spesa","amount":-25.35,"note":"","bp":null},{"id":1000511,"date":"2026-06-01","cat":"Svago","desc":"Su giudeu","amount":2,"note":"","bp":null},{"id":1000512,"date":"2026-06-01","cat":"Regali","desc":"Regalo emma","amount":10,"note":"","bp":null},{"id":1000513,"date":"2026-06-01","cat":"Regali","desc":"Regalo papa","amount":65,"note":"","bp":null},{"id":1000514,"date":"2026-06-01","cat":"Alice","desc":"Salviette","amount":5,"note":"","bp":null},{"id":1000606,"date":"2026-06-01","cat":"Mutuo","desc":"Rata mutuo","amount":427.82,"note":"","bp":null},{"id":1000706,"date":"2026-06-01","cat":"Spesa alimentare","desc":"Buoni pasto","amount":48,"note":"","bp":{"num":6,"val":8,"total":48}},{"id":1781619930981,"amount":18.75,"date":"2026-06-01","desc":"Lidl 12 buoni pasto (Anna)","cat":"Spesa alimentare","note":"Anticipato da Anna","bp":null,"splitPartner":false,"partnerDebt":true},{"id":1781945842606,"amount":8,"date":"2026-06-01","desc":"Pizza evelyn 20 (Anna)","cat":"Pasti fuori","note":"Anticipato da Anna","bp":null,"splitPartner":false,"partnerDebt":true},{"id":1781977212253,"amount":265,"date":"2026-06-01","desc":"Rata nido (Anna)","cat":"Alice","note":"Anticipato da Anna","bp":null,"splitPartner":false,"partnerDebt":true},{"id":1782200020130,"amount":3.35,"date":"2026-06-01","desc":"Colazione mulini (Anna)","cat":"Pasti fuori","note":"Anticipato da Anna","bp":null,"splitPartner":false,"partnerDebt":true},{"id":1000401,"date":"2026-05-01","cat":"Utenze","desc":"Elettricità","amount":34.5,"note":"","bp":null},{"id":1000402,"date":"2026-05-01","cat":"Utenze","desc":"Internet","amount":10.5,"note":"","bp":null},{"id":1000403,"date":"2026-05-01","cat":"Utenze","desc":"Cellulare","amount":7.99,"note":"","bp":null},{"id":1000404,"date":"2026-05-01","cat":"Utenze","desc":"Pulizia","amount":40,"note":"","bp":null},{"id":1000405,"date":"2026-05-01","cat":"Utenze","desc":"Sky","amount":7.5,"note":"","bp":null},{"id":1000406,"date":"2026-05-01","cat":"Viaggi","desc":"Alloggio Londra","amount":138.61,"note":"","bp":null},{"id":1000407,"date":"2026-05-01","cat":"Viaggi","desc":"Volo Londra","amount":122.98,"note":"","bp":null},{"id":1000408,"date":"2026-05-01","cat":"Viaggi","desc":"Alloggio londra saldo","amount":101,"note":"","bp":null},{"id":1000409,"date":"2026-05-01","cat":"Viaggi","desc":"Visto","amount":36,"note":"","bp":null},{"id":1000410,"date":"2026-05-01","cat":"Auto","desc":"Benzina","amount":25,"note":"","bp":null},{"id":1000411,"date":"2026-05-01","cat":"Auto","desc":"Benzina","amount":7.5,"note":"","bp":null},{"id":1000412,"date":"2026-05-01","cat":"Auto","desc":"Benzina","amount":10,"note":"","bp":null},{"id":1000413,"date":"2026-05-01","cat":"Casa","desc":"Ikea rata","amount":76.3,"note":"","bp":null},{"id":1000414,"date":"2026-05-01","cat":"Casa","desc":"Ikea","amount":30,"note":"","bp":null},{"id":1000415,"date":"2026-05-01","cat":"Casa","desc":"Varie","amount":5,"note":"","bp":null},{"id":1000416,"date":"2026-05-01","cat":"Casa","desc":"Rubinetto","amount":5,"note":"","bp":null},{"id":1000417,"date":"2026-05-01","cat":"Casa","desc":"Ikea","amount":154.5,"note":"","bp":null},{"id":1000418,"date":"2026-05-01","cat":"Casa","desc":"Leroy","amount":16,"note":"","bp":null},{"id":1000419,"date":"2026-05-01","cat":"Casa","desc":"Maurys","amount":6.75,"note":"","bp":null},{"id":1000420,"date":"2026-05-01","cat":"Pasti fuori","desc":"Fatjoe","amount":12.5,"note":"","bp":null},{"id":1000421,"date":"2026-05-01","cat":"Pasti fuori","desc":"Manduca","amount":23.75,"note":"","bp":null},{"id":1000422,"date":"2026-05-01","cat":"Pasti fuori","desc":"Ravioli","amount":7,"note":"","bp":null},{"id":1000423,"date":"2026-05-01","cat":"Pasti fuori","desc":"XPIZZA","amount":4.4,"note":"","bp":null},{"id":1000424,"date":"2026-05-01","cat":"Spesa alimentare","desc":"Lidl 3","amount":46.8,"note":"","bp":null},{"id":1000425,"date":"2026-05-01","cat":"Spesa alimentare","desc":"Eurospin 3","amount":7.65,"note":"","bp":null},{"id":1000426,"date":"2026-05-01","cat":"Spesa alimentare","desc":"Pan 5-28","amount":1.6,"note":"","bp":null},{"id":1000427,"date":"2026-05-01","cat":"Spesa alimentare","desc":"Conad 6","amount":7,"note":"","bp":null},{"id":1000428,"date":"2026-05-01","cat":"Spesa alimentare","desc":"Coop 9","amount":4,"note":"","bp":null},{"id":1000429,"date":"2026-05-01","cat":"Spesa alimentare","desc":"Eurospin 9","amount":7,"note":"","bp":null},{"id":1000430,"date":"2026-05-01","cat":"Spesa alimentare","desc":"Pan 12-21","amount":50.71,"note":"","bp":null},{"id":1000431,"date":"2026-05-01","cat":"Spesa alimentare","desc":"Eurospin 14-23","amount":25.8,"note":"","bp":null},{"id":1000432,"date":"2026-05-01","cat":"Spesa alimentare","desc":"Lidl 18-25","amount":6.65,"note":"","bp":null},{"id":1000433,"date":"2026-05-01","cat":"Spesa alimentare","desc":"Coop 18","amount":5,"note":"","bp":null},{"id":1000434,"date":"2026-05-01","cat":"Spesa alimentare","desc":"Reso spesa","amount":-57.18,"note":"","bp":null},{"id":1000435,"date":"2026-05-01","cat":"Svago","desc":"Spritz","amount":6.5,"note":"","bp":null},{"id":1000436,"date":"2026-05-01","cat":"Svago","desc":"Amin","amount":11,"note":"","bp":null},{"id":1000437,"date":"2026-05-01","cat":"Svago","desc":"Esperia","amount":10,"note":"","bp":null},{"id":1000438,"date":"2026-05-01","cat":"Svago","desc":"Birra","amount":10,"note":"","bp":null},{"id":1000439,"date":"2026-05-01","cat":"Svago","desc":"Colazione","amount":8.15,"note":"","bp":null},{"id":1000440,"date":"2026-05-01","cat":"Svago","desc":"Merenda","amount":2,"note":"","bp":null},{"id":1000441,"date":"2026-05-01","cat":"Svago","desc":"Birra trib","amount":3.5,"note":"","bp":null},{"id":1000442,"date":"2026-05-01","cat":"Cane","desc":"Pappa","amount":7.5,"note":"","bp":null},{"id":1000443,"date":"2026-05-01","cat":"Cane","desc":"Cuccia","amount":5,"note":"","bp":null},{"id":1000444,"date":"2026-05-01","cat":"Regali","desc":"Regalo EDO","amount":10,"note":"","bp":null},{"id":1000445,"date":"2026-05-01","cat":"Alice","desc":"Asilo","amount":265,"note":"","bp":null},{"id":1000446,"date":"2026-05-01","cat":"Alice","desc":"Crema","amount":8.58,"note":"","bp":null},{"id":1000447,"date":"2026-05-01","cat":"Alice","desc":"Bicchiere","amount":5.5,"note":"","bp":null},{"id":1000448,"date":"2026-05-01","cat":"Alice","desc":"Antiabbandono","amount":6,"note":"","bp":null},{"id":1000449,"date":"2026-05-01","cat":"Alice","desc":"Ibuprofene","amount":15,"note":"","bp":null},{"id":1000450,"date":"2026-05-01","cat":"Alice","desc":"Divisa","amount":15,"note":"","bp":null},{"id":1000605,"date":"2026-05-01","cat":"Mutuo","desc":"Rata mutuo","amount":427.82,"note":"","bp":null},{"id":1000705,"date":"2026-05-01","cat":"Spesa alimentare","desc":"Buoni pasto","amount":80,"note":"","bp":{"num":10,"val":8,"total":80}},{"id":1000301,"date":"2026-04-01","cat":"Utenze","desc":"Elettricità 03","amount":39.65,"note":"","bp":null},{"id":1000302,"date":"2026-04-01","cat":"Utenze","desc":"Internet","amount":10.5,"note":"","bp":null},{"id":1000303,"date":"2026-04-01","cat":"Utenze","desc":"Cellulare","amount":7.99,"note":"","bp":null},{"id":1000304,"date":"2026-04-01","cat":"Utenze","desc":"Pulizia","amount":40,"note":"","bp":null},{"id":1000305,"date":"2026-04-01","cat":"Utenze","desc":"Banca","amount":8.55,"note":"","bp":null},{"id":1000306,"date":"2026-04-01","cat":"Utenze","desc":"Sky","amount":7.5,"note":"","bp":null},{"id":1000307,"date":"2026-04-01","cat":"Utenze","desc":"Condominio 2 tri","amount":148,"note":"","bp":null},{"id":1000308,"date":"2026-04-01","cat":"Spese Mediche","desc":"Farmacia","amount":10,"note":"","bp":null},{"id":1000309,"date":"2026-04-01","cat":"Spese Mediche","desc":"Fisiatra","amount":14,"note":"","bp":null},{"id":1000310,"date":"2026-04-01","cat":"Viaggi","desc":"Napoli","amount":67.5,"note":"","bp":null},{"id":1000311,"date":"2026-04-01","cat":"Viaggi","desc":"Napoli","amount":171.25,"note":"","bp":null},{"id":1000312,"date":"2026-04-01","cat":"Auto","desc":"Benzina SS","amount":18.7,"note":"","bp":null},{"id":1000313,"date":"2026-04-01","cat":"Auto","desc":"Benzina","amount":10,"note":"","bp":null},{"id":1000314,"date":"2026-04-01","cat":"Casa","desc":"Ikea rata","amount":76.3,"note":"","bp":null},{"id":1000315,"date":"2026-04-01","cat":"Casa","desc":"Lenzuolo","amount":7.5,"note":"","bp":null},{"id":1000316,"date":"2026-04-01","cat":"Casa","desc":"Varie","amount":10.6,"note":"","bp":null},{"id":1000317,"date":"2026-04-01","cat":"Casa","desc":"Foto","amount":2,"note":"","bp":null},{"id":1000318,"date":"2026-04-01","cat":"Casa","desc":"Cavo cell","amount":2,"note":"","bp":null},{"id":1000319,"date":"2026-04-01","cat":"Pasti fuori","desc":"Officina del gusto","amount":22,"note":"","bp":null},{"id":1000320,"date":"2026-04-01","cat":"Pasti fuori","desc":"Aperitivo buffa","amount":19,"note":"","bp":null},{"id":1000321,"date":"2026-04-01","cat":"Pasti fuori","desc":"Sushi","amount":23.25,"note":"","bp":null},{"id":1000322,"date":"2026-04-01","cat":"Pasti fuori","desc":"Pizza claudio","amount":7.5,"note":"","bp":null},{"id":1000323,"date":"2026-04-01","cat":"Pasti fuori","desc":"Cena birrificio","amount":35.8,"note":"","bp":null},{"id":1000324,"date":"2026-04-01","cat":"Spesa alimentare","desc":"Eurospin 1-29","amount":46.4,"note":"","bp":null},{"id":1000325,"date":"2026-04-01","cat":"Spesa alimentare","desc":"Conad 2","amount":16.44,"note":"","bp":null},{"id":1000326,"date":"2026-04-01","cat":"Spesa alimentare","desc":"Lidl 2","amount":16.87,"note":"","bp":null},{"id":1000327,"date":"2026-04-01","cat":"Spesa alimentare","desc":"Lidl 17","amount":12.35,"note":"","bp":null},{"id":1000328,"date":"2026-04-01","cat":"Spesa alimentare","desc":"Coop 16","amount":3.73,"note":"","bp":null},{"id":1000329,"date":"2026-04-01","cat":"Spesa alimentare","desc":"Superpan 15","amount":25.39,"note":"","bp":null},{"id":1000330,"date":"2026-04-01","cat":"Spesa alimentare","desc":"Lidl 20","amount":27.41,"note":"","bp":null},{"id":1000331,"date":"2026-04-01","cat":"Spesa alimentare","desc":"Conad 18","amount":7.34,"note":"","bp":null},{"id":1000332,"date":"2026-04-01","cat":"Spesa alimentare","desc":"Pan 21","amount":2.3,"note":"","bp":null},{"id":1000333,"date":"2026-04-01","cat":"Spesa alimentare","desc":"Pan 24","amount":2.5,"note":"","bp":null},{"id":1000334,"date":"2026-04-01","cat":"Spesa alimentare","desc":"Reso spesa","amount":-205.45,"note":"","bp":null},{"id":1000335,"date":"2026-04-01","cat":"Shopping","desc":"Jeans zara","amount":29.95,"note":"","bp":null},{"id":1000336,"date":"2026-04-01","cat":"Svago","desc":"Palestra","amount":265.5,"note":"","bp":null},{"id":1000337,"date":"2026-04-01","cat":"Svago","desc":"Compleanno","amount":98.57,"note":"","bp":null},{"id":1000338,"date":"2026-04-01","cat":"Svago","desc":"Colazione","amount":4.3,"note":"","bp":null},{"id":1000339,"date":"2026-04-01","cat":"Cane","desc":"Spazzola","amount":5,"note":"","bp":null},{"id":1000340,"date":"2026-04-01","cat":"Regali","desc":"Elena","amount":11.5,"note":"","bp":null},{"id":1000341,"date":"2026-04-01","cat":"Regali","desc":"Regalo nico","amount":12,"note":"","bp":null},{"id":1000342,"date":"2026-04-01","cat":"Regali","desc":"Regalo chiara","amount":12,"note":"","bp":null},{"id":1000343,"date":"2026-04-01","cat":"Alice","desc":"Nido","amount":255,"note":"","bp":null},{"id":1000344,"date":"2026-04-01","cat":"Alice","desc":"Torta alice","amount":29.5,"note":"","bp":null},{"id":1000345,"date":"2026-04-01","cat":"Alice","desc":"Paste e pizzette","amount":47.7,"note":"","bp":null},{"id":1000346,"date":"2026-04-01","cat":"Alice","desc":"Ghiaccio","amount":10,"note":"","bp":null},{"id":1000347,"date":"2026-04-01","cat":"Alice","desc":"Bodi lidl","amount":5,"note":"","bp":null},{"id":1000348,"date":"2026-04-01","cat":"Alice","desc":"OVS alice","amount":7.2,"note":"","bp":null},{"id":1000349,"date":"2026-04-01","cat":"Alice","desc":"Aerosol","amount":11.25,"note":"","bp":null},{"id":1000604,"date":"2026-04-01","cat":"Mutuo","desc":"Rata mutuo","amount":427.82,"note":"","bp":null},{"id":1000704,"date":"2026-04-01","cat":"Spesa alimentare","desc":"Buoni pasto","amount":256,"note":"","bp":{"num":32,"val":8,"total":256}},{"id":1000201,"date":"2026-03-01","cat":"Utenze","desc":"Elettricità 02","amount":37.61,"note":"","bp":null},{"id":1000202,"date":"2026-03-01","cat":"Utenze","desc":"Internet","amount":10.5,"note":"","bp":null},{"id":1000203,"date":"2026-03-01","cat":"Utenze","desc":"Cellulare","amount":7.99,"note":"","bp":null},{"id":1000204,"date":"2026-03-01","cat":"Utenze","desc":"Condominio 1 tri","amount":157.26,"note":"","bp":null},{"id":1000205,"date":"2026-03-01","cat":"Utenze","desc":"Sky","amount":7.5,"note":"","bp":null},{"id":1000206,"date":"2026-03-01","cat":"Viaggi","desc":"Carloforte","amount":62.65,"note":"","bp":null},{"id":1000207,"date":"2026-03-01","cat":"Auto","desc":"Cambio olio scooter","amount":30,"note":"","bp":null},{"id":1000208,"date":"2026-03-01","cat":"Casa","desc":"Piante Lidl","amount":5.5,"note":"","bp":null},{"id":1000209,"date":"2026-03-01","cat":"Casa","desc":"Terrazzino","amount":17,"note":"","bp":null},{"id":1000210,"date":"2026-03-01","cat":"Casa","desc":"Mobile terrazzino","amount":52.5,"note":"","bp":null},{"id":1000211,"date":"2026-03-01","cat":"Casa","desc":"Reggimensola","amount":5,"note":"","bp":null},{"id":1000212,"date":"2026-03-01","cat":"Casa","desc":"Leroy merilin","amount":8.7,"note":"","bp":null},{"id":1000213,"date":"2026-03-01","cat":"Casa","desc":"Ikea","amount":24,"note":"","bp":null},{"id":1000214,"date":"2026-03-01","cat":"Casa","desc":"Temu","amount":4,"note":"","bp":null},{"id":1000215,"date":"2026-03-01","cat":"Casa","desc":"Cuscini","amount":14,"note":"","bp":null},{"id":1000216,"date":"2026-03-01","cat":"Casa","desc":"Ikea rata","amount":76.3,"note":"","bp":null},{"id":1000217,"date":"2026-03-01","cat":"Casa","desc":"Cfadda","amount":6.5,"note":"","bp":null},{"id":1000218,"date":"2026-03-01","cat":"Pasti fuori","desc":"Colazione su siccu","amount":5.1,"note":"","bp":null},{"id":1000219,"date":"2026-03-01","cat":"Pasti fuori","desc":"Caddozzo Cagliari","amount":16,"note":"","bp":null},{"id":1000220,"date":"2026-03-01","cat":"Pasti fuori","desc":"Colazione","amount":3,"note":"","bp":null},{"id":1000221,"date":"2026-03-01","cat":"Pasti fuori","desc":"Art of sushi","amount":27,"note":"","bp":null},{"id":1000222,"date":"2026-03-01","cat":"Pasti fuori","desc":"Pizza rari","amount":29.8,"note":"","bp":null},{"id":1000223,"date":"2026-03-01","cat":"Pasti fuori","desc":"Coccodi","amount":11.35,"note":"","bp":null},{"id":1000224,"date":"2026-03-01","cat":"Pasti fuori","desc":"Cena chicco","amount":8,"note":"","bp":null},{"id":1000225,"date":"2026-03-01","cat":"Pasti fuori","desc":"Bottega del quartiere","amount":26,"note":"","bp":null},{"id":1000226,"date":"2026-03-01","cat":"Pasti fuori","desc":"Colazione ikea","amount":1.9,"note":"","bp":null},{"id":1000227,"date":"2026-03-01","cat":"Spesa alimentare","desc":"Lidl 2","amount":59,"note":"","bp":null},{"id":1000228,"date":"2026-03-01","cat":"Spesa alimentare","desc":"Lidl 6","amount":11,"note":"","bp":null},{"id":1000229,"date":"2026-03-01","cat":"Spesa alimentare","desc":"Conad 6","amount":3,"note":"","bp":null},{"id":1000230,"date":"2026-03-01","cat":"Spesa alimentare","desc":"Lidl 7","amount":58.86,"note":"","bp":null},{"id":1000231,"date":"2026-03-01","cat":"Spesa alimentare","desc":"EP supercarni","amount":37.15,"note":"","bp":null},{"id":1000232,"date":"2026-03-01","cat":"Spesa alimentare","desc":"PAN 10-23","amount":8.1,"note":"","bp":null},{"id":1000233,"date":"2026-03-01","cat":"Spesa alimentare","desc":"PAN 15-26","amount":6.1,"note":"","bp":null},{"id":1000234,"date":"2026-03-01","cat":"Spesa alimentare","desc":"Conad 14","amount":7.44,"note":"","bp":null},{"id":1000235,"date":"2026-03-01","cat":"Spesa alimentare","desc":"Lidl 13","amount":17.3,"note":"","bp":null},{"id":1000236,"date":"2026-03-01","cat":"Spesa alimentare","desc":"Lidl 20","amount":64.15,"note":"","bp":null},{"id":1000237,"date":"2026-03-01","cat":"Spesa alimentare","desc":"Reso spesa","amount":-208.43,"note":"","bp":null},{"id":1000238,"date":"2026-03-01","cat":"Shopping","desc":"Mutande","amount":20,"note":"","bp":null},{"id":1000239,"date":"2026-03-01","cat":"Svago","desc":"Partita Cagliari","amount":5,"note":"","bp":null},{"id":1000240,"date":"2026-03-01","cat":"Svago","desc":"Palestra","amount":37.5,"note":"","bp":null},{"id":1000241,"date":"2026-03-01","cat":"Svago","desc":"Aperitivo pisu","amount":13.55,"note":"","bp":null},{"id":1000242,"date":"2026-03-01","cat":"Svago","desc":"Aperitivo bonni e paolo","amount":16.2,"note":"","bp":null},{"id":1000243,"date":"2026-03-01","cat":"Svago","desc":"Amin","amount":11,"note":"","bp":null},{"id":1000244,"date":"2026-03-01","cat":"Cane","desc":"Cuccia","amount":14.5,"note":"","bp":null},{"id":1000245,"date":"2026-03-01","cat":"Cane","desc":"Veterinario","amount":35,"note":"","bp":null},{"id":1000246,"date":"2026-03-01","cat":"Regali","desc":"Claudiano","amount":10,"note":"","bp":null},{"id":1000247,"date":"2026-03-01","cat":"Regali","desc":"Bea","amount":10,"note":"","bp":null},{"id":1000248,"date":"2026-03-01","cat":"Regali","desc":"Alice 1","amount":10,"note":"","bp":null},{"id":1000249,"date":"2026-03-01","cat":"Regali","desc":"Gabri","amount":15,"note":"","bp":null},{"id":1000250,"date":"2026-03-01","cat":"Regali","desc":"Laura bambine","amount":8.79,"note":"","bp":null},{"id":1000251,"date":"2026-03-01","cat":"Regali","desc":"Ilaria","amount":11.45,"note":"","bp":null},{"id":1000252,"date":"2026-03-01","cat":"Alice","desc":"Asilo","amount":245,"note":"","bp":null},{"id":1000253,"date":"2026-03-01","cat":"Alice","desc":"Passaporto","amount":62.6,"note":"","bp":null},{"id":1000254,"date":"2026-03-01","cat":"Alice","desc":"Varie","amount":17.6,"note":"","bp":null},{"id":1000255,"date":"2026-03-01","cat":"Alice","desc":"Salvitte","amount":8.5,"note":"","bp":null},{"id":1000256,"date":"2026-03-01","cat":"Alice","desc":"Fruttini","amount":1,"note":"","bp":null},{"id":1000257,"date":"2026-03-01","cat":"Alice","desc":"Tachipirina","amount":3,"note":"","bp":null},{"id":1000603,"date":"2026-03-01","cat":"Mutuo","desc":"Rata mutuo","amount":427.82,"note":"","bp":null},{"id":1000703,"date":"2026-03-01","cat":"Spesa alimentare","desc":"Buoni pasto","amount":152,"note":"","bp":{"num":19,"val":8,"total":152}},{"id":1000101,"date":"2026-02-01","cat":"Utenze","desc":"Elettricità","amount":49,"note":"","bp":null},{"id":1000102,"date":"2026-02-01","cat":"Utenze","desc":"Internet","amount":10.45,"note":"","bp":null},{"id":1000103,"date":"2026-02-01","cat":"Utenze","desc":"Cellulare","amount":7.99,"note":"","bp":null},{"id":1000104,"date":"2026-02-01","cat":"Utenze","desc":"Sky","amount":7.5,"note":"","bp":null},{"id":1000105,"date":"2026-02-01","cat":"Auto","desc":"Bollo","amount":139.4,"note":"","bp":null},{"id":1000106,"date":"2026-02-01","cat":"Auto","desc":"Assicurazione auto","amount":260.59,"note":"","bp":null},{"id":1000107,"date":"2026-02-01","cat":"Auto","desc":"Benzina SS","amount":22.5,"note":"","bp":null},{"id":1000108,"date":"2026-02-01","cat":"Casa","desc":"Reso cucina","amount":300,"note":"","bp":null},{"id":1000109,"date":"2026-02-01","cat":"Casa","desc":"Rata ikea","amount":76.3,"note":"","bp":null},{"id":1000110,"date":"2026-02-01","cat":"Casa","desc":"Sottovaso","amount":2.75,"note":"","bp":null},{"id":1000111,"date":"2026-02-01","cat":"Casa","desc":"Tavolo","amount":22.5,"note":"","bp":null},{"id":1000112,"date":"2026-02-01","cat":"Casa","desc":"Varie","amount":5.5,"note":"","bp":null},{"id":1000113,"date":"2026-02-01","cat":"Pasti fuori","desc":"Rimanino","amount":25,"note":"","bp":null},{"id":1000114,"date":"2026-02-01","cat":"Pasti fuori","desc":"Zeppole","amount":6,"note":"","bp":null},{"id":1000115,"date":"2026-02-01","cat":"Pasti fuori","desc":"Disiggio","amount":15,"note":"","bp":null},{"id":1000116,"date":"2026-02-01","cat":"Pasti fuori","desc":"Coccodi","amount":8.5,"note":"","bp":null},{"id":1000117,"date":"2026-02-01","cat":"Pasti fuori","desc":"Pizza sanremo","amount":16.5,"note":"","bp":null},{"id":1000118,"date":"2026-02-01","cat":"Spesa alimentare","desc":"Eurospin 1","amount":8,"note":"","bp":null},{"id":1000119,"date":"2026-02-01","cat":"Spesa alimentare","desc":"Conad 1","amount":21,"note":"","bp":null},{"id":1000120,"date":"2026-02-01","cat":"Spesa alimentare","desc":"Conad 3","amount":4.4,"note":"","bp":null},{"id":1000121,"date":"2026-02-01","cat":"Spesa alimentare","desc":"Pan 8","amount":1.54,"note":"","bp":null},{"id":1000122,"date":"2026-02-01","cat":"Spesa alimentare","desc":"Coldiretti 8","amount":6.2,"note":"","bp":null},{"id":1000123,"date":"2026-02-01","cat":"Spesa alimentare","desc":"Conad 11","amount":0.1,"note":"","bp":null},{"id":1000124,"date":"2026-02-01","cat":"Spesa alimentare","desc":"Hardis 15","amount":4.67,"note":"","bp":null},{"id":1000125,"date":"2026-02-01","cat":"Spesa alimentare","desc":"Pan 15","amount":4.87,"note":"","bp":null},{"id":1000126,"date":"2026-02-01","cat":"Spesa alimentare","desc":"Lidl 14-23-26","amount":112.28,"note":"","bp":null},{"id":1000127,"date":"2026-02-01","cat":"Spesa alimentare","desc":"Coop 27","amount":4,"note":"","bp":null},{"id":1000128,"date":"2026-02-01","cat":"Spesa alimentare","desc":"Reso spesa","amount":-40.35,"note":"","bp":null},{"id":1000129,"date":"2026-02-01","cat":"Shopping","desc":"Maglie LIDL","amount":13,"note":"","bp":null},{"id":1000130,"date":"2026-02-01","cat":"Svago","desc":"Zeppole lavoro","amount":3,"note":"","bp":null},{"id":1000131,"date":"2026-02-01","cat":"Svago","desc":"Amin","amount":11,"note":"","bp":null},{"id":1000132,"date":"2026-02-01","cat":"Cane","desc":"Pappa","amount":10,"note":"","bp":null},{"id":1000133,"date":"2026-02-01","cat":"Alice","desc":"Nido","amount":245,"note":"","bp":null},{"id":1000134,"date":"2026-02-01","cat":"Alice","desc":"Divisa","amount":40,"note":"","bp":null},{"id":1000135,"date":"2026-02-01","cat":"Alice","desc":"Addobbi","amount":41.5,"note":"","bp":null},{"id":1000136,"date":"2026-02-01","cat":"Alice","desc":"Varie","amount":27.48,"note":"","bp":null},{"id":1000602,"date":"2026-02-01","cat":"Mutuo","desc":"Rata mutuo","amount":427.82,"note":"","bp":null},{"id":1000702,"date":"2026-02-01","cat":"Spesa alimentare","desc":"Buoni pasto","amount":80,"note":"","bp":{"num":10,"val":8,"total":80}},{"id":1000001,"date":"2026-01-01","cat":"Utenze","desc":"Elettricità","amount":27.9,"note":"","bp":null},{"id":1000002,"date":"2026-01-01","cat":"Utenze","desc":"Internet","amount":10.45,"note":"","bp":null},{"id":1000003,"date":"2026-01-01","cat":"Utenze","desc":"Cellulare","amount":7.99,"note":"","bp":null},{"id":1000004,"date":"2026-01-01","cat":"Utenze","desc":"Banca","amount":8.55,"note":"","bp":null},{"id":1000005,"date":"2026-01-01","cat":"Utenze","desc":"Condominio 3/4 2025","amount":296,"note":"","bp":null},{"id":1000006,"date":"2026-01-01","cat":"Utenze","desc":"Sky","amount":7.5,"note":"","bp":null},{"id":1000007,"date":"2026-01-01","cat":"Viaggi","desc":"Addio scintu","amount":415,"note":"","bp":null},{"id":1000008,"date":"2026-01-01","cat":"Auto","desc":"Benzina SS","amount":20,"note":"","bp":null},{"id":1000009,"date":"2026-01-01","cat":"Auto","desc":"Benzina auto","amount":20,"note":"","bp":null},{"id":1000010,"date":"2026-01-01","cat":"Casa","desc":"Maurys","amount":12.5,"note":"","bp":null},{"id":1000011,"date":"2026-01-01","cat":"Casa","desc":"Varie","amount":4.5,"note":"","bp":null},{"id":1000012,"date":"2026-01-01","cat":"Casa","desc":"Vasi vari","amount":20.6,"note":"","bp":null},{"id":1000013,"date":"2026-01-01","cat":"Casa","desc":"Cinesi","amount":1.38,"note":"","bp":null},{"id":1000014,"date":"2026-01-01","cat":"Casa","desc":"Varie terrazzo","amount":8.35,"note":"","bp":null},{"id":1000015,"date":"2026-01-01","cat":"Casa","desc":"Lidl casa","amount":4.5,"note":"","bp":null},{"id":1000016,"date":"2026-01-01","cat":"Casa","desc":"Rata ikea 9","amount":76.3,"note":"","bp":null},{"id":1000017,"date":"2026-01-01","cat":"Casa","desc":"Fioriera grigliato","amount":30,"note":"","bp":null},{"id":1000018,"date":"2026-01-01","cat":"Casa","desc":"Robottino","amount":13,"note":"","bp":null},{"id":1000019,"date":"2026-01-01","cat":"Casa","desc":"Foto","amount":17.9,"note":"","bp":null},{"id":1000020,"date":"2026-01-01","cat":"Casa","desc":"Ikea","amount":5,"note":"","bp":null},{"id":1000021,"date":"2026-01-01","cat":"Casa","desc":"Risparmiocasa","amount":4.8,"note":"","bp":null},{"id":1000022,"date":"2026-01-01","cat":"Pasti fuori","desc":"Makito","amount":17,"note":"","bp":null},{"id":1000023,"date":"2026-01-01","cat":"Pasti fuori","desc":"Pizza rari","amount":21,"note":"","bp":null},{"id":1000024,"date":"2026-01-01","cat":"Pasti fuori","desc":"Colazione","amount":6,"note":"","bp":null},{"id":1000025,"date":"2026-01-01","cat":"Pasti fuori","desc":"Colazione compleanno","amount":7.5,"note":"","bp":null},{"id":1000026,"date":"2026-01-01","cat":"Pasti fuori","desc":"Pizza edo","amount":9,"note":"","bp":null},{"id":1000027,"date":"2026-01-01","cat":"Spesa alimentare","desc":"Lidl 2","amount":37.55,"note":"","bp":null},{"id":1000028,"date":"2026-01-01","cat":"Spesa alimentare","desc":"Lidl 5","amount":14.7,"note":"","bp":null},{"id":1000029,"date":"2026-01-01","cat":"Spesa alimentare","desc":"Maccellaio","amount":6,"note":"","bp":null},{"id":1000030,"date":"2026-01-01","cat":"Spesa alimentare","desc":"Lidl 12-29","amount":93.68,"note":"","bp":null},{"id":1000031,"date":"2026-01-01","cat":"Spesa alimentare","desc":"Pan 14","amount":8.5,"note":"","bp":null},{"id":1000032,"date":"2026-01-01","cat":"Spesa alimentare","desc":"Hardis 18","amount":12.25,"note":"","bp":null},{"id":1000033,"date":"2026-01-01","cat":"Spesa alimentare","desc":"Pan 18","amount":14,"note":"","bp":null},{"id":1000034,"date":"2026-01-01","cat":"Spesa alimentare","desc":"Coldiretti 18","amount":11,"note":"","bp":null},{"id":1000035,"date":"2026-01-01","cat":"Spesa alimentare","desc":"Coop 22","amount":4,"note":"","bp":null},{"id":1000036,"date":"2026-01-01","cat":"Spesa alimentare","desc":"Conad 25-27","amount":29.5,"note":"","bp":null},{"id":1000037,"date":"2026-01-01","cat":"Spesa alimentare","desc":"Reso spesa","amount":-151.65,"note":"","bp":null},{"id":1000038,"date":"2026-01-01","cat":"Svago","desc":"Concorso","amount":10.28,"note":"","bp":null},{"id":1000039,"date":"2026-01-01","cat":"Svago","desc":"Concorso","amount":10,"note":"","bp":null},{"id":1000040,"date":"2026-01-01","cat":"Svago","desc":"Concorso","amount":10.28,"note":"","bp":null},{"id":1000041,"date":"2026-01-01","cat":"Svago","desc":"Pizza sorpresa","amount":42.5,"note":"","bp":null},{"id":1000042,"date":"2026-01-01","cat":"Regali","desc":"Anna","amount":85,"note":"","bp":null},{"id":1000043,"date":"2026-01-01","cat":"Alice","desc":"Nido","amount":245,"note":"","bp":null},{"id":1000044,"date":"2026-01-01","cat":"Alice","desc":"Varie","amount":31.8,"note":"","bp":null},{"id":1000601,"date":"2026-01-01","cat":"Mutuo","desc":"Rata mutuo","amount":427.82,"note":"","bp":null},{"id":1000701,"date":"2026-01-01","cat":"Spesa alimentare","desc":"Buoni pasto","amount":72,"note":"","bp":{"num":9,"val":8,"total":72}}];
+const RAW_INCOMES=[{"id":1782330969278,"amount":144,"date":"2026-06-24","desc":"Buoni pasto Giugno","note":"","bp":{"num":18,"val":8,"total":144}},{"id":1781807493225,"amount":39.6,"date":"2026-06-18","desc":"Assegno unico Giugno","note":"","bp":null},{"id":2000050,"date":"2026-06-01","desc":"Stipendio","amount":2100,"note":"","bp":null},{"id":2000051,"date":"2026-06-01","desc":"BBVA 2%","amount":18.66,"note":"","bp":null},{"id":2000040,"date":"2026-05-01","desc":"Stipendio","amount":2150.26,"note":"","bp":null},{"id":2000041,"date":"2026-05-01","desc":"Azioni","amount":-4,"note":"","bp":null},{"id":2000042,"date":"2026-05-01","desc":"Generali","amount":127.58,"note":"","bp":null},{"id":2000043,"date":"2026-05-01","desc":"Buoni pasto","amount":152,"note":"","bp":{"num":19,"val":8,"total":152}},{"id":2000044,"date":"2026-05-01","desc":"BBVA 2%","amount":17.76,"note":"","bp":null},{"id":2000045,"date":"2026-05-01","desc":"Assegno unico","amount":54.25,"note":"","bp":null},{"id":2000030,"date":"2026-04-01","desc":"Stipendio","amount":2195.64,"note":"","bp":null},{"id":2000031,"date":"2026-04-01","desc":"Generali","amount":57.29,"note":"","bp":null},{"id":2000032,"date":"2026-04-01","desc":"Buoni pasto","amount":168,"note":"","bp":{"num":21,"val":8,"total":168}},{"id":2000033,"date":"2026-04-01","desc":"BBVA 1,75%","amount":16.05,"note":"","bp":null},{"id":2000034,"date":"2026-04-01","desc":"Assegno unico","amount":58.37,"note":"","bp":null},{"id":2000020,"date":"2026-03-01","desc":"Stipendio","amount":2334.39,"note":"","bp":null},{"id":2000021,"date":"2026-03-01","desc":"Generali","amount":1.46,"note":"","bp":null},{"id":2000022,"date":"2026-03-01","desc":"Buoni pasto","amount":168,"note":"","bp":{"num":21,"val":8,"total":168}},{"id":2000023,"date":"2026-03-01","desc":"BBVA 1,75%","amount":13.59,"note":"","bp":null},{"id":2000024,"date":"2026-03-01","desc":"Assegno unico","amount":47.37,"note":"","bp":null},{"id":2000010,"date":"2026-02-01","desc":"Stipendio","amount":2108.92,"note":"","bp":null},{"id":2000011,"date":"2026-02-01","desc":"Generali","amount":16.6,"note":"","bp":null},{"id":2000012,"date":"2026-02-01","desc":"Buoni pasto","amount":144,"note":"","bp":{"num":18,"val":8,"total":144}},{"id":2000013,"date":"2026-02-01","desc":"BBVA 4%","amount":13.84,"note":"","bp":null},{"id":2000014,"date":"2026-02-01","desc":"Rimborso Inps Dicembre","amount":163.64,"note":"","bp":null},{"id":2000015,"date":"2026-02-01","desc":"Assegno unico","amount":115.12,"note":"","bp":null},{"id":2000001,"date":"2026-01-01","desc":"Stipendio","amount":3063.45,"note":"","bp":null},{"id":2000002,"date":"2026-01-01","desc":"Azioni","amount":-7,"note":"","bp":null},{"id":2000003,"date":"2026-01-01","desc":"Generali","amount":47.06,"note":"","bp":null},{"id":2000004,"date":"2026-01-01","desc":"Buoni pasto","amount":120,"note":"","bp":{"num":15,"val":8,"total":120}},{"id":2000005,"date":"2026-01-01","desc":"BBVA 1,75%","amount":13.71,"note":"","bp":null},{"id":2000006,"date":"2026-01-01","desc":"Assegno unico","amount":111.47,"note":"","bp":null}];
+const RAW_PARTNER=[{"id":1782365346567,"desc":"Pensione paquito","amount":12.5,"cat":"Cane","date":"2026-06-25","type":"credito","expId":null,"note":"50% spesa spartita"},{"id":1782289159128,"desc":"Tassa soggiorno + cocktail","amount":10.5,"cat":"Viaggi","date":"2026-06-24","type":"credito","expId":null,"note":"50% spesa spartita"},{"id":1782365433268,"desc":"Volo Vienna cagliari","amount":97.27,"cat":"Viaggi","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"},{"id":1782365462850,"desc":"Volo per Salisburgo","amount":67.99,"cat":"Viaggi","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"},{"id":1782365492714,"desc":"Benzina cardedu","amount":24.5,"cat":"Auto","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"},{"id":1782365533444,"desc":"Hardis","amount":1.55,"cat":"Spesa alimentare","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"},{"id":1782365543558,"desc":"Ikea","amount":2.38,"cat":"Casa","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"},{"id":1782365595119,"desc":"Cambio tenda","amount":152.5,"cat":"Casa","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"},{"id":1782365626467,"desc":"Perdepera","amount":125,"cat":"Viaggi","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"},{"id":1782365639541,"desc":"Coop","amount":8.6,"cat":"Spesa alimentare","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"},{"id":1782365662566,"desc":"Conad","amount":23.8,"cat":"Spesa alimentare","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"},{"id":1782365690002,"desc":"Conad","amount":31.59,"cat":"Spesa alimentare","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"},{"id":1782365726579,"desc":"Rata ikea","amount":76.3,"cat":"Casa","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"},{"id":1782365745152,"desc":"Ikea","amount":5.73,"cat":"Casa","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"},{"id":1782365765288,"desc":"Benzina ss","amount":19,"cat":"Auto","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"},{"id":1782365793441,"desc":"Pan 12","amount":5.69,"cat":"Spesa alimentare","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"},{"id":1782365814594,"desc":"Lidl 12","amount":15.1,"cat":"Spesa alimentare","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"},{"id":1782365880973,"desc":"Colazione mulini","amount":3.35,"cat":"Pasti fuori","date":"2026-06-01","type":"debito","expId":null,"note":"Anna ha anticipato"},{"id":1782365907397,"desc":"Rata nido","amount":265,"cat":"Alice","date":"2026-06-01","type":"debito","expId":null,"note":"Anna ha anticipato"},{"id":1782365934139,"desc":"Pizza evelyn","amount":8,"cat":"Pasti fuori","date":"2026-06-01","type":"debito","expId":null,"note":"Anna ha anticipato"},{"id":1782365964031,"desc":"Lidl 12 buoni pasto","amount":18.75,"cat":"Spesa alimentare","date":"2026-06-01","type":"debito","expId":null,"note":"Anna ha anticipato"},{"id":1782366030030,"desc":"Regalo Francesco anni","amount":15,"cat":"Regali","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"},{"id":1782366425303,"desc":"Pan 15","amount":30.43,"cat":"Spesa alimentare","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"},{"id":1782366463693,"desc":"Vino ss","amount":6.25,"cat":"Spesa alimentare","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"},{"id":1782366514043,"desc":"Pizzette spiaggia","amount":5,"cat":"Pasti fuori","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"},{"id":1782367195099,"desc":"Bolletta luce giugno","amount":31.45,"cat":"Utenze","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"},{"id":1782367225249,"desc":"Regalo emma","amount":10,"cat":"Regali","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"},{"id":1782367249256,"desc":"Temu","amount":15.3,"cat":"Casa","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"},{"id":1782367273907,"desc":"Gilda","amount":20,"cat":"Utenze","date":"2026-06-01","type":"debito","expId":null,"note":"Anna ha anticipato"},{"id":1782367292185,"desc":"Debito viaggio","amount":49.35,"cat":"Viaggi","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"},{"id":1782367308102,"desc":"Su giudeu","amount":2,"cat":"Svago","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"},{"id":1782367333702,"desc":"Lidl 5","amount":15,"cat":"Spesa alimentare","date":"2026-06-01","type":"debito","expId":null,"note":"Anna ha anticipato"},{"id":1782367370554,"desc":"Lidl 5","amount":4.8,"cat":"Spesa alimentare","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"},{"id":1782367385078,"desc":"Salviette conad","amount":5,"cat":"Alice","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"},{"id":1782367425572,"desc":"Pan 4","amount":20.55,"cat":"Spesa alimentare","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"},{"id":1782367437013,"desc":"Lidl 3","amount":15,"cat":"Spesa alimentare","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"},{"id":1782367450729,"desc":"Abbanoa","amount":87.42,"cat":"Utenze","date":"2026-06-01","type":"credito","expId":null,"note":"Credito da Anna"}];
+
+const fmt = n => Number(n).toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2});
+const mKey = d => { const x=new Date(d); return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0'); };
+const mLabel = k => { const p=k.split('-'); return MONTHS[parseInt(p[1])-1]+' '+p[0]; };
+const mShort = k => { const p=k.split('-'); return MONTHS[parseInt(p[1])-1].slice(0,3); };
+const todayStr = () => new Date().toISOString().slice(0,10);
+const fmtDate = d => new Date(d+'T12:00').toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit'});
+
+function ChartCanvas({config, height=220}) {
+  const ref = useRef(null);
+  const chartRef = useRef(null);
+  const configStr = JSON.stringify(config);
+  useEffect(() => {
+    if (!ref.current) return;
+    if (chartRef.current) { chartRef.current.destroy(); chartRef.current = null; }
+    chartRef.current = new Chart(ref.current, JSON.parse(configStr));
+    return () => { if (chartRef.current) { chartRef.current.destroy(); chartRef.current = null; } };
+  }, [configStr]);
+  return <canvas ref={ref} style={{width:'100%',height:height+'px'}}/>;
 }
 
-var PRELOADED_MARCO=[
-  {id:1000001,date:'2026-01-01',cat:'Utenze',desc:'Elettricità',amount:27.90,note:'',bp:null},{id:1000002,date:'2026-01-01',cat:'Utenze',desc:'Internet',amount:10.45,note:'',bp:null},{id:1000003,date:'2026-01-01',cat:'Utenze',desc:'Cellulare',amount:7.99,note:'',bp:null},{id:1000004,date:'2026-01-01',cat:'Utenze',desc:'Banca',amount:8.55,note:'',bp:null},{id:1000005,date:'2026-01-01',cat:'Utenze',desc:'Condominio 3/4 2025',amount:296.00,note:'',bp:null},{id:1000006,date:'2026-01-01',cat:'Utenze',desc:'Sky',amount:7.50,note:'',bp:null},
-  {id:1000007,date:'2026-01-01',cat:'Viaggi',desc:'Addio scintu',amount:415.00,note:'',bp:null},
-  {id:1000008,date:'2026-01-01',cat:'Auto',desc:'Benzina SS',amount:20.00,note:'',bp:null},{id:1000009,date:'2026-01-01',cat:'Auto',desc:'Benzina auto',amount:20.00,note:'',bp:null},
-  {id:1000010,date:'2026-01-01',cat:'Casa',desc:'Maurys',amount:12.50,note:'',bp:null},{id:1000011,date:'2026-01-01',cat:'Casa',desc:'Varie',amount:4.50,note:'',bp:null},{id:1000012,date:'2026-01-01',cat:'Casa',desc:'Vasi vari',amount:20.60,note:'',bp:null},{id:1000013,date:'2026-01-01',cat:'Casa',desc:'Cinesi',amount:1.38,note:'',bp:null},{id:1000014,date:'2026-01-01',cat:'Casa',desc:'Varie terrazzo',amount:8.35,note:'',bp:null},{id:1000015,date:'2026-01-01',cat:'Casa',desc:'Lidl casa',amount:4.50,note:'',bp:null},{id:1000016,date:'2026-01-01',cat:'Casa',desc:'Rata ikea 9',amount:76.30,note:'',bp:null},{id:1000017,date:'2026-01-01',cat:'Casa',desc:'Fioriera grigliato',amount:30.00,note:'',bp:null},{id:1000018,date:'2026-01-01',cat:'Casa',desc:'Robottino',amount:13.00,note:'',bp:null},{id:1000019,date:'2026-01-01',cat:'Casa',desc:'Foto',amount:17.90,note:'',bp:null},{id:1000020,date:'2026-01-01',cat:'Casa',desc:'Ikea',amount:5.00,note:'',bp:null},{id:1000021,date:'2026-01-01',cat:'Casa',desc:'Risparmiocasa',amount:4.80,note:'',bp:null},
-  {id:1000022,date:'2026-01-01',cat:'Pasti fuori',desc:'Makito',amount:17.00,note:'',bp:null},{id:1000023,date:'2026-01-01',cat:'Pasti fuori',desc:'Pizza rari',amount:21.00,note:'',bp:null},{id:1000024,date:'2026-01-01',cat:'Pasti fuori',desc:'Colazione',amount:6.00,note:'',bp:null},{id:1000025,date:'2026-01-01',cat:'Pasti fuori',desc:'Colazione compleanno',amount:7.50,note:'',bp:null},{id:1000026,date:'2026-01-01',cat:'Pasti fuori',desc:'Pizza edo',amount:9.00,note:'',bp:null},
-  {id:1000027,date:'2026-01-01',cat:'Spesa alimentare',desc:'Lidl 2',amount:37.55,note:'',bp:null},{id:1000028,date:'2026-01-01',cat:'Spesa alimentare',desc:'Lidl 5',amount:14.70,note:'',bp:null},{id:1000029,date:'2026-01-01',cat:'Spesa alimentare',desc:'Maccellaio',amount:6.00,note:'',bp:null},{id:1000030,date:'2026-01-01',cat:'Spesa alimentare',desc:'Lidl 12-29',amount:93.68,note:'',bp:null},{id:1000031,date:'2026-01-01',cat:'Spesa alimentare',desc:'Pan 14',amount:8.50,note:'',bp:null},{id:1000032,date:'2026-01-01',cat:'Spesa alimentare',desc:'Hardis 18',amount:12.25,note:'',bp:null},{id:1000033,date:'2026-01-01',cat:'Spesa alimentare',desc:'Pan 18',amount:14.00,note:'',bp:null},{id:1000034,date:'2026-01-01',cat:'Spesa alimentare',desc:'Coldiretti 18',amount:11.00,note:'',bp:null},{id:1000035,date:'2026-01-01',cat:'Spesa alimentare',desc:'Coop 22',amount:4.00,note:'',bp:null},{id:1000036,date:'2026-01-01',cat:'Spesa alimentare',desc:'Conad 25-27',amount:29.50,note:'',bp:null},{id:1000037,date:'2026-01-01',cat:'Spesa alimentare',desc:'Reso spesa',amount:-151.65,note:'',bp:null},
-  {id:1000038,date:'2026-01-01',cat:'Svago',desc:'Concorso',amount:10.28,note:'',bp:null},{id:1000039,date:'2026-01-01',cat:'Svago',desc:'Concorso',amount:10.00,note:'',bp:null},{id:1000040,date:'2026-01-01',cat:'Svago',desc:'Concorso',amount:10.28,note:'',bp:null},{id:1000041,date:'2026-01-01',cat:'Svago',desc:'Pizza sorpresa',amount:42.50,note:'',bp:null},
-  {id:1000042,date:'2026-01-01',cat:'Regali',desc:'Anna',amount:85.00,note:'',bp:null},
-  {id:1000043,date:'2026-01-01',cat:'Alice',desc:'Nido',amount:245.00,note:'',bp:null},{id:1000044,date:'2026-01-01',cat:'Alice',desc:'Varie',amount:31.80,note:'',bp:null},
-  {id:1000101,date:'2026-02-01',cat:'Utenze',desc:'Elettricità',amount:49.00,note:'',bp:null},{id:1000102,date:'2026-02-01',cat:'Utenze',desc:'Internet',amount:10.45,note:'',bp:null},{id:1000103,date:'2026-02-01',cat:'Utenze',desc:'Cellulare',amount:7.99,note:'',bp:null},{id:1000104,date:'2026-02-01',cat:'Utenze',desc:'Sky',amount:7.50,note:'',bp:null},
-  {id:1000105,date:'2026-02-01',cat:'Auto',desc:'Bollo',amount:139.40,note:'',bp:null},{id:1000106,date:'2026-02-01',cat:'Auto',desc:'Assicurazione auto',amount:260.59,note:'',bp:null},{id:1000107,date:'2026-02-01',cat:'Auto',desc:'Benzina SS',amount:22.50,note:'',bp:null},
-  {id:1000108,date:'2026-02-01',cat:'Casa',desc:'Reso cucina',amount:300.00,note:'',bp:null},{id:1000109,date:'2026-02-01',cat:'Casa',desc:'Rata ikea',amount:76.30,note:'',bp:null},{id:1000110,date:'2026-02-01',cat:'Casa',desc:'Sottovaso',amount:2.75,note:'',bp:null},{id:1000111,date:'2026-02-01',cat:'Casa',desc:'Tavolo',amount:22.50,note:'',bp:null},{id:1000112,date:'2026-02-01',cat:'Casa',desc:'Varie',amount:5.50,note:'',bp:null},
-  {id:1000113,date:'2026-02-01',cat:'Pasti fuori',desc:'Rimanino',amount:25.00,note:'',bp:null},{id:1000114,date:'2026-02-01',cat:'Pasti fuori',desc:'Zeppole',amount:6.00,note:'',bp:null},{id:1000115,date:'2026-02-01',cat:'Pasti fuori',desc:'Disiggio',amount:15.00,note:'',bp:null},{id:1000116,date:'2026-02-01',cat:'Pasti fuori',desc:'Coccodi',amount:8.50,note:'',bp:null},{id:1000117,date:'2026-02-01',cat:'Pasti fuori',desc:'Pizza sanremo',amount:16.50,note:'',bp:null},
-  {id:1000118,date:'2026-02-01',cat:'Spesa alimentare',desc:'Eurospin 1',amount:8.00,note:'',bp:null},{id:1000119,date:'2026-02-01',cat:'Spesa alimentare',desc:'Conad 1',amount:21.00,note:'',bp:null},{id:1000120,date:'2026-02-01',cat:'Spesa alimentare',desc:'Conad 3',amount:4.40,note:'',bp:null},{id:1000121,date:'2026-02-01',cat:'Spesa alimentare',desc:'Pan 8',amount:1.54,note:'',bp:null},{id:1000122,date:'2026-02-01',cat:'Spesa alimentare',desc:'Coldiretti 8',amount:6.20,note:'',bp:null},{id:1000123,date:'2026-02-01',cat:'Spesa alimentare',desc:'Conad 11',amount:0.10,note:'',bp:null},{id:1000124,date:'2026-02-01',cat:'Spesa alimentare',desc:'Hardis 15',amount:4.67,note:'',bp:null},{id:1000125,date:'2026-02-01',cat:'Spesa alimentare',desc:'Pan 15',amount:4.87,note:'',bp:null},{id:1000126,date:'2026-02-01',cat:'Spesa alimentare',desc:'Lidl 14-23-26',amount:112.28,note:'',bp:null},{id:1000127,date:'2026-02-01',cat:'Spesa alimentare',desc:'Coop 27',amount:4.00,note:'',bp:null},{id:1000128,date:'2026-02-01',cat:'Spesa alimentare',desc:'Reso spesa',amount:-40.35,note:'',bp:null},
-  {id:1000129,date:'2026-02-01',cat:'Shopping',desc:'Maglie LIDL',amount:13.00,note:'',bp:null},
-  {id:1000130,date:'2026-02-01',cat:'Svago',desc:'Zeppole lavoro',amount:3.00,note:'',bp:null},{id:1000131,date:'2026-02-01',cat:'Svago',desc:'Amin',amount:11.00,note:'',bp:null},
-  {id:1000132,date:'2026-02-01',cat:'Cane',desc:'Pappa',amount:10.00,note:'',bp:null},
-  {id:1000133,date:'2026-02-01',cat:'Alice',desc:'Nido',amount:245.00,note:'',bp:null},{id:1000134,date:'2026-02-01',cat:'Alice',desc:'Divisa',amount:40.00,note:'',bp:null},{id:1000135,date:'2026-02-01',cat:'Alice',desc:'Addobbi',amount:41.50,note:'',bp:null},{id:1000136,date:'2026-02-01',cat:'Alice',desc:'Varie',amount:27.48,note:'',bp:null},
-  {id:1000201,date:'2026-03-01',cat:'Utenze',desc:'Elettricità 02',amount:37.61,note:'',bp:null},{id:1000202,date:'2026-03-01',cat:'Utenze',desc:'Internet',amount:10.50,note:'',bp:null},{id:1000203,date:'2026-03-01',cat:'Utenze',desc:'Cellulare',amount:7.99,note:'',bp:null},{id:1000204,date:'2026-03-01',cat:'Utenze',desc:'Condominio 1 tri',amount:157.26,note:'',bp:null},{id:1000205,date:'2026-03-01',cat:'Utenze',desc:'Sky',amount:7.50,note:'',bp:null},
-  {id:1000206,date:'2026-03-01',cat:'Viaggi',desc:'Carloforte',amount:62.65,note:'',bp:null},
-  {id:1000207,date:'2026-03-01',cat:'Auto',desc:'Cambio olio scooter',amount:30.00,note:'',bp:null},
-  {id:1000208,date:'2026-03-01',cat:'Casa',desc:'Piante Lidl',amount:5.50,note:'',bp:null},{id:1000209,date:'2026-03-01',cat:'Casa',desc:'Terrazzino',amount:17.00,note:'',bp:null},{id:1000210,date:'2026-03-01',cat:'Casa',desc:'Mobile terrazzino',amount:52.50,note:'',bp:null},{id:1000211,date:'2026-03-01',cat:'Casa',desc:'Reggimensola',amount:5.00,note:'',bp:null},{id:1000212,date:'2026-03-01',cat:'Casa',desc:'Leroy merilin',amount:8.70,note:'',bp:null},{id:1000213,date:'2026-03-01',cat:'Casa',desc:'Ikea',amount:24.00,note:'',bp:null},{id:1000214,date:'2026-03-01',cat:'Casa',desc:'Temu',amount:4.00,note:'',bp:null},{id:1000215,date:'2026-03-01',cat:'Casa',desc:'Cuscini',amount:14.00,note:'',bp:null},{id:1000216,date:'2026-03-01',cat:'Casa',desc:'Ikea rata',amount:76.30,note:'',bp:null},{id:1000217,date:'2026-03-01',cat:'Casa',desc:'Cfadda',amount:6.50,note:'',bp:null},
-  {id:1000218,date:'2026-03-01',cat:'Pasti fuori',desc:'Colazione su siccu',amount:5.10,note:'',bp:null},{id:1000219,date:'2026-03-01',cat:'Pasti fuori',desc:'Caddozzo Cagliari',amount:16.00,note:'',bp:null},{id:1000220,date:'2026-03-01',cat:'Pasti fuori',desc:'Colazione',amount:3.00,note:'',bp:null},{id:1000221,date:'2026-03-01',cat:'Pasti fuori',desc:'Art of sushi',amount:27.00,note:'',bp:null},{id:1000222,date:'2026-03-01',cat:'Pasti fuori',desc:'Pizza rari',amount:29.80,note:'',bp:null},{id:1000223,date:'2026-03-01',cat:'Pasti fuori',desc:'Coccodi',amount:11.35,note:'',bp:null},{id:1000224,date:'2026-03-01',cat:'Pasti fuori',desc:'Cena chicco',amount:8.00,note:'',bp:null},{id:1000225,date:'2026-03-01',cat:'Pasti fuori',desc:'Bottega del quartiere',amount:26.00,note:'',bp:null},{id:1000226,date:'2026-03-01',cat:'Pasti fuori',desc:'Colazione ikea',amount:1.90,note:'',bp:null},
-  {id:1000227,date:'2026-03-01',cat:'Spesa alimentare',desc:'Lidl 2',amount:59.00,note:'',bp:null},{id:1000228,date:'2026-03-01',cat:'Spesa alimentare',desc:'Lidl 6',amount:11.00,note:'',bp:null},{id:1000229,date:'2026-03-01',cat:'Spesa alimentare',desc:'Conad 6',amount:3.00,note:'',bp:null},{id:1000230,date:'2026-03-01',cat:'Spesa alimentare',desc:'Lidl 7',amount:58.86,note:'',bp:null},{id:1000231,date:'2026-03-01',cat:'Spesa alimentare',desc:'EP supercarni',amount:37.15,note:'',bp:null},{id:1000232,date:'2026-03-01',cat:'Spesa alimentare',desc:'PAN 10-23',amount:8.10,note:'',bp:null},{id:1000233,date:'2026-03-01',cat:'Spesa alimentare',desc:'PAN 15-26',amount:6.10,note:'',bp:null},{id:1000234,date:'2026-03-01',cat:'Spesa alimentare',desc:'Conad 14',amount:7.44,note:'',bp:null},{id:1000235,date:'2026-03-01',cat:'Spesa alimentare',desc:'Lidl 13',amount:17.30,note:'',bp:null},{id:1000236,date:'2026-03-01',cat:'Spesa alimentare',desc:'Lidl 20',amount:64.15,note:'',bp:null},{id:1000237,date:'2026-03-01',cat:'Spesa alimentare',desc:'Reso spesa',amount:-208.43,note:'',bp:null},
-  {id:1000238,date:'2026-03-01',cat:'Shopping',desc:'Mutande',amount:20.00,note:'',bp:null},
-  {id:1000239,date:'2026-03-01',cat:'Svago',desc:'Partita Cagliari',amount:5.00,note:'',bp:null},{id:1000240,date:'2026-03-01',cat:'Svago',desc:'Palestra',amount:37.50,note:'',bp:null},{id:1000241,date:'2026-03-01',cat:'Svago',desc:'Aperitivo pisu',amount:13.55,note:'',bp:null},{id:1000242,date:'2026-03-01',cat:'Svago',desc:'Aperitivo bonni e paolo',amount:16.20,note:'',bp:null},{id:1000243,date:'2026-03-01',cat:'Svago',desc:'Amin',amount:11.00,note:'',bp:null},
-  {id:1000244,date:'2026-03-01',cat:'Cane',desc:'Cuccia',amount:14.50,note:'',bp:null},{id:1000245,date:'2026-03-01',cat:'Cane',desc:'Veterinario',amount:35.00,note:'',bp:null},
-  {id:1000246,date:'2026-03-01',cat:'Regali',desc:'Claudiano',amount:10.00,note:'',bp:null},{id:1000247,date:'2026-03-01',cat:'Regali',desc:'Bea',amount:10.00,note:'',bp:null},{id:1000248,date:'2026-03-01',cat:'Regali',desc:'Alice 1',amount:10.00,note:'',bp:null},{id:1000249,date:'2026-03-01',cat:'Regali',desc:'Gabri',amount:15.00,note:'',bp:null},{id:1000250,date:'2026-03-01',cat:'Regali',desc:'Laura bambine',amount:8.79,note:'',bp:null},{id:1000251,date:'2026-03-01',cat:'Regali',desc:'Ilaria',amount:11.45,note:'',bp:null},
-  {id:1000252,date:'2026-03-01',cat:'Alice',desc:'Asilo',amount:245.00,note:'',bp:null},{id:1000253,date:'2026-03-01',cat:'Alice',desc:'Passaporto',amount:62.60,note:'',bp:null},{id:1000254,date:'2026-03-01',cat:'Alice',desc:'Varie',amount:17.60,note:'',bp:null},{id:1000255,date:'2026-03-01',cat:'Alice',desc:'Salvitte',amount:8.50,note:'',bp:null},{id:1000256,date:'2026-03-01',cat:'Alice',desc:'Fruttini',amount:1.00,note:'',bp:null},{id:1000257,date:'2026-03-01',cat:'Alice',desc:'Tachipirina',amount:3.00,note:'',bp:null},
-  {id:1000301,date:'2026-04-01',cat:'Utenze',desc:'Elettricità 03',amount:39.65,note:'',bp:null},{id:1000302,date:'2026-04-01',cat:'Utenze',desc:'Internet',amount:10.50,note:'',bp:null},{id:1000303,date:'2026-04-01',cat:'Utenze',desc:'Cellulare',amount:7.99,note:'',bp:null},{id:1000304,date:'2026-04-01',cat:'Utenze',desc:'Pulizia',amount:40.00,note:'',bp:null},{id:1000305,date:'2026-04-01',cat:'Utenze',desc:'Banca',amount:8.55,note:'',bp:null},{id:1000306,date:'2026-04-01',cat:'Utenze',desc:'Sky',amount:7.50,note:'',bp:null},{id:1000307,date:'2026-04-01',cat:'Utenze',desc:'Condominio 2 tri',amount:148.00,note:'',bp:null},
-  {id:1000308,date:'2026-04-01',cat:'Spese Mediche',desc:'Farmacia',amount:10.00,note:'',bp:null},{id:1000309,date:'2026-04-01',cat:'Spese Mediche',desc:'Fisiatra',amount:14.00,note:'',bp:null},
-  {id:1000310,date:'2026-04-01',cat:'Viaggi',desc:'Napoli',amount:67.50,note:'',bp:null},{id:1000311,date:'2026-04-01',cat:'Viaggi',desc:'Napoli',amount:171.25,note:'',bp:null},
-  {id:1000312,date:'2026-04-01',cat:'Auto',desc:'Benzina SS',amount:18.70,note:'',bp:null},{id:1000313,date:'2026-04-01',cat:'Auto',desc:'Benzina',amount:10.00,note:'',bp:null},
-  {id:1000314,date:'2026-04-01',cat:'Casa',desc:'Ikea rata',amount:76.30,note:'',bp:null},{id:1000315,date:'2026-04-01',cat:'Casa',desc:'Lenzuolo',amount:7.50,note:'',bp:null},{id:1000316,date:'2026-04-01',cat:'Casa',desc:'Varie',amount:10.60,note:'',bp:null},{id:1000317,date:'2026-04-01',cat:'Casa',desc:'Foto',amount:2.00,note:'',bp:null},{id:1000318,date:'2026-04-01',cat:'Casa',desc:'Cavo cell',amount:2.00,note:'',bp:null},
-  {id:1000319,date:'2026-04-01',cat:'Pasti fuori',desc:'Officina del gusto',amount:22.00,note:'',bp:null},{id:1000320,date:'2026-04-01',cat:'Pasti fuori',desc:'Aperitivo buffa',amount:19.00,note:'',bp:null},{id:1000321,date:'2026-04-01',cat:'Pasti fuori',desc:'Sushi',amount:23.25,note:'',bp:null},{id:1000322,date:'2026-04-01',cat:'Pasti fuori',desc:'Pizza claudio',amount:7.50,note:'',bp:null},{id:1000323,date:'2026-04-01',cat:'Pasti fuori',desc:'Cena birrificio',amount:35.80,note:'',bp:null},
-  {id:1000324,date:'2026-04-01',cat:'Spesa alimentare',desc:'Eurospin 1-29',amount:46.40,note:'',bp:null},{id:1000325,date:'2026-04-01',cat:'Spesa alimentare',desc:'Conad 2',amount:16.44,note:'',bp:null},{id:1000326,date:'2026-04-01',cat:'Spesa alimentare',desc:'Lidl 2',amount:16.87,note:'',bp:null},{id:1000327,date:'2026-04-01',cat:'Spesa alimentare',desc:'Lidl 17',amount:12.35,note:'',bp:null},{id:1000328,date:'2026-04-01',cat:'Spesa alimentare',desc:'Coop 16',amount:3.73,note:'',bp:null},{id:1000329,date:'2026-04-01',cat:'Spesa alimentare',desc:'Superpan 15',amount:25.39,note:'',bp:null},{id:1000330,date:'2026-04-01',cat:'Spesa alimentare',desc:'Lidl 20',amount:27.41,note:'',bp:null},{id:1000331,date:'2026-04-01',cat:'Spesa alimentare',desc:'Conad 18',amount:7.34,note:'',bp:null},{id:1000332,date:'2026-04-01',cat:'Spesa alimentare',desc:'Pan 21',amount:2.30,note:'',bp:null},{id:1000333,date:'2026-04-01',cat:'Spesa alimentare',desc:'Pan 24',amount:2.50,note:'',bp:null},{id:1000334,date:'2026-04-01',cat:'Spesa alimentare',desc:'Reso spesa',amount:-205.45,note:'',bp:null},
-  {id:1000335,date:'2026-04-01',cat:'Shopping',desc:'Jeans zara',amount:29.95,note:'',bp:null},
-  {id:1000336,date:'2026-04-01',cat:'Svago',desc:'Palestra',amount:265.50,note:'',bp:null},{id:1000337,date:'2026-04-01',cat:'Svago',desc:'Compleanno',amount:98.57,note:'',bp:null},{id:1000338,date:'2026-04-01',cat:'Svago',desc:'Colazione',amount:4.30,note:'',bp:null},
-  {id:1000339,date:'2026-04-01',cat:'Cane',desc:'Spazzola',amount:5.00,note:'',bp:null},
-  {id:1000340,date:'2026-04-01',cat:'Regali',desc:'Elena',amount:11.50,note:'',bp:null},{id:1000341,date:'2026-04-01',cat:'Regali',desc:'Regalo nico',amount:12.00,note:'',bp:null},{id:1000342,date:'2026-04-01',cat:'Regali',desc:'Regalo chiara',amount:12.00,note:'',bp:null},
-  {id:1000343,date:'2026-04-01',cat:'Alice',desc:'Nido',amount:255.00,note:'',bp:null},{id:1000344,date:'2026-04-01',cat:'Alice',desc:'Torta alice',amount:29.50,note:'',bp:null},{id:1000345,date:'2026-04-01',cat:'Alice',desc:'Paste e pizzette',amount:47.70,note:'',bp:null},{id:1000346,date:'2026-04-01',cat:'Alice',desc:'Ghiaccio',amount:10.00,note:'',bp:null},{id:1000347,date:'2026-04-01',cat:'Alice',desc:'Bodi lidl',amount:5.00,note:'',bp:null},{id:1000348,date:'2026-04-01',cat:'Alice',desc:'OVS alice',amount:7.20,note:'',bp:null},{id:1000349,date:'2026-04-01',cat:'Alice',desc:'Aerosol',amount:11.25,note:'',bp:null},
-  {id:1000401,date:'2026-05-01',cat:'Utenze',desc:'Elettricità',amount:34.50,note:'',bp:null},{id:1000402,date:'2026-05-01',cat:'Utenze',desc:'Internet',amount:10.50,note:'',bp:null},{id:1000403,date:'2026-05-01',cat:'Utenze',desc:'Cellulare',amount:7.99,note:'',bp:null},{id:1000404,date:'2026-05-01',cat:'Utenze',desc:'Pulizia',amount:40.00,note:'',bp:null},{id:1000405,date:'2026-05-01',cat:'Utenze',desc:'Sky',amount:7.50,note:'',bp:null},
-  {id:1000406,date:'2026-05-01',cat:'Viaggi',desc:'Alloggio Londra',amount:138.61,note:'',bp:null},{id:1000407,date:'2026-05-01',cat:'Viaggi',desc:'Volo Londra',amount:122.98,note:'',bp:null},{id:1000408,date:'2026-05-01',cat:'Viaggi',desc:'Alloggio londra saldo',amount:101.00,note:'',bp:null},{id:1000409,date:'2026-05-01',cat:'Viaggi',desc:'Visto',amount:36.00,note:'',bp:null},
-  {id:1000410,date:'2026-05-01',cat:'Auto',desc:'Benzina',amount:25.00,note:'',bp:null},{id:1000411,date:'2026-05-01',cat:'Auto',desc:'Benzina',amount:7.50,note:'',bp:null},{id:1000412,date:'2026-05-01',cat:'Auto',desc:'Benzina',amount:10.00,note:'',bp:null},
-  {id:1000413,date:'2026-05-01',cat:'Casa',desc:'Ikea rata',amount:76.30,note:'',bp:null},{id:1000414,date:'2026-05-01',cat:'Casa',desc:'Ikea',amount:30.00,note:'',bp:null},{id:1000415,date:'2026-05-01',cat:'Casa',desc:'Varie',amount:5.00,note:'',bp:null},{id:1000416,date:'2026-05-01',cat:'Casa',desc:'Rubinetto',amount:5.00,note:'',bp:null},{id:1000417,date:'2026-05-01',cat:'Casa',desc:'Ikea',amount:154.50,note:'',bp:null},{id:1000418,date:'2026-05-01',cat:'Casa',desc:'Leroy',amount:16.00,note:'',bp:null},{id:1000419,date:'2026-05-01',cat:'Casa',desc:'Maurys',amount:6.75,note:'',bp:null},
-  {id:1000420,date:'2026-05-01',cat:'Pasti fuori',desc:'Fatjoe',amount:12.50,note:'',bp:null},{id:1000421,date:'2026-05-01',cat:'Pasti fuori',desc:'Manduca',amount:23.75,note:'',bp:null},{id:1000422,date:'2026-05-01',cat:'Pasti fuori',desc:'Ravioli',amount:7.00,note:'',bp:null},{id:1000423,date:'2026-05-01',cat:'Pasti fuori',desc:'XPIZZA',amount:4.40,note:'',bp:null},
-  {id:1000424,date:'2026-05-01',cat:'Spesa alimentare',desc:'Lidl 3',amount:46.80,note:'',bp:null},{id:1000425,date:'2026-05-01',cat:'Spesa alimentare',desc:'Eurospin 3',amount:7.65,note:'',bp:null},{id:1000426,date:'2026-05-01',cat:'Spesa alimentare',desc:'Pan 5-28',amount:1.60,note:'',bp:null},{id:1000427,date:'2026-05-01',cat:'Spesa alimentare',desc:'Conad 6',amount:7.00,note:'',bp:null},{id:1000428,date:'2026-05-01',cat:'Spesa alimentare',desc:'Coop 9',amount:4.00,note:'',bp:null},{id:1000429,date:'2026-05-01',cat:'Spesa alimentare',desc:'Eurospin 9',amount:7.00,note:'',bp:null},{id:1000430,date:'2026-05-01',cat:'Spesa alimentare',desc:'Pan 12-21',amount:50.71,note:'',bp:null},{id:1000431,date:'2026-05-01',cat:'Spesa alimentare',desc:'Eurospin 14-23',amount:25.80,note:'',bp:null},{id:1000432,date:'2026-05-01',cat:'Spesa alimentare',desc:'Lidl 18-25',amount:6.65,note:'',bp:null},{id:1000433,date:'2026-05-01',cat:'Spesa alimentare',desc:'Coop 18',amount:5.00,note:'',bp:null},{id:1000434,date:'2026-05-01',cat:'Spesa alimentare',desc:'Reso spesa',amount:-57.18,note:'',bp:null},
-  {id:1000435,date:'2026-05-01',cat:'Svago',desc:'Spritz',amount:6.50,note:'',bp:null},{id:1000436,date:'2026-05-01',cat:'Svago',desc:'Amin',amount:11.00,note:'',bp:null},{id:1000437,date:'2026-05-01',cat:'Svago',desc:'Esperia',amount:10.00,note:'',bp:null},{id:1000438,date:'2026-05-01',cat:'Svago',desc:'Birra',amount:10.00,note:'',bp:null},{id:1000439,date:'2026-05-01',cat:'Svago',desc:'Colazione',amount:8.15,note:'',bp:null},{id:1000440,date:'2026-05-01',cat:'Svago',desc:'Merenda',amount:2.00,note:'',bp:null},{id:1000441,date:'2026-05-01',cat:'Svago',desc:'Birra trib',amount:3.50,note:'',bp:null},
-  {id:1000442,date:'2026-05-01',cat:'Cane',desc:'Pappa',amount:7.50,note:'',bp:null},{id:1000443,date:'2026-05-01',cat:'Cane',desc:'Cuccia',amount:5.00,note:'',bp:null},
-  {id:1000444,date:'2026-05-01',cat:'Regali',desc:'Regalo EDO',amount:10.00,note:'',bp:null},
-  {id:1000445,date:'2026-05-01',cat:'Alice',desc:'Asilo',amount:265.00,note:'',bp:null},{id:1000446,date:'2026-05-01',cat:'Alice',desc:'Crema',amount:8.58,note:'',bp:null},{id:1000447,date:'2026-05-01',cat:'Alice',desc:'Bicchiere',amount:5.50,note:'',bp:null},{id:1000448,date:'2026-05-01',cat:'Alice',desc:'Antiabbandono',amount:6.00,note:'',bp:null},{id:1000449,date:'2026-05-01',cat:'Alice',desc:'Ibuprofene',amount:15.00,note:'',bp:null},{id:1000450,date:'2026-05-01',cat:'Alice',desc:'Divisa',amount:15.00,note:'',bp:null},
-  {id:1000501,date:'2026-06-01',cat:'Utenze',desc:'Elettricità',amount:31.45,note:'',bp:null},{id:1000502,date:'2026-06-01',cat:'Utenze',desc:'Acqua',amount:87.42,note:'',bp:null},{id:1000503,date:'2026-06-01',cat:'Utenze',desc:'Cellulare',amount:4.00,note:'',bp:null},{id:1000504,date:'2026-06-01',cat:'Utenze',desc:'Pulizia',amount:20.00,note:'',bp:null},
-  {id:1000505,date:'2026-06-01',cat:'Viaggi',desc:'Londra',amount:321.60,note:'',bp:null},
-  {id:1000506,date:'2026-06-01',cat:'Casa',desc:'Temu',amount:15.30,note:'',bp:null},
-  {id:1000507,date:'2026-06-01',cat:'Spesa alimentare',desc:'Lidl 3',amount:14.04,note:'',bp:null},{id:1000508,date:'2026-06-01',cat:'Spesa alimentare',desc:'Pan 4',amount:9.08,note:'',bp:null},{id:1000509,date:'2026-06-01',cat:'Spesa alimentare',desc:'Lidl 5',amount:9.62,note:'',bp:null},{id:1000510,date:'2026-06-01',cat:'Spesa alimentare',desc:'Reso spesa',amount:-25.35,note:'',bp:null},
-  {id:1000511,date:'2026-06-01',cat:'Svago',desc:'Su giudeu',amount:2.00,note:'',bp:null},
-  {id:1000512,date:'2026-06-01',cat:'Regali',desc:'Regalo emma',amount:10.00,note:'',bp:null},{id:1000513,date:'2026-06-01',cat:'Regali',desc:'Regalo papa',amount:65.00,note:'',bp:null},
-  {id:1000514,date:'2026-06-01',cat:'Alice',desc:'Salviette',amount:5.00,note:'',bp:null},
-  {id:1000601,date:'2026-01-01',cat:'Mutuo',desc:'Rata mutuo',amount:427.82,note:'',bp:null},{id:1000602,date:'2026-02-01',cat:'Mutuo',desc:'Rata mutuo',amount:427.82,note:'',bp:null},{id:1000603,date:'2026-03-01',cat:'Mutuo',desc:'Rata mutuo',amount:427.82,note:'',bp:null},{id:1000604,date:'2026-04-01',cat:'Mutuo',desc:'Rata mutuo',amount:427.82,note:'',bp:null},{id:1000605,date:'2026-05-01',cat:'Mutuo',desc:'Rata mutuo',amount:427.82,note:'',bp:null},{id:1000606,date:'2026-06-01',cat:'Mutuo',desc:'Rata mutuo',amount:427.82,note:'',bp:null},
-  {id:1000701,date:'2026-01-01',cat:'Spesa alimentare',desc:'Buoni pasto',amount:72.00,note:'',bp:{num:9,val:8,total:72.00}},{id:1000702,date:'2026-02-01',cat:'Spesa alimentare',desc:'Buoni pasto',amount:80.00,note:'',bp:{num:10,val:8,total:80.00}},{id:1000703,date:'2026-03-01',cat:'Spesa alimentare',desc:'Buoni pasto',amount:152.00,note:'',bp:{num:19,val:8,total:152.00}},{id:1000704,date:'2026-04-01',cat:'Spesa alimentare',desc:'Buoni pasto',amount:256.00,note:'',bp:{num:32,val:8,total:256.00}},{id:1000705,date:'2026-05-01',cat:'Spesa alimentare',desc:'Buoni pasto',amount:80.00,note:'',bp:{num:10,val:8,total:80.00}},{id:1000706,date:'2026-06-01',cat:'Spesa alimentare',desc:'Buoni pasto',amount:48.00,note:'',bp:{num:6,val:8,total:48.00}}
-];
+const KpiCard = ({label,value,color,bg}) => (
+  <div style={{background:bg||'#f5f5f0',borderRadius:10,padding:'12px 14px'}}>
+    <div style={{fontSize:10,color:color||'#888',textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:4,fontWeight:500}}>{label}</div>
+    <div style={{fontSize:18,fontWeight:500,color:color||'#1a1a1a'}}>{value}</div>
+  </div>
+);
 
-var PRELOADED_INCOMES_MARCO=[
-  {id:2000001,date:'2026-01-01',desc:'Stipendio',amount:3063.45,note:'',bp:null},{id:2000002,date:'2026-01-01',desc:'Azioni',amount:-7.00,note:'',bp:null},{id:2000003,date:'2026-01-01',desc:'Generali',amount:47.06,note:'',bp:null},{id:2000004,date:'2026-01-01',desc:'Buoni pasto',amount:120.00,note:'',bp:{num:15,val:8,total:120.00}},{id:2000005,date:'2026-01-01',desc:'BBVA 1,75%',amount:13.71,note:'',bp:null},{id:2000006,date:'2026-01-01',desc:'Assegno unico',amount:111.47,note:'',bp:null},
-  {id:2000010,date:'2026-02-01',desc:'Stipendio',amount:2108.92,note:'',bp:null},{id:2000011,date:'2026-02-01',desc:'Generali',amount:16.60,note:'',bp:null},{id:2000012,date:'2026-02-01',desc:'Buoni pasto',amount:144.00,note:'',bp:{num:18,val:8,total:144.00}},{id:2000013,date:'2026-02-01',desc:'BBVA 4%',amount:13.84,note:'',bp:null},{id:2000014,date:'2026-02-01',desc:'Rimborso Inps Dicembre',amount:163.64,note:'',bp:null},{id:2000015,date:'2026-02-01',desc:'Assegno unico',amount:115.12,note:'',bp:null},
-  {id:2000020,date:'2026-03-01',desc:'Stipendio',amount:2334.39,note:'',bp:null},{id:2000021,date:'2026-03-01',desc:'Generali',amount:1.46,note:'',bp:null},{id:2000022,date:'2026-03-01',desc:'Buoni pasto',amount:168.00,note:'',bp:{num:21,val:8,total:168.00}},{id:2000023,date:'2026-03-01',desc:'BBVA 1,75%',amount:13.59,note:'',bp:null},{id:2000024,date:'2026-03-01',desc:'Assegno unico',amount:47.37,note:'',bp:null},
-  {id:2000030,date:'2026-04-01',desc:'Stipendio',amount:2195.64,note:'',bp:null},{id:2000031,date:'2026-04-01',desc:'Generali',amount:57.29,note:'',bp:null},{id:2000032,date:'2026-04-01',desc:'Buoni pasto',amount:168.00,note:'',bp:{num:21,val:8,total:168.00}},{id:2000033,date:'2026-04-01',desc:'BBVA 1,75%',amount:16.05,note:'',bp:null},{id:2000034,date:'2026-04-01',desc:'Assegno unico',amount:58.37,note:'',bp:null},
-  {id:2000040,date:'2026-05-01',desc:'Stipendio',amount:2150.26,note:'',bp:null},{id:2000041,date:'2026-05-01',desc:'Azioni',amount:-4.00,note:'',bp:null},{id:2000042,date:'2026-05-01',desc:'Generali',amount:127.58,note:'',bp:null},{id:2000043,date:'2026-05-01',desc:'Buoni pasto',amount:152.00,note:'',bp:{num:19,val:8,total:152.00}},{id:2000044,date:'2026-05-01',desc:'BBVA 2%',amount:17.76,note:'',bp:null},{id:2000045,date:'2026-05-01',desc:'Assegno unico',amount:54.25,note:'',bp:null},
-  {id:2000050,date:'2026-06-01',desc:'Stipendio',amount:2100.00,note:'',bp:null},{id:2000051,date:'2026-06-01',desc:'BBVA 2%',amount:18.66,note:'',bp:null}
-];
+function App() {
+  const [profile, setProfile] = useState('marco');
+  const [tab, setTab] = useState(0);
+  const [expenses, setExpenses] = useState([]);
+  const [incomes, setIncomes] = useState([]);
+  const [partnerItems, setPartnerItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filterMonth, setFilterMonth] = useState('');
+  const [filterCat, setFilterCat] = useState('');
+  const [activeCats, setActiveCats] = useState([...CATS]);
 
-function fmt(n){return Number(n).toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2});}
-function monthKey(d){var x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0');}
-function monthLabel(k){var p=k.split('-');return MONTHS[parseInt(p[1])-1]+' '+p[0];}
-function fmtDate(d){return new Date(d+'T12:00').toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit'});}
-function partnerName(){return currentProfile==='marco'?'Anna':'Marco';}
-function expKey(){return 'expenses_'+currentProfile;}
-function incKey(){return 'incomes_'+currentProfile;}
-function prtKey(){return 'partner_'+currentProfile;}
-function saveExp(){storage.set(expKey(),JSON.stringify(expenses));}
-function saveInc(){storage.set(incKey(),JSON.stringify(incomes));}
-function savePartner(){storage.set(prtKey(),JSON.stringify(partnerItems));}
+  const [ef, setEf] = useState({amount:'',date:todayStr(),desc:'',cat:'',note:'',split:false,bpNum:'',bpVal:'8'});
+  const [inf, setInf] = useState({amount:'',date:todayStr(),desc:'',note:'',bpNum:'',bpVal:'8'});
+  const [pf, setPf] = useState({tipo:'credito',desc:'',amount:'',cat:'',date:todayStr(),note:'',addToStorico:true});
+  const [payf, setPayf] = useState({amount:'',desc:''});
+  const [toast, setToast] = useState('');
+  const [openCats, setOpenCats] = useState({});
+  const th = THEME[profile];
 
-function switchProfile(p){
-  currentProfile=p;
-  currentPartnerTipo='debito';
-  document.body.classList.toggle('anna',p==='anna');
-  document.getElementById('btn-marco').className='profile-btn'+(p==='marco'?' active-marco':'');
-  document.getElementById('btn-anna').className='profile-btn'+(p==='anna'?' active-anna':'');
-  var pn=partnerName();
-  document.getElementById('partner-tab-label').textContent='Debiti/Crediti '+pn;
-  document.getElementById('p-label-devi').textContent=pn;
-  document.getElementById('p-label-deve').textContent=pn;
-  document.getElementById('p-pay-label').textContent=pn;
-  document.getElementById('p-debt-title').textContent='Aggiungi debito/credito verso '+pn;
-  document.getElementById('p-btn-add').textContent='Aggiungi debito verso '+pn;
-  document.getElementById('split-flag-text').textContent='Da spartire con '+pn;
-  document.getElementById('app-title').innerHTML='<i class="ti ti-wallet"></i> Gestore Spese — '+(p==='marco'?'Marco':'Anna');
-  var bpDef=p==='anna'?'7.50':'8';
-  document.getElementById('inp-bp-val').value=bpDef;
-  document.getElementById('inc-bp-val').value=bpDef;
-  var dBtn=document.getElementById('btn-tipo-debito');
-  var cBtn=document.getElementById('btn-tipo-credito');
-  if(dBtn){dBtn.className='btn partner';dBtn.style.opacity='1';}
-  if(cBtn){cBtn.className='btn';cBtn.style.opacity='.5';}
-  expenses=[];incomes=[];partnerItems=[];
-  loadProfile();
-  showTab('add');
-}
+  const showToast = msg => { setToast(msg); setTimeout(()=>setToast(''),2500); };
 
-function loadProfile(){
-  var today=new Date().toISOString().slice(0,10);
-  document.getElementById('inp-date').value=today;
-  document.getElementById('inc-date').value=today;
-  loading(true);
-  Promise.all([
-    storage.get(expKey()),
-    storage.get(incKey()),
-    storage.get(prtKey())
-  ]).then(function(res){
-    var re=res[0],ri=res[1],rp=res[2];
-    if(re&&re.value){try{expenses=JSON.parse(re.value);}catch(e){expenses=[];}}
-    if(ri&&ri.value){try{incomes=JSON.parse(ri.value);}catch(e){incomes=[];}}
-    if(rp&&rp.value){try{partnerItems=JSON.parse(rp.value);}catch(e){partnerItems=[];}}
-    if(currentProfile==='marco'){loadPreloadedMarco();loadPreloadedIncomesMarco();}
-    else{populateMonthFilter();}
-    loading(false);
-  }).catch(function(){
-    if(currentProfile==='marco'){loadPreloadedMarco();loadPreloadedIncomesMarco();}
-    else{populateMonthFilter();}
-    loading(false);
-  });
-}
+  // ── Carica dati dal backend ───────────────────────────────────────────────
+  const loadProfile = async (p) => {
+    setLoading(true);
+    try {
+      const [re, ri, rp] = await Promise.all([
+        storage.get('expenses_' + p),
+        storage.get('incomes_' + p),
+        storage.get('partner_' + p)
+      ]);
+      let exp = re && re.value ? JSON.parse(re.value) : [];
+      let inc = ri && ri.value ? JSON.parse(ri.value) : [];
+      let par = rp && rp.value ? JSON.parse(rp.value) : [];
 
-function loadPreloadedMarco(){
-  var seen={};expenses.forEach(function(e){seen[e.id]=1;});
-  var added=0;PRELOADED_MARCO.forEach(function(e){if(!seen[e.id]){expenses.push(e);added++;}});
-  if(added>0){expenses.sort(function(a,b){return new Date(b.date)-new Date(a.date);});saveExp();}
-  populateMonthFilter();
-}
-function loadPreloadedIncomesMarco(){
-  var seen={};incomes.forEach(function(i){seen[i.id]=1;});
-  var added=0;PRELOADED_INCOMES_MARCO.forEach(function(i){if(!seen[i.id]){incomes.push(i);added++;}});
-  if(added>0){incomes.sort(function(a,b){return new Date(b.date)-new Date(a.date);});saveInc();}
-}
-
-function toggleBP(){
-  var show=document.getElementById('inp-cat').value==='Spesa alimentare';
-  document.getElementById('bp-section').style.display=show?'block':'none';
-  if(!show){document.getElementById('inp-bp-num').value='';calcBP();}
-}
-function calcBP(){
-  var n=parseFloat(document.getElementById('inp-bp-num').value)||0;
-  var v=parseFloat(document.getElementById('inp-bp-val').value)||8;
-  document.getElementById('bp-result').innerHTML='Sconto: <span>€ '+fmt(n*v)+'</span>';
-}
-function calcIncBP(){
-  var n=parseFloat(document.getElementById('inc-bp-num').value)||0;
-  var v=parseFloat(document.getElementById('inc-bp-val').value)||8;
-  var total=n*v;
-  document.getElementById('inc-bp-result').innerHTML='Totale: <span>€ '+fmt(total)+'</span>';
-  if(n>0){
-    document.getElementById('inc-amount').value=total.toFixed(2);
-    var d=document.getElementById('inc-date').value;
-    if(d){var x=new Date(d+'T12:00');document.getElementById('inc-desc').value='Buoni pasto '+MONTHS[x.getMonth()];}
-  }
-}
-
-function addExpense(){
-  var amount=parseFloat(document.getElementById('inp-amount').value);
-  var date=document.getElementById('inp-date').value;
-  var desc=document.getElementById('inp-desc').value.trim();
-  var cat=document.getElementById('inp-cat').value;
-  var note=document.getElementById('inp-note').value.trim();
-  var splitP=document.getElementById('inp-partner').checked;
-  if(!amount||amount<=0){toast('Inserisci un importo valido');return;}
-  if(!date){toast('Inserisci la data');return;}
-  if(!desc){toast('Inserisci la descrizione');return;}
-  if(!cat){toast('Seleziona una categoria');return;}
-  var bp=null;
-  if(cat==='Spesa alimentare'){
-    var bpn=parseFloat(document.getElementById('inp-bp-num').value)||0;
-    var bpv=parseFloat(document.getElementById('inp-bp-val').value)||8;
-    if(bpn>0){bp={num:bpn,val:bpv,total:bpn*bpv};amount=Math.round((amount+bp.total)*100)/100;}
-  }
-  var expAmount=splitP?Math.round(amount/2*100)/100:amount;
-  expenses.push({id:Date.now(),amount:expAmount,date:date,desc:desc+(splitP?' (50%)':''),cat:cat,note:note,bp:bp,splitPartner:splitP});
-  expenses.sort(function(a,b){return new Date(b.date)-new Date(a.date);});
-  if(splitP){
-    var half=Math.round(amount/2*100)/100;
-    partnerItems.push({id:Date.now()+1,desc:desc,amount:half,cat:cat,date:date,type:'credito',expId:null,note:'50% spesa spartita'});
-    partnerItems.sort(function(a,b){return new Date(b.date)-new Date(a.date);});
-    savePartner();
-  }
-  saveExp();populateMonthFilter();clearExpForm();
-  toast(splitP?'Spesa salvata: 50% storico, 50% credito verso '+partnerName()+' ✓':'Spesa salvata ✓');
-}
-
-function addIncome(){
-  var amount=parseFloat(document.getElementById('inc-amount').value);
-  var date=document.getElementById('inc-date').value;
-  var desc=document.getElementById('inc-desc').value.trim();
-  var note=document.getElementById('inc-note').value.trim();
-  var bpn=parseFloat(document.getElementById('inc-bp-num').value)||0;
-  var bpv=parseFloat(document.getElementById('inc-bp-val').value)||8;
-  if(bpn>0) amount=Math.round(bpn*bpv*100)/100;
-  if(!amount||amount<=0){toast('Inserisci un importo valido');return;}
-  if(!date){toast('Inserisci la data');return;}
-  if(!desc){toast('Inserisci la descrizione');return;}
-  var bp=bpn>0?{num:bpn,val:bpv,total:bpn*bpv}:null;
-  incomes.push({id:Date.now(),amount:amount,date:date,desc:desc,note:note,bp:bp});
-  incomes.sort(function(a,b){return new Date(b.date)-new Date(a.date);});
-  saveInc();populateMonthFilter();clearIncForm();
-  toast('Entrata salvata ✓');
-}
-
-function getNextPayId(){
-  var maxId=0;
-  partnerItems.forEach(function(a){
-    if(a.payId){var n=parseInt(a.payId,10);if(n>maxId)maxId=n;}
-    if(a.progId){var n2=parseInt(a.progId,10);if(n2>maxId)maxId=n2;}
-  });
-  return String(maxId+1).padStart(3,'0');
-}
-function calcPartnerPay(){
-  var el=document.getElementById('p-pay-amount');
-  var raw=(el?el.value:'').replace(',','.');
-  var amount=parseFloat(raw)||0;
-  var cred=partnerItems.filter(function(a){return a.type==='credito';}).reduce(function(s,a){return s+a.amount;},0);
-  var deb=partnerItems.filter(function(a){return a.type==='debito';}).reduce(function(s,a){return s+a.amount;},0);
-  var pag=partnerItems.filter(function(a){return a.type==='pagamento';}).reduce(function(s,a){return s+(a.signed!==undefined?a.signed:a.amount);},0);
-  var saldo=cred-deb-pag;
-  var prev=document.getElementById('p-pay-preview');
-  if(!prev) return;
-  if(!amount&&amount!==0){prev.textContent='— inserisci importo';prev.style.color='#666';return;}
-  var res=saldo-amount;
-  if(Math.abs(res)<0.01){prev.textContent='Saldo azzerato ✓';prev.style.color='#085041';}
-  else if(res>0){prev.textContent='Credito residuo: € '+fmt(res);prev.style.color='#085041';}
-  else{prev.textContent='Debito residuo: € '+fmt(Math.abs(res));prev.style.color='#a32d2d';}
-}
-function addPartnerPay(){
-  var el=document.getElementById('p-pay-amount');
-  var raw=(el?el.value:'').replace(',','.');
-  var amount=parseFloat(raw);
-  if(isNaN(amount)||amount===0){toast('Inserisci un importo valido');return;}
-  var now=new Date();
-  var dd=String(now.getDate()).padStart(2,'0');
-  var mm=String(now.getMonth()+1).padStart(2,'0');
-  var progId=getNextPayId();
-  var descPayEl=document.getElementById('p-pay-desc');
-  var descPay=descPayEl?descPayEl.value.trim():'';
-  var payDesc='Pagamento #'+progId+' del '+dd+'.'+mm+'.'+now.getFullYear()+(descPay?' — '+descPay:'');
-  var unsettled=partnerItems.filter(function(a){return(a.type==='debito'||a.type==='credito')&&!a.payId;});
-  unsettled.sort(function(a,b){return new Date(a.date)-new Date(b.date);});
-  unsettled.forEach(function(a){a.payId=progId;a.payDesc=payDesc;});
-  partnerItems.push({id:Date.now(),desc:payDesc,amount:Math.abs(amount),signed:amount,cat:'',date:now.toISOString().slice(0,10),type:'pagamento',progId:progId,expId:null,note:amount>0?'Anna ha pagato':'Hai pagato Anna'});
-  partnerItems.sort(function(a,b){return new Date(b.date)-new Date(a.date);});
-  savePartner();
-  if(el) el.value='';
-  if(descPayEl) descPayEl.value='';
-  var prev=document.getElementById('p-pay-preview');
-  if(prev){prev.textContent='— inserisci importo';prev.style.color='#666';}
-  renderPartner();
-  toast('Pagamento #'+progId+' registrato ✓');
-}
-
-function setTipoPartner(tipo){
-  currentPartnerTipo=tipo;
-  var pn=partnerName();
-  var dBtn=document.getElementById('btn-tipo-debito');
-  var cBtn=document.getElementById('btn-tipo-credito');
-  var addBtn=document.getElementById('p-btn-add-action');
-  var addLbl=document.getElementById('p-btn-add');
-  if(tipo==='debito'){
-    if(dBtn){dBtn.className='btn partner';dBtn.style.opacity='1';}
-    if(cBtn){cBtn.className='btn';cBtn.style.opacity='.5';}
-    if(addBtn) addBtn.className='btn partner';
-    if(addLbl) addLbl.textContent='Aggiungi debito verso '+pn;
-  } else {
-    if(dBtn){dBtn.className='btn';dBtn.style.opacity='.5';}
-    if(cBtn){cBtn.className='btn success';cBtn.style.opacity='1';}
-    if(addBtn) addBtn.className='btn success';
-    if(addLbl) addLbl.textContent='Aggiungi credito da '+pn;
-  }
-}
-
-function addPartnerDebt(){
-  var descEl=document.getElementById('p-desc-field');
-  var amountEl=document.getElementById('p-amount-field');
-  var monthEl=document.getElementById('p-month-field');
-  var catEl=document.getElementById('p-cat-field');
-  var storicoEl=document.getElementById('p-storico-flag');
-  if(!descEl||!amountEl||!monthEl||!catEl){toast('Errore: campi non trovati');return;}
-  var desc=descEl.value.trim();
-  var amount=parseFloat((amountEl.value||'').replace(',','.'));
-  var month=monthEl.value;
-  var cat=catEl.value;
-  var addToStorico=storicoEl?storicoEl.checked:true;
-  var tipo=currentPartnerTipo;
-  if(!desc){toast('Inserisci la descrizione');return;}
-  if(!amount||amount<=0){toast('Inserisci un importo valido');return;}
-  if(!cat){toast('Seleziona una categoria');return;}
-  var date=month+'-01';
-  var ts=Date.now();
-  partnerItems.push({id:ts+1,desc:desc,amount:amount,cat:cat,date:date,type:tipo,expId:addToStorico?ts:null,note:tipo==='debito'?partnerName()+' ha anticipato':'Credito da '+partnerName()});
-  partnerItems.sort(function(a,b){return new Date(b.date)-new Date(a.date);});
-  savePartner();
-  if(addToStorico){
-    if(tipo==='debito'){
-      expenses.push({id:ts,amount:amount,date:date,desc:desc+' ('+partnerName()+')',cat:cat,note:'Anticipato da '+partnerName(),bp:null,splitPartner:false,partnerDebt:true});
-      expenses.sort(function(a,b){return new Date(b.date)-new Date(a.date);});
-      saveExp();
-    } else {
-      incomes.push({id:ts,amount:amount,date:date,desc:desc+' (credito da '+partnerName()+')',note:'Credito da '+partnerName(),bp:null});
-      incomes.sort(function(a,b){return new Date(b.date)-new Date(a.date);});
-      saveInc();
+      if (p === 'marco') {
+        // Merge precaricati: aggiungi solo quelli mancanti
+        const seenE = {}; exp.forEach(e => seenE[e.id] = 1);
+        const seenI = {}; inc.forEach(i => seenI[i.id] = 1);
+        const seenP = {}; par.forEach(a => seenP[a.id] = 1);
+        const newExp = RAW_EXPENSES.filter(e => !seenE[e.id]);
+        const newInc = RAW_INCOMES.filter(i => !seenI[i.id]);
+        const newPar = RAW_PARTNER.filter(a => !seenP[a.id]);
+        if (newExp.length) { exp = [...exp, ...newExp].sort((a,b)=>new Date(b.date)-new Date(a.date)); storage.set('expenses_marco', JSON.stringify(exp)); }
+        if (newInc.length) { inc = [...inc, ...newInc].sort((a,b)=>new Date(b.date)-new Date(a.date)); storage.set('incomes_marco', JSON.stringify(inc)); }
+        if (newPar.length) { par = [...par, ...newPar].sort((a,b)=>new Date(b.date)-new Date(a.date)); storage.set('partner_marco', JSON.stringify(par)); }
+      }
+      setExpenses(exp);
+      setIncomes(inc);
+      setPartnerItems(par);
+    } catch(e) {
+      setExpenses(p === 'marco' ? [...RAW_EXPENSES] : []);
+      setIncomes(p === 'marco' ? [...RAW_INCOMES] : []);
+      setPartnerItems(p === 'marco' ? [...RAW_PARTNER] : []);
     }
-    populateMonthFilter();
-  }
-  descEl.value='';amountEl.value='';catEl.value='';
-  if(storicoEl) storicoEl.checked=true;
-  renderPartner();
-  toast((tipo==='debito'?'Debito':'Credito')+' aggiunto ✓');
-}
+    setLoading(false);
+  };
 
-function deleteExpense(id){
-  var exp=expenses.filter(function(e){return e.id===id;})[0];
-  expenses=expenses.filter(function(e){return e.id!==id;});
-  saveExp();
-  if(exp){
-    var before=partnerItems.length;
-    if(exp.partnerDebt) partnerItems=partnerItems.filter(function(a){return a.expId!==id;});
-    if(exp.splitPartner) partnerItems=partnerItems.filter(function(a){return!(a.type==='credito'&&a.desc===exp.desc.replace(' (50%)','')&&monthKey(a.date)===monthKey(exp.date));});
-    if(partnerItems.length!==before) savePartner();
-  }
-  renderList();renderSummary();toast('Spesa eliminata');
-}
-function deleteIncome(id){
-  incomes=incomes.filter(function(i){return i.id!==id;});
-  saveInc();renderList();renderSummary();toast('Entrata eliminata');
-}
-function deletePartner(id){
-  var item=partnerItems.filter(function(a){return a.id===id;})[0];
-  partnerItems=partnerItems.filter(function(a){return a.id!==id;});
-  if(item){
-    if(item.expId){
-      expenses=expenses.filter(function(e){return e.id!==item.expId;});
-      incomes=incomes.filter(function(i){return i.id!==item.expId;});
-      saveExp();saveInc();
+  useEffect(() => { loadProfile('marco'); }, []);
+
+  // ── Salva sul backend ─────────────────────────────────────────────────────
+  const saveExp = (data) => storage.set('expenses_' + profile, JSON.stringify(data));
+  const saveInc = (data) => storage.set('incomes_' + profile, JSON.stringify(data));
+  const savePar = (data) => storage.set('partner_' + profile, JSON.stringify(data));
+
+  const switchProfile = (p) => {
+    setProfile(p);
+    setTab(0);
+    setFilterMonth(''); setFilterCat('');
+    setActiveCats([...CATS]);
+    setEf({amount:'',date:todayStr(),desc:'',cat:'',note:'',split:false,bpNum:'',bpVal:p==='anna'?'7.50':'8'});
+    setInf({amount:'',date:todayStr(),desc:'',note:'',bpNum:'',bpVal:p==='anna'?'7.50':'8'});
+    setPf({tipo:'credito',desc:'',amount:'',cat:'',date:todayStr(),note:'',addToStorico:true});
+    setPayf({amount:'',desc:''});
+    loadProfile(p);
+  };
+
+  const bpDiscount = useMemo(()=>Math.round((parseFloat(ef.bpNum)||0)*(parseFloat(ef.bpVal)||8)*100)/100,[ef.bpNum,ef.bpVal]);
+  const incBpTotal = useMemo(()=>Math.round((parseFloat(inf.bpNum)||0)*(parseFloat(inf.bpVal)||8)*100)/100,[inf.bpNum,inf.bpVal]);
+
+  const allMonthKeys = useMemo(()=>{
+    const s={}, k=[];
+    expenses.forEach(e=>{const m=mKey(e.date);if(!s[m]){s[m]=1;k.push(m);}});
+    incomes.forEach(i=>{const m=mKey(i.date);if(!s[m]){s[m]=1;k.push(m);}});
+    return k.sort();
+  },[expenses,incomes]);
+
+  const monthData = useMemo(()=>allMonthKeys.map(mk=>({
+    mk, name:mShort(mk),
+    uscite:  Math.round(expenses.filter(e=>mKey(e.date)===mk).reduce((s,e)=>s+e.amount,0)*100)/100,
+    entrate: Math.round(incomes.filter(i=>mKey(i.date)===mk).reduce((s,i)=>s+i.amount,0)*100)/100,
+  })),[allMonthKeys,expenses,incomes]);
+
+  const avgE = monthData.length ? Math.round(monthData.reduce((s,d)=>s+d.uscite,0)/monthData.length*100)/100 : 0;
+  const avgI = monthData.length ? Math.round(monthData.reduce((s,d)=>s+d.entrate,0)/monthData.length*100)/100 : 0;
+
+  const filteredExp = useMemo(()=>expenses.filter(e=>(!filterMonth||mKey(e.date)===filterMonth)&&(!filterCat||e.cat===filterCat)),[expenses,filterMonth,filterCat]);
+  const filteredInc = useMemo(()=>incomes.filter(i=>!filterMonth||mKey(i.date)===filterMonth),[incomes,filterMonth]);
+  const groupedMonths = useMemo(()=>{
+    const s={}, k=[];
+    filteredExp.forEach(e=>{const m=mKey(e.date);if(!s[m]){s[m]=1;k.push(m);}});
+    if(!filterCat) filteredInc.forEach(i=>{const m=mKey(i.date);if(!s[m]){s[m]=1;k.push(m);}});
+    return k.sort().reverse();
+  },[filteredExp,filteredInc,filterCat]);
+
+  const partnerSaldo = useMemo(()=>{
+    const cred=partnerItems.filter(a=>a.type==='credito').reduce((s,a)=>s+a.amount,0);
+    const deb=partnerItems.filter(a=>a.type==='debito').reduce((s,a)=>s+a.amount,0);
+    const pag=partnerItems.filter(a=>a.type==='pagamento').reduce((s,a)=>s+(a.signed!==undefined?a.signed:a.amount),0);
+    return {cred, deb, saldo:cred-deb-pag};
+  },[partnerItems]);
+
+  const payPreview = useMemo(()=>{
+    const amt=parseFloat(payf.amount)||0;
+    if(!payf.amount) return null;
+    const res=partnerSaldo.saldo-amt;
+    if(Math.abs(res)<0.01) return {text:'Saldo azzerato ✓',color:'#0F6E56'};
+    if(res>0) return {text:'Credito residuo: € '+fmt(res),color:'#0F6E56'};
+    return {text:'Debito residuo: € '+fmt(Math.abs(res)),color:'#a32d2d'};
+  },[payf.amount,partnerSaldo]);
+
+  /* ── ACTIONS ── */
+  const addExpense = () => {
+    let amt=parseFloat(ef.amount);
+    if(!amt||amt<=0) return showToast('Importo non valido');
+    if(!ef.desc.trim()) return showToast('Inserisci la descrizione');
+    if(!ef.cat) return showToast('Seleziona una categoria');
+    let bp=null;
+    if(ef.cat==='Spesa alimentare'&&parseFloat(ef.bpNum)>0){
+      const n=parseFloat(ef.bpNum), v=parseFloat(ef.bpVal)||8;
+      bp={num:n,val:v,total:Math.round(n*v*100)/100};
+      amt=Math.round((amt+bp.total)*100)/100;
     }
-    if(item.type==='pagamento'&&item.progId){
-      partnerItems.forEach(function(a){
-        if(a.payId===item.progId){delete a.payId;delete a.payDesc;}
-      });
+    const finalAmt=ef.split?Math.round(amt/2*100)/100:amt;
+    const newExp={id:Date.now(),amount:finalAmt,date:ef.date,desc:ef.desc+(ef.split?' (50%)':''),cat:ef.cat,note:ef.note,bp,splitPartner:ef.split};
+    const updated=[newExp,...expenses].sort((a,b)=>new Date(b.date)-new Date(a.date));
+    setExpenses(updated); saveExp(updated);
+    if(ef.split){
+      const updP=[{id:Date.now()+1,desc:ef.desc,amount:Math.round(amt/2*100)/100,cat:ef.cat,date:ef.date,type:'credito',note:'50% spesa spartita'},...partnerItems];
+      setPartnerItems(updP); savePar(updP);
     }
-  }
-  savePartner();renderPartner();renderList();toast('Voce eliminata');
-}
+    setEf({amount:'',date:todayStr(),desc:'',cat:'',note:'',split:false,bpNum:'',bpVal:profile==='anna'?'7.50':'8'});
+    showToast('Spesa salvata ✓');
+  };
 
-function clearExpForm(){
-  ['inp-amount','inp-desc','inp-note'].forEach(function(id){document.getElementById(id).value='';});
-  document.getElementById('inp-cat').value='';
-  document.getElementById('inp-date').value=new Date().toISOString().slice(0,10);
-  document.getElementById('inp-partner').checked=false;
-  document.getElementById('bp-section').style.display='none';
-  document.getElementById('inp-bp-num').value='';
-  document.getElementById('inp-bp-val').value=currentProfile==='anna'?'7.50':'8';
-  calcBP();
-}
-function clearIncForm(){
-  ['inc-amount','inc-desc','inc-note'].forEach(function(id){document.getElementById(id).value='';});
-  document.getElementById('inc-bp-num').value='';
-  document.getElementById('inc-bp-val').value=currentProfile==='anna'?'7.50':'8';
-  calcIncBP();
-  document.getElementById('inc-date').value=new Date().toISOString().slice(0,10);
-}
+  const addIncome = () => {
+    let amt=parseFloat(inf.amount);
+    const bpn=parseFloat(inf.bpNum)||0, bpv=parseFloat(inf.bpVal)||8;
+    if(bpn>0) amt=Math.round(bpn*bpv*100)/100;
+    if(!amt||amt<=0) return showToast('Importo non valido');
+    if(!inf.desc.trim()) return showToast('Inserisci la descrizione');
+    const bp=bpn>0?{num:bpn,val:bpv,total:Math.round(bpn*bpv*100)/100}:null;
+    const updated=[{id:Date.now(),amount:amt,date:inf.date,desc:inf.desc,note:inf.note,bp},...incomes].sort((a,b)=>new Date(b.date)-new Date(a.date));
+    setIncomes(updated); saveInc(updated);
+    setInf({amount:'',date:todayStr(),desc:'',note:'',bpNum:'',bpVal:profile==='anna'?'7.50':'8'});
+    showToast('Entrata salvata ✓');
+  };
 
-function populateMonthFilter(){
-  var seen={};var keys=[];
-  expenses.forEach(function(e){var k=monthKey(e.date);if(!seen[k]){seen[k]=1;keys.push(k);}});
-  incomes.forEach(function(i){var k=monthKey(i.date);if(!seen[k]){seen[k]=1;keys.push(k);}});
-  keys.sort().reverse();
-  var sel=document.getElementById('f-month'),cur=sel.value;
-  sel.innerHTML='<option value="">Tutti i mesi</option>'+keys.map(function(k){return '<option value="'+k+'">'+monthLabel(k)+'</option>';}).join('');
-  if(cur) sel.value=cur;
-}
-
-function renderList(){
-  var mf=document.getElementById('f-month').value;
-  var cf=document.getElementById('f-cat').value;
-  var exps=expenses.filter(function(e){return(!mf||monthKey(e.date)===mf)&&(!cf||e.cat===cf);});
-  var incs=incomes.filter(function(i){return!mf||monthKey(i.date)===mf;});
-  var cont=document.getElementById('list-container');
-  var seen={};var allKeys=[];
-  exps.forEach(function(e){var k=monthKey(e.date);if(!seen[k]){seen[k]=1;allKeys.push(k);}});
-  if(!cf) incs.forEach(function(i){var k=monthKey(i.date);if(!seen[k]){seen[k]=1;allKeys.push(k);}});
-  allKeys.sort().reverse();
-  if(!allKeys.length){cont.innerHTML='<div class="empty"><i class="ti ti-inbox" style="font-size:32px;display:block;margin-bottom:.5rem"></i>Nessuna voce trovata</div>';return;}
-  cont.innerHTML=allKeys.map(function(mk){
-    var me=exps.filter(function(e){return monthKey(e.date)===mk;});
-    var mi=cf?[]:incs.filter(function(i){return monthKey(i.date)===mk;});
-    var totE=me.reduce(function(s,e){return s+e.amount;},0);
-    var totI=mi.reduce(function(s,i){return s+i.amount;},0);
-    var bal=totI-totE;
-    var balH=totI>0?'<span style="color:'+(bal>=0?'#085041':'#a32d2d')+';font-weight:500">Saldo: '+(bal>=0?'+':'')+'€ '+fmt(bal)+'</span>':'';
-    var incRows=mi.map(function(i){
-      var bH=i.bp?'<span style="font-size:11px;color:#0F6E56;margin-left:4px"><i class="ti ti-ticket" style="font-size:11px"></i> '+i.bp.num+'x buoni</span>':'';
-      return '<div class="income-row"><span class="exp-date">'+fmtDate(i.date)+'</span><span>'+i.desc+bH+'</span><span class="exp-amount" style="color:#085041">+ € '+fmt(i.amount)+'</span><button class="exp-delete btn danger" onclick="deleteIncome('+i.id+')"><i class="ti ti-trash"></i></button></div>';
-    }).join('');
-    var expRows=me.map(function(e){
-      var bH=e.bp?'<span style="font-size:11px;color:#0F6E56;margin-left:4px"><i class="ti ti-ticket" style="font-size:11px"></i> '+e.bp.num+'x (- € '+fmt(e.bp.total)+')</span>':'';
-      var spH=e.splitPartner?'<span class="partner-badge"><i class="ti ti-users" style="font-size:10px"></i> 50%</span>':'';
-      var pdH=e.partnerDebt?'<span class="partner-badge"><i class="ti ti-user" style="font-size:10px"></i> '+partnerName()+'</span>':'';
-      return '<div class="expense-row"><span class="exp-date">'+fmtDate(e.date)+'</span><span>'+e.desc+bH+spH+pdH+'<br><span style="display:inline-block;margin-top:2px;padding:1px 7px;border-radius:5px;font-size:10px;font-weight:500;background:'+(CAT_COLORS[e.cat]||'#888')+'22;color:'+(CAT_COLORS[e.cat]||'#888')+'">'+e.cat+'</span></span><span class="exp-amount" style="color:#a32d2d">- € '+fmt(e.amount)+'</span><button class="exp-delete btn danger" onclick="deleteExpense('+e.id+')"><i class="ti ti-trash"></i></button></div>';
-    }).join('');
-    var div=incRows&&expRows?'<div style="height:0.5px;background:rgba(0,0,0,.1);margin:4px 0"></div>':'';
-    return '<div class="month-section"><div class="month-header"><h2>'+monthLabel(mk)+'</h2><div style="display:flex;gap:16px;align-items:center;font-size:13px">'+(totI>0?'<span style="color:#085041">+ € '+fmt(totI)+'</span>':'')+'<span style="color:#a32d2d">- € '+fmt(totE)+'</span>'+balH+'</div></div><div class="card" style="padding:.5rem 0">'+incRows+div+expRows+'</div></div>';
-  }).join('');
-}
-
-function toggleCat(uid){
-  var el=document.getElementById(uid),ico=document.getElementById('ico-'+uid);
-  if(!el) return;
-  var open=el.style.display==='block';
-  el.style.display=open?'none':'block';
-  if(ico) ico.style.transform=open?'':'rotate(180deg)';
-}
-
-function renderSummary(){
-  var cont=document.getElementById('summary-container');
-  var totE=expenses.reduce(function(s,e){return s+e.amount;},0);
-  var totI=incomes.reduce(function(s,i){return s+i.amount;},0);
-  var bal=totI-totE;
-  var byMonth={};
-  expenses.forEach(function(e){var k=monthKey(e.date);if(!byMonth[k])byMonth[k]={e:[],i:[]};byMonth[k].e.push(e);});
-  incomes.forEach(function(i){var k=monthKey(i.date);if(!byMonth[k])byMonth[k]={e:[],i:[]};byMonth[k].i.push(i);});
-  var nM=Math.max(Object.keys(byMonth).length,1);
-  var html='<div class="summary-grid"><div class="metric green"><div class="metric-label">Totale entrate</div><div class="metric-value">€ '+fmt(totI)+'</div></div><div class="metric red"><div class="metric-label">Totale spese</div><div class="metric-value">€ '+fmt(totE)+'</div></div><div class="metric '+(bal>=0?'green':'red')+'"><div class="metric-label">Saldo</div><div class="metric-value">'+(bal>=0?'+':'')+'€ '+fmt(bal)+'</div></div><div class="metric"><div class="metric-label">Media spese/mese</div><div class="metric-value">€ '+fmt(totE/nM)+'</div></div></div>';
-  if(!Object.keys(byMonth).length){html+='<div class="empty">Nessuna voce</div>';cont.innerHTML=html;return;}
-  Object.keys(byMonth).sort().reverse().forEach(function(mk){
-    var me=byMonth[mk].e,mi=byMonth[mk].i;
-    var tE=me.reduce(function(s,e){return s+e.amount;},0);
-    var tI=mi.reduce(function(s,i){return s+i.amount;},0);
-    var bM=tI-tE;
-    var byCat={};
-    me.forEach(function(e){if(!byCat[e.cat])byCat[e.cat]=[];byCat[e.cat].push(e);});
-    var cats=Object.keys(byCat).map(function(c){return{cat:c,items:byCat[c]};});
-    cats.sort(function(a,b){return b.items.reduce(function(s,e){return s+e.amount;},0)-a.items.reduce(function(s,e){return s+e.amount;},0);});
-    var catBlocks=cats.map(function(entry){
-      var cat=entry.cat,items=entry.items;
-      var tC=items.reduce(function(s,e){return s+e.amount;},0);
-      var pct=Math.round(tC/tE*100);
-      var tBP=items.reduce(function(s,e){return s+(e.bp?e.bp.total:0);},0);
-      var bpN=tBP>0?'<span style="font-size:11px;color:#0F6E56;margin-left:8px"><i class="ti ti-ticket" style="font-size:11px"></i> - € '+fmt(tBP)+'</span>':'';
-      var uid='cat'+mk.replace('-','')+cat.replace(/\W/g,'');
-      var rows=items.map(function(e){
-        var bH=e.bp?'<span style="font-size:11px;color:#0F6E56"> '+e.bp.num+'x (- € '+fmt(e.bp.total)+')</span>':'';
-        var spH=e.splitPartner?'<span class="partner-badge"><i class="ti ti-users" style="font-size:10px"></i> 50%</span>':'';
-        return '<div class="expense-row"><span class="exp-date">'+fmtDate(e.date)+'</span><span>'+e.desc+bH+spH+'</span><span class="exp-amount">€ '+fmt(e.amount)+'</span><button class="exp-delete btn danger" onclick="deleteExpense('+e.id+')"><i class="ti ti-trash"></i></button></div>';
-      }).join('');
-      return '<div class="cat-block"><div class="cat-header" style="cursor:pointer" onclick="toggleCat(\''+uid+'\')"><div class="cat-label"><span style="width:10px;height:10px;border-radius:50%;background:'+(CAT_COLORS[cat]||'#888')+';display:inline-block"></span>'+cat+bpN+'</div><div style="display:flex;align-items:center;gap:12px"><span style="font-size:12px;color:#666">'+pct+'%</span><span style="font-weight:500;font-size:13px">€ '+fmt(tC)+'</span><i class="ti ti-chevron-down" id="ico-'+uid+'" style="font-size:14px;color:#666;transition:transform .2s"></i></div></div><div id="'+uid+'" style="display:none;padding:0 4px">'+rows+'</div></div>';
-    }).join('');
-    var incBlock='';
-    if(mi.length){
-      var iuid='inc'+mk.replace('-','');
-      var iRows=mi.map(function(i){
-        var bH=i.bp?'<span style="font-size:11px;color:#0F6E56"> '+i.bp.num+'x buoni</span>':'';
-        return '<div class="income-row"><span class="exp-date">'+fmtDate(i.date)+'</span><span>'+i.desc+bH+'</span><span class="exp-amount" style="color:#085041">+ € '+fmt(i.amount)+'</span><button class="exp-delete btn danger" onclick="deleteIncome('+i.id+')"><i class="ti ti-trash"></i></button></div>';
-      }).join('');
-      incBlock='<div class="cat-block"><div class="cat-header" style="background:#E1F5EE;cursor:pointer" onclick="toggleCat(\''+iuid+'\')"><div class="cat-label" style="color:#085041"><i class="ti ti-arrow-down-circle" style="font-size:14px"></i> Entrate</div><div style="display:flex;align-items:center;gap:8px"><span style="font-weight:500;font-size:13px;color:#085041">+ € '+fmt(tI)+'</span><i class="ti ti-chevron-down" id="ico-'+iuid+'" style="font-size:14px;color:#0F6E56;transition:transform .2s"></i></div></div><div id="'+iuid+'" style="display:none;padding:0 4px">'+iRows+'</div></div>';
+  const addPartnerItem = () => {
+    if(!pf.desc.trim()) return showToast('Inserisci la descrizione');
+    const amt=parseFloat(pf.amount);
+    if(!amt||amt<=0) return showToast('Importo non valido');
+    if(!pf.cat) return showToast('Seleziona una categoria');
+    const ts=Date.now();
+    const newItem={id:ts+1,desc:pf.desc,amount:amt,cat:pf.cat,date:pf.date,type:pf.tipo,note:pf.tipo==='debito'?'Anna ha anticipato':'Credito da Anna'};
+    const updP=[newItem,...partnerItems]; setPartnerItems(updP); savePar(updP);
+    if(pf.addToStorico){
+      if(pf.tipo==='debito'){
+        const updE=[{id:ts,amount:amt,date:pf.date,desc:pf.desc+' (Anna)',cat:pf.cat,note:'Anticipato da Anna',bp:null,splitPartner:false,partnerDebt:true},...expenses].sort((a,b)=>new Date(b.date)-new Date(a.date));
+        setExpenses(updE); saveExp(updE);
+      } else {
+        const updI=[{id:ts,amount:amt,date:pf.date,desc:pf.desc+' (credito da Anna)',note:'Credito da Anna',bp:null},...incomes].sort((a,b)=>new Date(b.date)-new Date(a.date));
+        setIncomes(updI); saveInc(updI);
+      }
     }
-    var bc=bM>=0?'#085041':'#a32d2d';
-    html+='<div class="month-section"><div class="month-header"><h2>'+monthLabel(mk)+'</h2><div style="display:flex;gap:16px;font-size:13px;align-items:center">'+(tI>0?'<span style="color:#085041">+ € '+fmt(tI)+'</span>':'')+'<span style="color:#a32d2d">- € '+fmt(tE)+'</span><span style="color:'+bc+';font-weight:500">Saldo: '+(bM>=0?'+':'')+'€ '+fmt(bM)+'</span></div></div><div class="card" style="padding:.75rem">'+incBlock+catBlocks+'</div></div>';
-  });
-  cont.innerHTML=html;
+    setPf({tipo:'credito',desc:'',amount:'',cat:'',date:todayStr(),note:'',addToStorico:true});
+    showToast((pf.tipo==='debito'?'Debito':'Credito')+' aggiunto ✓');
+  };
+
+  const addPayment = () => {
+    const amt=parseFloat(payf.amount);
+    if(isNaN(amt)||amt===0) return showToast('Importo non valido');
+    const now=todayStr();
+    const updated=[{id:Date.now(),desc:'Pagamento '+now+(payf.desc?' — '+payf.desc:''),amount:Math.abs(amt),signed:amt,cat:'',date:now,type:'pagamento',note:amt>0?'Anna ha pagato':'Hai pagato Anna'},...partnerItems];
+    setPartnerItems(updated); savePar(updated);
+    setPayf({amount:'',desc:''});
+    showToast('Pagamento registrato ✓');
+  };
+
+  const exportCSV = () => {
+    const rows=[['Tipo','Data','Descrizione','Categoria','Importo']];
+    filteredExp.forEach(e=>rows.push(['Spesa',e.date,e.desc,e.cat,e.amount.toFixed(2)]));
+    if(!filterCat) filteredInc.forEach(i=>rows.push(['Entrata',i.date,i.desc,'',i.amount.toFixed(2)]));
+    const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'}));
+    a.download='spese_'+profile+'.csv'; a.click();
+    showToast('CSV scaricato ✓');
+  };
+
+  const toggleCat = cat => setActiveCats(p=>p.includes(cat)?(p.length>1?p.filter(c=>c!==cat):p):[...p,cat]);
+
+  /* ── Chart configs ── */
+  const globalChartConfig = useMemo(()=>({
+    type:'bar',
+    data:{
+      labels:monthData.map(d=>d.name),
+      datasets:[
+        {label:'Entrate',data:monthData.map(d=>d.entrate),backgroundColor:'rgba(29,158,117,.8)',borderRadius:4,order:2},
+        {label:'Uscite', data:monthData.map(d=>d.uscite), backgroundColor:'rgba(226,75,74,.8)', borderRadius:4,order:2},
+        {label:'Media entrate',data:monthData.map(()=>avgI),type:'line',borderColor:'#0F6E56',borderWidth:2,borderDash:[6,4],pointRadius:0,fill:false,order:1},
+        {label:'Media uscite', data:monthData.map(()=>avgE),type:'line',borderColor:'#a32d2d',borderWidth:2,borderDash:[6,4],pointRadius:0,fill:false,order:1},
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12,padding:12}},
+        tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: € ${fmt(ctx.parsed.y)}`}}},
+      scales:{y:{ticks:{callback:v=>'€'+Math.round(v),font:{size:11}},grid:{color:'rgba(0,0,0,.05)'},border:{display:false}},
+              x:{ticks:{font:{size:11}},grid:{display:false},border:{display:false}}}}
+  }),[monthData,avgI,avgE]);
+
+  const catChartConfig = useMemo(()=>({
+    type:'line',
+    data:{labels:allMonthKeys.map(mShort),
+      datasets:activeCats.map(cat=>({
+        label:cat,
+        data:allMonthKeys.map(mk=>Math.round(expenses.filter(e=>mKey(e.date)===mk&&e.cat===cat).reduce((s,e)=>s+e.amount,0)*100)/100),
+        borderColor:CAT_COLORS[cat]||'#888',backgroundColor:(CAT_COLORS[cat]||'#888')+'22',
+        borderWidth:2,tension:.35,pointRadius:3,pointBackgroundColor:CAT_COLORS[cat]||'#888',fill:false,
+      }))
+    },
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12,padding:8}},
+        tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: € ${fmt(ctx.parsed.y)}`}}},
+      scales:{y:{ticks:{callback:v=>'€'+Math.round(v),font:{size:11}},grid:{color:'rgba(0,0,0,.05)'},border:{display:false}},
+              x:{ticks:{font:{size:11}},grid:{display:false},border:{display:false}}}}
+  }),[allMonthKeys,expenses,activeCats]);
+
+  /* ── STYLES ── */
+  const S = {
+    wrap:{background:th.bg,minHeight:'100vh'},
+    app:{maxWidth:860,margin:'0 auto',paddingBottom:48},
+    hdr:{padding:'20px 20px 0',display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:20},
+    htitle:{fontSize:18,fontWeight:500,display:'flex',alignItems:'center',gap:8,color:'#1a1a1a'},
+    psw:{display:'flex',background:'rgba(0,0,0,.07)',borderRadius:10,padding:3,gap:2},
+    pbtn:(a,w)=>({padding:'6px 16px',borderRadius:8,border:'none',fontSize:12,fontWeight:500,cursor:'pointer',transition:'all .2s',background:a?(w==='marco'?'#1a3a6e':'#a0325a'):'transparent',color:a?'#fff':'#666'}),
+    tabbar:{display:'flex',padding:'0 20px',borderBottom:'0.5px solid rgba(0,0,0,.12)',overflowX:'auto'},
+    tab:(a)=>({padding:'10px 13px',border:'none',background:'none',fontSize:12,fontWeight:a?500:400,color:a?th.accent:'#888',borderBottom:a?`2px solid ${th.accent}`:'2px solid transparent',marginBottom:-1,cursor:'pointer',whiteSpace:'nowrap',transition:'color .15s'}),
+    page:{padding:'20px'},
+    card:{background:'#fff',border:'0.5px solid rgba(0,0,0,.11)',borderRadius:12,padding:'18px 20px',marginBottom:16},
+    grid:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12},
+    fg:{display:'flex',flexDirection:'column',gap:5},
+    full:{gridColumn:'1/-1'},
+    lbl:{fontSize:10,color:'#999',fontWeight:500,textTransform:'uppercase',letterSpacing:'0.05em'},
+    inp:{padding:'9px 11px',border:'0.5px solid rgba(0,0,0,.2)',borderRadius:8,fontSize:14,background:'#fff',color:'#1a1a1a',outline:'none',width:'100%'},
+    sel:{padding:'9px 11px',border:'0.5px solid rgba(0,0,0,.2)',borderRadius:8,fontSize:13,background:'#fff',color:'#1a1a1a',outline:'none',width:'100%'},
+    btnP:{padding:'9px 20px',borderRadius:8,border:'none',background:th.accent,color:'#fff',fontSize:13,fontWeight:500,cursor:'pointer'},
+    btnO:{padding:'9px 18px',borderRadius:8,border:'0.5px solid rgba(0,0,0,.2)',background:'transparent',color:'#555',fontSize:13,cursor:'pointer'},
+    btnS:{padding:'9px 20px',borderRadius:8,border:'none',background:'#0F6E56',color:'#fff',fontSize:13,fontWeight:500,cursor:'pointer'},
+    btnSm:{padding:'6px 12px',borderRadius:7,border:'0.5px solid rgba(0,0,0,.2)',background:'transparent',color:'#666',fontSize:12,cursor:'pointer'},
+    actions:{display:'flex',justifyContent:'flex-end',gap:8,marginTop:16},
+    kpiGrid:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(130px,1fr))',gap:10,marginBottom:20},
+    fbar:{display:'flex',gap:8,marginBottom:16,flexWrap:'wrap',alignItems:'center'},
+    mhdr:{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'10px 0',borderBottom:'0.5px solid rgba(0,0,0,.1)',marginBottom:10},
+    erow:{display:'grid',gridTemplateColumns:'54px 1fr auto 24px',gap:8,alignItems:'center',padding:'8px 10px',fontSize:13,borderBottom:'0.5px solid rgba(0,0,0,.05)'},
+    irow:{display:'grid',gridTemplateColumns:'54px 1fr auto 24px',gap:8,alignItems:'center',padding:'8px 10px',fontSize:13,borderBottom:'0.5px solid rgba(0,0,0,.05)'},
+    dlbl:{color:'#bbb',fontSize:11},
+    chip:(a,cat)=>({padding:'4px 10px',borderRadius:20,fontSize:11,fontWeight:500,cursor:'pointer',userSelect:'none',border:`0.5px solid ${a?(CAT_COLORS[cat]||'#888'):'rgba(0,0,0,.14)'}`,background:a?(CAT_COLORS[cat]||'#888'):'#f5f5f0',color:a?'#fff':'#666',transition:'all .15s'}),
+    andCard:{background:'#fff',border:'0.5px solid rgba(0,0,0,.11)',borderRadius:12,padding:'18px 20px',marginBottom:16},
+    andTitle:{fontSize:13,fontWeight:500,color:'#666',marginBottom:14},
+    xbtn:{background:'none',border:'none',cursor:'pointer',color:'#ddd',fontSize:16,padding:0,lineHeight:1},
+    bpBox:{background:'#f5f5f0',borderRadius:10,padding:'12px',marginTop:6,display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10,alignItems:'end'},
+    sectionTitle:{fontSize:13,fontWeight:500,color:'#555',marginBottom:12,display:'flex',alignItems:'center',gap:6},
+    toast:{position:'fixed',bottom:24,right:24,background:th.accent,color:'#fff',padding:'10px 18px',borderRadius:8,fontSize:13,zIndex:999,pointerEvents:'none',boxShadow:'0 2px 12px rgba(0,0,0,.15)'},
+    loadingWrap:{display:'flex',alignItems:'center',justifyContent:'center',padding:'4rem',color:'#bbb',fontSize:14,gap:8},
+  };
+
+  /* ── TAB 0: NUOVA SPESA ── */
+  const renderSpesa = () => (
+    <div style={S.page}>
+      <div style={S.card}>
+        <div style={S.grid}>
+          <div style={S.fg}><label style={S.lbl}>Importo (€)</label><input style={S.inp} type="number" min="0" step="0.01" placeholder="0,00" value={ef.amount} onChange={e=>setEf(p=>({...p,amount:e.target.value}))}/></div>
+          <div style={S.fg}><label style={S.lbl}>Data</label><input style={S.inp} type="date" value={ef.date} onChange={e=>setEf(p=>({...p,date:e.target.value}))}/></div>
+          <div style={{...S.fg,...S.full}}><label style={S.lbl}>Descrizione</label><input style={S.inp} type="text" placeholder="Es. Visita medica..." value={ef.desc} onChange={e=>setEf(p=>({...p,desc:e.target.value}))}/></div>
+          <div style={{...S.fg,...S.full}}>
+            <label style={S.lbl}>Categoria</label>
+            <select style={S.sel} value={ef.cat} onChange={e=>setEf(p=>({...p,cat:e.target.value,bpNum:'',bpVal:profile==='anna'?'7.50':'8'}))}>
+              <option value="">— Seleziona —</option>{CATS.map(c=><option key={c}>{c}</option>)}
+            </select>
+          </div>
+          {ef.cat==='Spesa alimentare'&&(<div style={{...S.fg,...S.full}}>
+            <label style={S.lbl}>Buoni pasto (opzionale)</label>
+            <div style={S.bpBox}>
+              <div style={S.fg}><label style={S.lbl}>N° buoni</label><input style={S.inp} type="number" min="0" step="1" placeholder="0" value={ef.bpNum} onChange={e=>setEf(p=>({...p,bpNum:e.target.value}))}/></div>
+              <div style={S.fg}><label style={S.lbl}>Valore (€)</label><input style={S.inp} type="number" min="0" step="0.01" value={ef.bpVal} onChange={e=>setEf(p=>({...p,bpVal:e.target.value}))}/></div>
+              <div style={{paddingBottom:9,fontSize:13,color:'#666'}}>Sconto: <span style={{fontWeight:500,color:'#1a1a1a'}}>€ {fmt(bpDiscount)}</span></div>
+            </div>
+          </div>)}
+          <div style={{...S.fg,...S.full}}><label style={S.lbl}>Note (opzionale)</label><input style={S.inp} type="text" placeholder="Informazioni aggiuntive..." value={ef.note} onChange={e=>setEf(p=>({...p,note:e.target.value}))}/></div>
+          <div style={{...S.fg,...S.full}}>
+            <label style={{display:'flex',alignItems:'center',gap:8,fontSize:13,color:'#555',background:th.accentLight,padding:'10px 12px',borderRadius:8,cursor:'pointer',userSelect:'none'}}>
+              <input type="checkbox" checked={ef.split} onChange={e=>setEf(p=>({...p,split:e.target.checked}))} style={{width:15,height:15,accentColor:th.accent}}/>
+              Da spartire al 50% con {profile==='marco'?'Anna':'Marco'}
+            </label>
+          </div>
+        </div>
+        <div style={S.actions}>
+          <button style={S.btnO} onClick={()=>setEf({amount:'',date:todayStr(),desc:'',cat:'',note:'',split:false,bpNum:'',bpVal:profile==='anna'?'7.50':'8'})}>Cancella</button>
+          <button style={S.btnP} onClick={addExpense}>Salva spesa</button>
+        </div>
+      </div>
+    </div>
+  );
+
+  /* ── TAB 1: NUOVA ENTRATA ── */
+  const renderEntrata = () => (
+    <div style={S.page}>
+      <div style={S.card}>
+        <div style={S.grid}>
+          <div style={S.fg}><label style={S.lbl}>Importo (€)</label><input style={S.inp} type="number" min="0" step="0.01" placeholder="0,00" value={inf.amount} onChange={e=>setInf(p=>({...p,amount:e.target.value}))}/></div>
+          <div style={S.fg}><label style={S.lbl}>Data</label><input style={S.inp} type="date" value={inf.date} onChange={e=>setInf(p=>({...p,date:e.target.value}))}/></div>
+          <div style={{...S.fg,...S.full}}><label style={S.lbl}>Descrizione</label><input style={S.inp} type="text" placeholder="Es. Stipendio..." value={inf.desc} onChange={e=>setInf(p=>({...p,desc:e.target.value}))}/></div>
+          <div style={{...S.fg,...S.full}}>
+            <label style={S.lbl}>Buoni pasto (opzionale)</label>
+            <div style={S.bpBox}>
+              <div style={S.fg}><label style={S.lbl}>N° buoni</label><input style={S.inp} type="number" min="0" step="1" placeholder="0" value={inf.bpNum} onChange={e=>{const n=e.target.value,v=parseFloat(inf.bpVal)||8,tot=Math.round((parseFloat(n)||0)*v*100)/100;setInf(p=>({...p,bpNum:n,amount:tot>0?String(tot):p.amount,desc:tot>0&&(!p.desc||p.desc.startsWith('Buoni pasto'))?'Buoni pasto':p.desc}));}}/></div>
+              <div style={S.fg}><label style={S.lbl}>Valore (€)</label><input style={S.inp} type="number" min="0" step="0.01" value={inf.bpVal} onChange={e=>setInf(p=>({...p,bpVal:e.target.value}))}/></div>
+              <div style={{paddingBottom:9,fontSize:13,color:'#666'}}>Totale: <span style={{fontWeight:500,color:'#1a1a1a'}}>€ {fmt(incBpTotal)}</span></div>
+            </div>
+          </div>
+          <div style={{...S.fg,...S.full}}><label style={S.lbl}>Note (opzionale)</label><input style={S.inp} type="text" placeholder="..." value={inf.note} onChange={e=>setInf(p=>({...p,note:e.target.value}))}/></div>
+        </div>
+        <div style={S.actions}>
+          <button style={S.btnO} onClick={()=>setInf({amount:'',date:todayStr(),desc:'',note:'',bpNum:'',bpVal:profile==='anna'?'7.50':'8'})}>Cancella</button>
+          <button style={S.btnS} onClick={addIncome}>Salva entrata</button>
+        </div>
+      </div>
+    </div>
+  );
+
+  /* ── TAB 2: STORICO ── */
+  const renderStorico = () => (
+    <div style={S.page}>
+      <div style={S.fbar}>
+        <select style={{...S.sel,maxWidth:160,fontSize:12}} value={filterMonth} onChange={e=>setFilterMonth(e.target.value)}>
+          <option value="">Tutti i mesi</option>
+          {allMonthKeys.slice().reverse().map(k=><option key={k} value={k}>{mLabel(k)}</option>)}
+        </select>
+        <select style={{...S.sel,maxWidth:160,fontSize:12}} value={filterCat} onChange={e=>setFilterCat(e.target.value)}>
+          <option value="">Tutte le categorie</option>{CATS.map(c=><option key={c}>{c}</option>)}
+        </select>
+        <div style={{flex:1}}/><button style={S.btnSm} onClick={exportCSV}>↓ CSV</button>
+      </div>
+      {!groupedMonths.length
+        ? <div style={{textAlign:'center',padding:'3rem',color:'#bbb',fontSize:14}}>Nessuna voce trovata</div>
+        : groupedMonths.map(mk=>{
+          const me=filteredExp.filter(e=>mKey(e.date)===mk);
+          const mi=filterCat?[]:filteredInc.filter(i=>mKey(i.date)===mk);
+          const totE=me.reduce((s,e)=>s+e.amount,0), totI=mi.reduce((s,i)=>s+i.amount,0), bal=totI-totE;
+          return (
+            <div key={mk} style={{marginBottom:20}}>
+              <div style={S.mhdr}>
+                <span style={{fontSize:15,fontWeight:500}}>{mLabel(mk)}</span>
+                <div style={{display:'flex',gap:14,fontSize:12}}>
+                  {totI>0&&<span style={{color:'#0F6E56',fontWeight:500}}>+ € {fmt(totI)}</span>}
+                  <span style={{color:'#a32d2d',fontWeight:500}}>− € {fmt(totE)}</span>
+                  {totI>0&&<span style={{color:bal>=0?'#0F6E56':'#a32d2d',fontWeight:500}}>{bal>=0?'+':''}€ {fmt(bal)}</span>}
+                </div>
+              </div>
+              <div style={S.card}>
+                {mi.map(i=>(<div key={i.id} style={S.irow}><span style={S.dlbl}>{fmtDate(i.date)}</span><span style={{color:'#333'}}>{i.desc}{i.bp&&<span style={{fontSize:10,color:'#0F6E56',marginLeft:6}}>🎟 {i.bp.num}x</span>}</span><span style={{color:'#0F6E56',fontWeight:500}}>+ € {fmt(i.amount)}</span><button style={S.xbtn} onClick={()=>{const u=incomes.filter(x=>x.id!==i.id);setIncomes(u);saveInc(u);showToast('Eliminata');}}>×</button></div>))}
+                {mi.length>0&&me.length>0&&<div style={{height:'0.5px',background:'rgba(0,0,0,.07)',margin:'4px 0'}}/>}
+                {me.map(e=>(<div key={e.id} style={S.erow}><span style={S.dlbl}>{fmtDate(e.date)}</span><div><div style={{color:'#333',lineHeight:1.4}}>{e.desc}{e.bp&&<span style={{fontSize:10,color:'#0F6E56',marginLeft:6}}>🎟 {e.bp.num}x (−€{fmt(e.bp.total)})</span>}{e.splitPartner&&<span style={{fontSize:10,background:'#dde8f5',color:'#1a3a6e',padding:'1px 5px',borderRadius:4,marginLeft:4}}>50%</span>}</div><span style={{display:'inline-block',marginTop:2,padding:'1px 7px',borderRadius:4,fontSize:10,fontWeight:500,background:(CAT_COLORS[e.cat]||'#888')+'22',color:CAT_COLORS[e.cat]||'#888'}}>{e.cat}</span></div><span style={{color:'#a32d2d',fontWeight:500}}>− € {fmt(e.amount)}</span><button style={S.xbtn} onClick={()=>{const u=expenses.filter(x=>x.id!==e.id);setExpenses(u);saveExp(u);showToast('Eliminata');}}>×</button></div>))}
+              </div>
+            </div>
+          );
+        })
+      }
+    </div>
+  );
+
+  /* ── TAB 3: RIEPILOGO ── */
+  const renderRiepilogo = () => {
+    const totE=expenses.reduce((s,e)=>s+e.amount,0), totI=incomes.reduce((s,i)=>s+i.amount,0);
+    const byMonth={};
+    expenses.forEach(e=>{const k=mKey(e.date);if(!byMonth[k])byMonth[k]={e:[],i:[]};byMonth[k].e.push(e);});
+    incomes.forEach(i=>{const k=mKey(i.date);if(!byMonth[k])byMonth[k]={e:[],i:[]};byMonth[k].i.push(i);});
+    const nM=Math.max(Object.keys(byMonth).length,1);
+    const toggleCatOpen = uid => setOpenCats(prev=>({...prev,[uid]:!prev[uid]}));
+    return (
+      <div style={S.page}>
+        <div style={S.kpiGrid}>
+          <KpiCard label="Totale entrate" value={'€ '+fmt(totI)} color="#085041" bg="#E1F5EE"/>
+          <KpiCard label="Totale spese" value={'€ '+fmt(totE)} color="#711B0B" bg="#FCEBEB"/>
+          <KpiCard label="Saldo" value={(totI-totE>=0?'+':'')+'€ '+fmt(totI-totE)} color={totI-totE>=0?'#085041':'#a32d2d'} bg={totI-totE>=0?'#E1F5EE':'#FCEBEB'}/>
+          <KpiCard label="Media/mese" value={'€ '+fmt(totE/nM)} color={th.accent} bg={th.accentLight}/>
+        </div>
+        {Object.keys(byMonth).sort().reverse().map(mk=>{
+          const me=byMonth[mk].e, mi=byMonth[mk].i;
+          const tE=me.reduce((s,e)=>s+e.amount,0), tI=mi.reduce((s,i)=>s+i.amount,0), bM=tI-tE;
+          const byCat={};
+          me.forEach(e=>{if(!byCat[e.cat])byCat[e.cat]=0; byCat[e.cat]+=e.amount;});
+          const cats=Object.entries(byCat).sort((a,b)=>b[1]-a[1]);
+          const incUid='inc_'+mk, incOpen=!!openCats[incUid];
+          return (
+            <div key={mk} style={{marginBottom:20}}>
+              <div style={S.mhdr}>
+                <span style={{fontSize:15,fontWeight:500}}>{mLabel(mk)}</span>
+                <div style={{display:'flex',gap:12,fontSize:12}}>
+                  {tI>0&&<span style={{color:'#0F6E56',fontWeight:500}}>+ € {fmt(tI)}</span>}
+                  <span style={{color:'#a32d2d',fontWeight:500}}>− € {fmt(tE)}</span>
+                  <span style={{color:bM>=0?'#0F6E56':'#a32d2d',fontWeight:500}}>Saldo: {bM>=0?'+':''}€ {fmt(bM)}</span>
+                </div>
+              </div>
+              <div style={S.card}>
+                {mi.length>0&&(
+                  <div style={{marginBottom:8}}>
+                    <div onClick={()=>toggleCatOpen(incUid)} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'7px 10px',background:'#E1F5EE',borderRadius:7,fontSize:13,fontWeight:500,cursor:'pointer',userSelect:'none'}}>
+                      <div style={{display:'flex',alignItems:'center',gap:8,color:'#085041'}}><span style={{width:9,height:9,borderRadius:'50%',background:'#0F6E56',display:'inline-block'}}/>Entrate</div>
+                      <div style={{display:'flex',alignItems:'center',gap:12}}><span style={{color:'#085041',fontWeight:500}}>+ € {fmt(tI)}</span><span style={{fontSize:12,color:'#0F6E56',display:'inline-block',transform:incOpen?'rotate(180deg)':'rotate(0deg)'}}>▾</span></div>
+                    </div>
+                    {incOpen&&<div style={{paddingTop:2}}>{mi.map(i=>(<div key={i.id} style={S.irow}><span style={S.dlbl}>{fmtDate(i.date)}</span><span style={{color:'#333'}}>{i.desc}{i.bp&&<span style={{fontSize:10,color:'#0F6E56',marginLeft:6}}>🎟 {i.bp.num}x</span>}</span><span style={{color:'#0F6E56',fontWeight:500}}>+ € {fmt(i.amount)}</span><button style={S.xbtn} onClick={()=>{const u=incomes.filter(x=>x.id!==i.id);setIncomes(u);saveInc(u);showToast('Eliminata');}}>×</button></div>))}</div>}
+                  </div>
+                )}
+                {cats.map(([cat,tot])=>{
+                  const pct=Math.round(tot/tE*100), uid='cat_'+mk+'_'+cat, isOpen=!!openCats[uid];
+                  const tBP=byMonth[mk].e.filter(e=>e.cat===cat&&e.bp).reduce((s,e)=>s+(e.bp?e.bp.total:0),0);
+                  const catItems=byMonth[mk].e.filter(e=>e.cat===cat);
+                  return (
+                    <div key={cat} style={{marginBottom:6}}>
+                      <div onClick={()=>toggleCatOpen(uid)} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'7px 10px',background:'#f8f8f5',borderRadius:7,fontSize:13,fontWeight:500,cursor:'pointer',userSelect:'none'}}>
+                        <div style={{display:'flex',alignItems:'center',gap:8}}><span style={{width:9,height:9,borderRadius:'50%',background:CAT_COLORS[cat]||'#888',display:'inline-block'}}/>{cat}{tBP>0&&<span style={{fontSize:10,color:'#0F6E56',fontWeight:500}}>🎟 −€{fmt(tBP)}</span>}</div>
+                        <div style={{display:'flex',alignItems:'center',gap:12}}><span style={{fontSize:11,color:'#bbb'}}>{pct}%</span><span style={{fontWeight:500}}>€ {fmt(tot)}</span><span style={{fontSize:12,color:'#888',display:'inline-block',transform:isOpen?'rotate(180deg)':'rotate(0deg)'}}>▾</span></div>
+                      </div>
+                      <div style={{height:4,background:'#f0f0ea',borderRadius:3,overflow:'hidden',margin:'3px 10px 4px'}}><div style={{height:'100%',width:pct+'%',background:CAT_COLORS[cat]||'#888',borderRadius:3}}/></div>
+                      {isOpen&&<div style={{paddingTop:2}}>{catItems.map(e=>(<div key={e.id} style={S.erow}><span style={S.dlbl}>{fmtDate(e.date)}</span><span style={{color:'#555'}}>{e.desc}{e.bp&&<span style={{fontSize:10,color:'#0F6E56',marginLeft:6}}>🎟 {e.bp.num}x (−€{fmt(e.bp.total)})</span>}{e.splitPartner&&<span style={{fontSize:10,background:'#dde8f5',color:'#1a3a6e',padding:'1px 5px',borderRadius:4,marginLeft:4}}>50%</span>}</span><span style={{color:'#a32d2d',fontWeight:500}}>€ {fmt(e.amount)}</span><button style={S.xbtn} onClick={()=>{const u=expenses.filter(x=>x.id!==e.id);setExpenses(u);saveExp(u);showToast('Eliminata');}}>×</button></div>))}</div>}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  /* ── TAB 4: DEBITI/CREDITI ── */
+  const renderPartner = () => {
+    const {cred,deb,saldo}=partnerSaldo;
+    const byMonth={};
+    partnerItems.forEach(a=>{const k=mKey(a.date);if(!byMonth[k])byMonth[k]=[];byMonth[k].push(a);});
+    return (
+      <div style={S.page}>
+        <div style={S.kpiGrid}>
+          <KpiCard label={`Tu devi a ${profile==='marco'?'Anna':'Marco'}`} value={'€ '+fmt(deb)} color="#711B0B" bg="#FCEBEB"/>
+          <KpiCard label={`${profile==='marco'?'Anna':'Marco'} ti deve`} value={'€ '+fmt(cred)} color="#085041" bg="#E1F5EE"/>
+          <KpiCard label="Saldo netto" value={(saldo>=0?'+':'')+'€ '+fmt(Math.abs(saldo))} color={saldo>=0?'#085041':'#a32d2d'} bg={saldo>=0?'#E1F5EE':'#FCEBEB'}/>
+        </div>
+        <div style={{...S.card,borderColor:'#E1F5EE',marginBottom:16}}>
+          <div style={S.sectionTitle}>↔ Registra pagamento</div>
+          <div style={S.grid}>
+            <div style={S.fg}>
+              <label style={S.lbl}>Importo (€)</label>
+              <div style={{fontSize:10,color:'#bbb',marginBottom:4}}>positivo = {profile==='marco'?'Anna':'Marco'} paga te · negativo = tu paghi {profile==='marco'?'Anna':'Marco'}</div>
+              <input style={S.inp} type="number" step="0.01" placeholder="es. 25,00 o -10,00" value={payf.amount} onChange={e=>setPayf(p=>({...p,amount:e.target.value}))}/>
+            </div>
+            <div style={S.fg}>
+              <label style={S.lbl}>Saldo dopo pagamento</label>
+              <div style={{padding:'9px 11px',background:'#f5f5f0',borderRadius:8,fontSize:14,color:payPreview?.color||'#999',minHeight:40,display:'flex',alignItems:'center'}}>{payPreview?.text||'— inserisci importo'}</div>
+            </div>
+            <div style={{...S.fg,...S.full}}><label style={S.lbl}>Descrizione (opzionale)</label><input style={S.inp} type="text" placeholder="Es. Bonifico..." value={payf.desc} onChange={e=>setPayf(p=>({...p,desc:e.target.value}))}/></div>
+          </div>
+          <div style={S.actions}><button style={S.btnS} onClick={addPayment}>Registra pagamento</button></div>
+        </div>
+        <div style={S.card}>
+          <div style={S.sectionTitle}>+ Aggiungi debito / credito</div>
+          <div style={S.grid}>
+            <div style={{...S.fg,...S.full}}>
+              <label style={S.lbl}>Tipo</label>
+              <div style={{display:'flex',gap:8}}>
+                <button onClick={()=>setPf(p=>({...p,tipo:'debito'}))} style={{...S.btnO,...(pf.tipo==='debito'?{background:th.accent,color:'#fff',border:'none'}:{}),flex:1,justifyContent:'center'}}>↑ Debito (tu devi)</button>
+                <button onClick={()=>setPf(p=>({...p,tipo:'credito'}))} style={{...S.btnO,...(pf.tipo==='credito'?{background:'#0F6E56',color:'#fff',border:'none'}:{}),flex:1,justifyContent:'center'}}>↓ Credito (ti deve)</button>
+              </div>
+            </div>
+            <div style={{...S.fg,...S.full}}><label style={S.lbl}>Descrizione</label><input style={S.inp} type="text" placeholder="Es. Spesa supermercato..." value={pf.desc} onChange={e=>setPf(p=>({...p,desc:e.target.value}))}/></div>
+            <div style={S.fg}><label style={S.lbl}>Importo (€)</label><input style={S.inp} type="number" min="0" step="0.01" placeholder="0,00" value={pf.amount} onChange={e=>setPf(p=>({...p,amount:e.target.value}))}/></div>
+            <div style={S.fg}><label style={S.lbl}>Data</label><input style={S.inp} type="date" value={pf.date} onChange={e=>setPf(p=>({...p,date:e.target.value}))}/></div>
+            <div style={{...S.fg,...S.full}}>
+              <label style={S.lbl}>Categoria</label>
+              <select style={S.sel} value={pf.cat} onChange={e=>setPf(p=>({...p,cat:e.target.value}))}>
+                <option value="">— Seleziona —</option>{CATS.map(c=><option key={c}>{c}</option>)}
+              </select>
+            </div>
+            <div style={{...S.fg,...S.full}}>
+              <label style={{display:'flex',alignItems:'center',gap:8,fontSize:13,color:'#555',background:th.accentLight,padding:'10px 12px',borderRadius:8,cursor:'pointer',userSelect:'none'}}>
+                <input type="checkbox" checked={pf.addToStorico} onChange={e=>setPf(p=>({...p,addToStorico:e.target.checked}))} style={{width:15,height:15,accentColor:th.accent}}/>
+                Imputare spesa nello storico
+              </label>
+            </div>
+          </div>
+          <div style={S.actions}>
+            <button style={S.btnO} onClick={()=>setPf({tipo:'credito',desc:'',amount:'',cat:'',date:todayStr(),note:'',addToStorico:true})}>Cancella</button>
+            <button style={pf.tipo==='debito'?S.btnP:S.btnS} onClick={addPartnerItem}>{pf.tipo==='debito'?'Aggiungi debito':'Aggiungi credito'}</button>
+          </div>
+        </div>
+        {!Object.keys(byMonth).length
+          ? <div style={{textAlign:'center',padding:'3rem',color:'#bbb',fontSize:14}}>Nessuna voce registrata</div>
+          : Object.keys(byMonth).sort().reverse().map(mk=>{
+            const items=byMonth[mk];
+            const mC=items.filter(a=>a.type==='credito').reduce((s,a)=>s+a.amount,0);
+            const mD=items.filter(a=>a.type==='debito').reduce((s,a)=>s+a.amount,0);
+            const mP=items.filter(a=>a.type==='pagamento').reduce((s,a)=>s+(a.signed!==undefined?a.signed:a.amount),0);
+            const sM=mC-mD-mP;
+            return (
+              <div key={mk} style={{marginBottom:20}}>
+                <div style={S.mhdr}>
+                  <span style={{fontSize:15,fontWeight:500}}>{mLabel(mk)}</span>
+                  <span style={{fontSize:12,fontWeight:500,color:sM>=0?'#0F6E56':'#a32d2d'}}>Saldo: {sM>=0?'+':''}€ {fmt(sM)}</span>
+                </div>
+                <div style={S.card}>
+                  {items.map(a=>{
+                    const isPay=a.type==='pagamento', isD=a.type==='debito';
+                    const dispAmt=isPay&&a.signed!==undefined?(a.signed<0?'− ':'+ ')+'€ '+fmt(Math.abs(a.signed)):(isD?'− ':'+ ')+'€ '+fmt(a.amount);
+                    const dispCol=isPay&&a.signed!==undefined?(a.signed<0?'#a32d2d':'#0F6E56'):(isD?'#a32d2d':'#0F6E56');
+                    return (
+                      <div key={a.id} style={{display:'grid',gridTemplateColumns:'54px 1fr auto auto 24px',gap:8,alignItems:'center',padding:'8px 10px',fontSize:13,borderBottom:'0.5px solid rgba(0,0,0,.05)'}}>
+                        <span style={S.dlbl}>{fmtDate(a.date)}</span>
+                        <div><div style={{color:'#333',lineHeight:1.4}}>{a.desc}</div>{a.cat&&<span style={{display:'inline-block',marginTop:2,padding:'1px 7px',borderRadius:4,fontSize:10,fontWeight:500,background:(CAT_COLORS[a.cat]||'#888')+'22',color:CAT_COLORS[a.cat]||'#888'}}>{a.cat}</span>}</div>
+                        <span style={{fontSize:10,fontWeight:500,padding:'2px 7px',borderRadius:5,background:isD?'#FCEBEB':'#E1F5EE',color:isD?'#a32d2d':'#085041',whiteSpace:'nowrap'}}>{isD?'Debito':isPay?'Pagamento':'Credito'}</span>
+                        <span style={{color:dispCol,fontWeight:500,whiteSpace:'nowrap'}}>{dispAmt}</span>
+                        <button style={S.xbtn} onClick={()=>{const u=partnerItems.filter(x=>x.id!==a.id);setPartnerItems(u);savePar(u);showToast('Eliminata');}}>×</button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })
+        }
+      </div>
+    );
+  };
+
+  /* ── TAB 5: ANDAMENTI ── */
+  const renderAndamenti = () => {
+    const n=monthData.length||1;
+    const avgSav=Math.round((monthData.reduce((s,d)=>s+d.entrate,0)-monthData.reduce((s,d)=>s+d.uscite,0))/n*100)/100;
+    const bestMk=[...monthData].sort((a,b)=>(b.entrate-b.uscite)-(a.entrate-a.uscite))[0]?.mk||'';
+    const worstMk=[...monthData].sort((a,b)=>b.uscite-a.uscite)[0]?.mk||'';
+    return (
+      <div style={S.page}>
+        <div style={S.kpiGrid}>
+          <KpiCard label="Media entrate/mese" value={'€ '+fmt(avgI)} color="#085041" bg="#E1F5EE"/>
+          <KpiCard label="Media uscite/mese"  value={'€ '+fmt(avgE)} color="#711B0B" bg="#FCEBEB"/>
+          <KpiCard label="Risparmio medio" value={(avgSav>=0?'+':'')+'€ '+fmt(avgSav)} color={avgSav>=0?'#085041':'#a32d2d'} bg={avgSav>=0?'#E1F5EE':'#FCEBEB'}/>
+          <KpiCard label="Mese migliore"    value={bestMk?mShort(bestMk):'-'} color={th.accent} bg={th.accentLight}/>
+          <KpiCard label="Mese più costoso" value={worstMk?mShort(worstMk):'-'} color="#711B0B" bg="#FCEBEB"/>
+        </div>
+        <div style={S.andCard}>
+          <div style={S.andTitle}>Entrate e uscite mensili</div>
+          <div style={{position:'relative',height:220}}><ChartCanvas config={globalChartConfig} height={220}/></div>
+        </div>
+        <div style={S.andCard}>
+          <div style={{...S.andTitle,marginBottom:10}}>Andamento per categoria</div>
+          <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:14}}>
+            {CATS.map(cat=>(<button key={cat} onClick={()=>toggleCat(cat)} style={S.chip(activeCats.includes(cat),cat)}>{cat}</button>))}
+          </div>
+          <div style={{position:'relative',height:280}}><ChartCanvas config={catChartConfig} height={280}/></div>
+        </div>
+      </div>
+    );
+  };
+
+  /* ── RENDER ── */
+  return (
+    <div style={S.wrap}>
+      <div style={S.app}>
+        <div style={S.hdr}>
+          <div style={S.htitle}>
+            <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke={th.accent} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 12V7H5a2 2 0 010-4h14v4M21 12v5H5a2 2 0 000 4h16v-5M21 12H5"/>
+            </svg>
+            Gestore spese
+            <span style={{fontSize:13,color:'#bbb',fontWeight:400}}>— {profile==='marco'?'Marco':'Anna'}</span>
+          </div>
+          <div style={S.psw}>
+            <button style={S.pbtn(profile==='marco','marco')} onClick={()=>switchProfile('marco')}>Marco</button>
+            <button style={S.pbtn(profile==='anna','anna')}  onClick={()=>switchProfile('anna')}>Anna</button>
+          </div>
+        </div>
+        <div style={S.tabbar}>
+          {TABS.map((label,i)=>{
+            const displayLabel=(i===4)?`Debiti/Crediti ${profile==='marco'?'Anna':'Marco'}`:label;
+            return <button key={i} style={S.tab(tab===i)} onClick={()=>setTab(i)}>{displayLabel}</button>;
+          })}
+        </div>
+        {loading
+          ? <div style={S.loadingWrap}><span>Caricamento dati...</span></div>
+          : <>
+            {tab===0 && renderSpesa()}
+            {tab===1 && renderEntrata()}
+            {tab===2 && renderStorico()}
+            {tab===3 && renderRiepilogo()}
+            {tab===4 && renderPartner()}
+            {tab===5 && renderAndamenti()}
+          </>
+        }
+      </div>
+      {toast && <div style={S.toast}>{toast}</div>}
+    </div>
+  );
 }
 
-function renderPartner(){
-  var cred=partnerItems.filter(function(a){return a.type==='credito';}).reduce(function(s,a){return s+a.amount;},0);
-  var deb=partnerItems.filter(function(a){return a.type==='debito';}).reduce(function(s,a){return s+a.amount;},0);
-  var pag=partnerItems.filter(function(a){return a.type==='pagamento';}).reduce(function(s,a){return s+(a.signed!==undefined?a.signed:a.amount);},0);
-  var saldo=cred-deb-pag;
-  document.getElementById('p-debito').textContent='€ '+fmt(deb);
-  document.getElementById('p-credito').textContent='€ '+fmt(cred);
-  document.getElementById('p-saldo').textContent=(saldo>=0?'+':'')+'€ '+fmt(Math.abs(saldo));
-  document.getElementById('p-saldo').style.color=saldo>=0?'#085041':'#a32d2d';
-  var cont=document.getElementById('partner-container');
-  if(!partnerItems.length){cont.innerHTML='<div class="empty"><i class="ti ti-users" style="font-size:32px;display:block;margin-bottom:.5rem"></i>Nessuna voce registrata</div>';return;}
-  var byMonth={};
-  partnerItems.forEach(function(a){var k=monthKey(a.date);if(!byMonth[k])byMonth[k]=[];byMonth[k].push(a);});
-  cont.innerHTML=Object.keys(byMonth).sort().reverse().map(function(mk){
-    var items=byMonth[mk];
-    var mC=items.filter(function(a){return a.type==='credito';}).reduce(function(s,a){return s+a.amount;},0);
-    var mD=items.filter(function(a){return a.type==='debito';}).reduce(function(s,a){return s+a.amount;},0);
-    var mP=items.filter(function(a){return a.type==='pagamento';}).reduce(function(s,a){return s+(a.signed!==undefined?a.signed:a.amount);},0);
-    var sM=mC-mD-mP;
-    var rows=items.map(function(a){
-      var isPay=a.type==='pagamento',isD=a.type==='debito';
-      var color=isD?'#a32d2d':'#085041',sign=isD?'- ':'+ ';
-      var badge=isD?'<span style="font-size:10px;background:#FCEBEB;color:#a32d2d;padding:1px 6px;border-radius:5px;font-weight:500">Debito</span>':(isPay?'<span style="font-size:10px;background:#E1F5EE;color:#085041;padding:1px 6px;border-radius:5px;font-weight:500">Pagamento</span>':'<span style="font-size:10px;background:#E1F5EE;color:#085041;padding:1px 6px;border-radius:5px;font-weight:500">Credito</span>');
-      var catB=a.cat?'<span style="display:inline-block;margin-left:4px;padding:1px 6px;border-radius:5px;font-size:10px;font-weight:500;background:'+(CAT_COLORS[a.cat]||'#888')+'22;color:'+(CAT_COLORS[a.cat]||'#888')+'">'+a.cat+'</span>':'';
-      var payBadge=a.payId?'<span style="display:inline-block;margin-left:4px;padding:1px 7px;border-radius:5px;font-size:10px;background:#E1F5EE;color:#085041;font-weight:500"><i class="ti ti-check" style="font-size:10px"></i> #'+a.payId+'</span>':(isPay?'<span style="display:inline-block;margin-left:4px;padding:1px 7px;border-radius:5px;font-size:10px;background:#E1F5EE;color:#085041;font-weight:500"><i class="ti ti-check" style="font-size:10px"></i> #'+a.progId+'</span>':'');
-      var dispAmt=isPay?(a.signed!==undefined?(a.signed<0?'- ':'+ ')+'€ '+fmt(Math.abs(a.signed)):sign+'€ '+fmt(a.amount)):sign+'€ '+fmt(a.amount);
-      var dispCol=isPay?(a.signed!==undefined?(a.signed<0?'#a32d2d':'#085041'):'#085041'):color;
-      return '<div class="anna-row"><span class="exp-date">'+fmtDate(a.date)+'</span><span>'+a.desc+catB+payBadge+'</span><span>'+badge+'</span><span class="exp-amount" style="color:'+dispCol+'">'+dispAmt+'</span><button class="exp-delete btn danger" onclick="deletePartner('+a.id+')"><i class="ti ti-trash"></i></button></div>';
-    }).join('');
-    var sc=sM>=0?'#085041':'#a32d2d';
-    return '<div class="month-section"><div class="month-header"><h2>'+monthLabel(mk)+'</h2><span style="font-size:13px;color:'+sc+';font-weight:500">Saldo: '+(sM>=0?'+':'')+'€ '+fmt(sM)+'</span></div><div class="card" style="padding:.5rem 0">'+rows+'</div></div>';
-  }).join('');
-}
-
-function exportCSV(){
-  var mf=document.getElementById('f-month').value;
-  var cf=document.getElementById('f-cat').value;
-  var exps=expenses.filter(function(e){return(!mf||monthKey(e.date)===mf)&&(!cf||e.cat===cf);});
-  var incs=cf?[]:incomes.filter(function(i){return!mf||monthKey(i.date)===mf;});
-  if(!exps.length&&!incs.length){toast('Nessun dato da esportare');return;}
-  var rows=[['Tipo','Data','Descrizione','Categoria','Importo','Note']];
-  exps.forEach(function(e){rows.push(['Spesa',e.date,e.desc,e.cat,e.amount.toFixed(2),e.note||'']);});
-  incs.forEach(function(i){rows.push(['Entrata',i.date,i.desc,'',i.amount.toFixed(2),i.note||'']);});
-  var csv=rows.map(function(r){return r.map(function(v){return'"'+String(v).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
-  var a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'}));
-  a.download='spese_'+currentProfile+'_export.csv';a.click();
-  toast('CSV scaricato');
-}
-
-function showTab(t){
-  TABS.forEach(function(id,idx){
-    document.getElementById('page-'+id).classList.toggle('visible',id===t);
-    document.querySelectorAll('.tab')[idx].classList.toggle('active',id===t);
-  });
-  if(t==='list'){populateMonthFilter();renderList();}
-  if(t==='summary') renderSummary();
-  if(t==='partner') renderPartner();
-}
-
-function toast(msg){
-  var el=document.getElementById('toast');
-  el.textContent=msg;el.classList.add('show');
-  setTimeout(function(){el.classList.remove('show');},2500);
-}
-
-switchProfile('marco');
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
 </script>
 </body>
 </html>
