@@ -138,3 +138,20 @@ def storage_list():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
+
+# ── Endpoint backup completo ──────────────────────────────────────────────────
+@app.route('/api/backup/all', methods=['GET'])
+def backup_all():
+    """Restituisce tutti i dati del DB in un unico JSON — usato da GitHub Actions"""
+    secret = request.args.get('secret', '')
+    if secret != os.environ.get('BACKUP_SECRET', 'backup2026'):
+        return jsonify({'error': 'unauthorized'}), 401
+    keys = db_list('')
+    data = {}
+    for key in keys:
+        data[key] = db_get(key)
+    return jsonify({
+        'timestamp': __import__('datetime').datetime.utcnow().isoformat(),
+        'keys': keys,
+        'data': data
+    })
