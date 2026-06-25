@@ -1,0 +1,38 @@
+name: Backup giornaliero DB
+
+on:
+  schedule:
+    - cron: '0 2 * * *'   # ogni notte alle 02:00 UTC (04:00 ora italiana)
+  workflow_dispatch:        # permette di lanciarlo manualmente dal sito GitHub
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Scarica backup dal server
+        run: |
+          curl -f "${{ secrets.RENDER_URL }}/api/backup/all?secret=${{ secrets.BACKUP_SECRET }}" \
+            -o backup_temp.json
+          echo "Backup scaricato con successo"
+
+      - name: Salva backup con data
+        run: |
+          mkdir -p backups
+          DATE=$(date +%Y-%m-%d)
+          cp backup_temp.json backups/backup_${DATE}.json
+          cp backup_temp.json backups/backup_latest.json
+          echo "File salvati: backup_${DATE}.json e backup_latest.json"
+
+      - name: Commit e push del backup
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add backups/
+          git diff --staged --quiet || git commit -m "Backup automatico $(date +%Y-%m-%d)"
+          git push
