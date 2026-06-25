@@ -14,6 +14,25 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:15px}
 input,select,button,textarea{font-family:inherit}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:3px}
+@media(max-width:600px){
+  .rsp-grid-2{grid-template-columns:1fr !important}
+  .rsp-grid-3{grid-template-columns:1fr 1fr !important}
+  .rsp-col-full{grid-column:1/-1 !important}
+  .rsp-hide{display:none !important}
+  .rsp-stack{flex-direction:column !important}
+  .rsp-chart-h{height:180px !important}
+  .rsp-heatmap{font-size:9px !important}
+  .rsp-heatmap td div{width:20px !important;height:16px !important}
+  .rsp-tabbar{gap:0 !important}
+  .rsp-tab{padding:8px 8px !important;font-size:11px !important}
+  .rsp-header{padding:14px 12px 0 !important}
+  .rsp-page{padding:12px !important}
+  .rsp-card{padding:14px 12px !important}
+  .rsp-kpi-val{font-size:15px !important}
+  .rsp-kpi-lbl{font-size:9px !important}
+  .rsp-partner-row{grid-template-columns:48px 1fr auto 20px !important;font-size:12px !important}
+  .rsp-exp-row{grid-template-columns:48px 1fr auto 20px !important;font-size:12px !important}
+}
 </style>
 </head>
 <body>
@@ -104,7 +123,6 @@ function App() {
 
   const showToast = msg => { setToast(msg); setTimeout(()=>setToast(''),2500); };
 
-  // ── Carica dati dal backend ───────────────────────────────────────────────
   const loadProfile = async (p) => {
     setLoading(true);
     try {
@@ -129,9 +147,9 @@ function App() {
       }
       setExpenses(exp); setIncomes(inc); setPartnerItems(par);
     } catch(e) {
-      setExpenses(p === 'marco' ? [...RAW_EXPENSES] : []);
-      setIncomes(p === 'marco' ? [...RAW_INCOMES] : []);
-      setPartnerItems(p === 'marco' ? [...RAW_PARTNER] : []);
+      setExpenses(p==='marco'?[...RAW_EXPENSES]:[]);
+      setIncomes(p==='marco'?[...RAW_INCOMES]:[]);
+      setPartnerItems(p==='marco'?[...RAW_PARTNER]:[]);
     }
     setLoading(false);
   };
@@ -144,11 +162,11 @@ function App() {
 
   const switchProfile = (p) => {
     setProfile(p); setTab(0); setFilterMonth(''); setFilterCat('');
-    setActiveCats([...CATS]);
+    setActiveCats([...CATS]); setOpenSections({});
     setEf({amount:'',date:todayStr(),desc:'',cat:'',note:'',split:false,bpNum:'',bpVal:p==='anna'?'7.50':'8'});
     setInf({amount:'',date:todayStr(),desc:'',note:'',bpNum:'',bpVal:p==='anna'?'7.50':'8'});
     setPf({tipo:'credito',desc:'',amount:'',cat:'',date:todayStr(),note:'',addToStorico:true});
-    setPayf({amount:'',desc:''}); setOpenSections({});
+    setPayf({amount:'',desc:''});
     loadProfile(p);
   };
 
@@ -196,7 +214,6 @@ function App() {
     return {text:'Debito residuo: € '+fmt(Math.abs(res)),color:'#a32d2d'};
   },[payf.amount,partnerSaldo]);
 
-  /* ── ACTIONS ── */
   const addExpense = () => {
     let amt=parseFloat(ef.amount);
     if(!amt||amt<=0) return showToast('Importo non valido');
@@ -277,18 +294,17 @@ function App() {
 
   const toggleCat = cat => setActiveCats(p=>p.includes(cat)?(p.length>1?p.filter(c=>c!==cat):p):[...p,cat]);
 
-  /* ── STYLES ── */
   const S = {
     wrap:{background:th.bg,minHeight:'100vh'},
-    app:{maxWidth:860,margin:'0 auto',paddingBottom:48},
+    app:{maxWidth:860,margin:'0 auto',paddingBottom:48,minWidth:0},
     hdr:{padding:'20px 20px 0',display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:20},
-    htitle:{fontSize:18,fontWeight:500,display:'flex',alignItems:'center',gap:8,color:'#1a1a1a'},
+    htitle:{fontSize:'clamp(14px,4vw,18px)',fontWeight:500,display:'flex',alignItems:'center',gap:8,color:'#1a1a1a',flexWrap:'wrap'},
     psw:{display:'flex',background:'rgba(0,0,0,.07)',borderRadius:10,padding:3,gap:2},
     pbtn:(a,w)=>({padding:'6px 16px',borderRadius:8,border:'none',fontSize:12,fontWeight:500,cursor:'pointer',transition:'all .2s',background:a?(w==='marco'?'#1a3a6e':'#a0325a'):'transparent',color:a?'#fff':'#666'}),
     tabbar:{display:'flex',padding:'0 20px',borderBottom:'0.5px solid rgba(0,0,0,.12)',overflowX:'auto'},
-    tab:(a)=>({padding:'10px 13px',border:'none',background:'none',fontSize:12,fontWeight:a?500:400,color:a?th.accent:'#888',borderBottom:a?`2px solid ${th.accent}`:'2px solid transparent',marginBottom:-1,cursor:'pointer',whiteSpace:'nowrap',transition:'color .15s'}),
-    page:{padding:'20px'},
-    card:{background:'#fff',border:'0.5px solid rgba(0,0,0,.11)',borderRadius:12,padding:'18px 20px',marginBottom:16},
+    tab:(a)=>({padding:'10px clamp(6px,2vw,13px)',border:'none',background:'none',fontSize:'clamp(10px,2.5vw,12px)',fontWeight:a?500:400,color:a?th.accent:'#888',borderBottom:a?`2px solid ${th.accent}`:'2px solid transparent',marginBottom:-1,cursor:'pointer',whiteSpace:'nowrap',transition:'color .15s'}),
+    page:{padding:'clamp(12px,4vw,20px)'},
+    card:{background:'#fff',border:'0.5px solid rgba(0,0,0,.11)',borderRadius:12,padding:'18px 20px',marginBottom:16,wordBreak:'break-word'},
     grid:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12},
     fg:{display:'flex',flexDirection:'column',gap:5},
     full:{gridColumn:'1/-1'},
@@ -300,27 +316,26 @@ function App() {
     btnS:{padding:'9px 20px',borderRadius:8,border:'none',background:'#0F6E56',color:'#fff',fontSize:13,fontWeight:500,cursor:'pointer'},
     btnSm:{padding:'6px 12px',borderRadius:7,border:'0.5px solid rgba(0,0,0,.2)',background:'transparent',color:'#666',fontSize:12,cursor:'pointer'},
     actions:{display:'flex',justifyContent:'flex-end',gap:8,marginTop:16},
-    kpiGrid:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(130px,1fr))',gap:10,marginBottom:20},
+    kpiGrid:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(110px,1fr))',gap:8,marginBottom:16},
     fbar:{display:'flex',gap:8,marginBottom:16,flexWrap:'wrap',alignItems:'center'},
     mhdr:{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'10px 0',borderBottom:'0.5px solid rgba(0,0,0,.1)',marginBottom:10},
     erow:{display:'grid',gridTemplateColumns:'54px 1fr auto 24px',gap:8,alignItems:'center',padding:'8px 10px',fontSize:13,borderBottom:'0.5px solid rgba(0,0,0,.05)'},
     irow:{display:'grid',gridTemplateColumns:'54px 1fr auto 24px',gap:8,alignItems:'center',padding:'8px 10px',fontSize:13,borderBottom:'0.5px solid rgba(0,0,0,.05)'},
     dlbl:{color:'#bbb',fontSize:11},
     chip:(a,cat)=>({padding:'4px 10px',borderRadius:20,fontSize:11,fontWeight:500,cursor:'pointer',userSelect:'none',border:`0.5px solid ${a?(CAT_COLORS[cat]||'#888'):'rgba(0,0,0,.14)'}`,background:a?(CAT_COLORS[cat]||'#888'):'#f5f5f0',color:a?'#fff':'#666',transition:'all .15s'}),
-    andCard:{background:'#fff',border:'0.5px solid rgba(0,0,0,.11)',borderRadius:12,padding:'18px 20px',marginBottom:16},
+    andCard:{background:'#fff',border:'0.5px solid rgba(0,0,0,.11)',borderRadius:12,padding:'18px 20px',marginBottom:16,wordBreak:'break-word'},
     andTitle:{fontSize:13,fontWeight:500,color:'#666',marginBottom:14},
     xbtn:{background:'none',border:'none',cursor:'pointer',color:'#ddd',fontSize:16,padding:0,lineHeight:1},
     bpBox:{background:'#f5f5f0',borderRadius:10,padding:'12px',marginTop:6,display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10,alignItems:'end'},
     sectionTitle:{fontSize:13,fontWeight:500,color:'#555',marginBottom:12,display:'flex',alignItems:'center',gap:6},
     toast:{position:'fixed',bottom:24,right:24,background:th.accent,color:'#fff',padding:'10px 18px',borderRadius:8,fontSize:13,zIndex:999,pointerEvents:'none',boxShadow:'0 2px 12px rgba(0,0,0,.15)'},
-    loadingWrap:{display:'flex',alignItems:'center',justifyContent:'center',padding:'4rem',color:'#bbb',fontSize:14,gap:8},
+    loadingWrap:{display:'flex',alignItems:'center',justifyContent:'center',padding:'4rem',color:'#bbb',fontSize:14},
   };
 
-  /* ── TAB 0: NUOVA SPESA ── */
   const renderSpesa = () => (
-    <div style={S.page}>
-      <div style={S.card}>
-        <div style={S.grid}>
+    <div style={S.page} className='rsp-page'>
+      <div style={S.card} className='rsp-card'>
+        <div style={S.grid} className='rsp-grid-2'>
           <div style={S.fg}><label style={S.lbl}>Importo (€)</label><input style={S.inp} type="number" min="0" step="0.01" placeholder="0,00" value={ef.amount} onChange={e=>setEf(p=>({...p,amount:e.target.value}))}/></div>
           <div style={S.fg}><label style={S.lbl}>Data</label><input style={S.inp} type="date" value={ef.date} onChange={e=>setEf(p=>({...p,date:e.target.value}))}/></div>
           <div style={{...S.fg,...S.full}}><label style={S.lbl}>Descrizione</label><input style={S.inp} type="text" placeholder="Es. Visita medica..." value={ef.desc} onChange={e=>setEf(p=>({...p,desc:e.target.value}))}/></div>
@@ -354,11 +369,10 @@ function App() {
     </div>
   );
 
-  /* ── TAB 1: NUOVA ENTRATA ── */
   const renderEntrata = () => (
-    <div style={S.page}>
-      <div style={S.card}>
-        <div style={S.grid}>
+    <div style={S.page} className='rsp-page'>
+      <div style={S.card} className='rsp-card'>
+        <div style={S.grid} className='rsp-grid-2'>
           <div style={S.fg}><label style={S.lbl}>Importo (€)</label><input style={S.inp} type="number" min="0" step="0.01" placeholder="0,00" value={inf.amount} onChange={e=>setInf(p=>({...p,amount:e.target.value}))}/></div>
           <div style={S.fg}><label style={S.lbl}>Data</label><input style={S.inp} type="date" value={inf.date} onChange={e=>setInf(p=>({...p,date:e.target.value}))}/></div>
           <div style={{...S.fg,...S.full}}><label style={S.lbl}>Descrizione</label><input style={S.inp} type="text" placeholder="Es. Stipendio..." value={inf.desc} onChange={e=>setInf(p=>({...p,desc:e.target.value}))}/></div>
@@ -380,9 +394,8 @@ function App() {
     </div>
   );
 
-  /* ── TAB 2: STORICO ── */
   const renderStorico = () => (
-    <div style={S.page}>
+    <div style={S.page} className='rsp-page'>
       <div style={S.fbar}>
         <select style={{...S.sel,maxWidth:160,fontSize:12}} value={filterMonth} onChange={e=>setFilterMonth(e.target.value)}>
           <option value="">Tutti i mesi</option>
@@ -409,10 +422,10 @@ function App() {
                   {totI>0&&<span style={{color:bal>=0?'#0F6E56':'#a32d2d',fontWeight:500}}>{bal>=0?'+':''}€ {fmt(bal)}</span>}
                 </div>
               </div>
-              <div style={S.card}>
-                {mi.map(i=>(<div key={i.id} style={S.irow}><span style={S.dlbl}>{fmtDate(i.date)}</span><span style={{color:'#333'}}>{i.desc}{i.bp&&<span style={{fontSize:10,color:'#0F6E56',marginLeft:6}}>🎟 {i.bp.num}x</span>}</span><span style={{color:'#0F6E56',fontWeight:500}}>+ € {fmt(i.amount)}</span><button style={S.xbtn} onClick={()=>{const u=incomes.filter(x=>x.id!==i.id);setIncomes(u);saveInc(u);showToast('Eliminata');}}>×</button></div>))}
+              <div style={S.card} className='rsp-card'>
+                {mi.map(i=>(<div key={i.id} style={S.irow} className='rsp-exp-row'><span style={S.dlbl}>{fmtDate(i.date)}</span><span style={{color:'#333'}}>{i.desc}{i.bp&&<span style={{fontSize:10,color:'#0F6E56',marginLeft:6}}>🎟 {i.bp.num}x</span>}</span><span style={{color:'#0F6E56',fontWeight:500}}>+ € {fmt(i.amount)}</span><button style={S.xbtn} onClick={()=>{const u=incomes.filter(x=>x.id!==i.id);setIncomes(u);saveInc(u);showToast('Eliminata');}}>×</button></div>))}
                 {mi.length>0&&me.length>0&&<div style={{height:'0.5px',background:'rgba(0,0,0,.07)',margin:'4px 0'}}/>}
-                {me.map(e=>(<div key={e.id} style={S.erow}><span style={S.dlbl}>{fmtDate(e.date)}</span><div><div style={{color:'#333',lineHeight:1.4}}>{e.desc}{e.bp&&<span style={{fontSize:10,color:'#0F6E56',marginLeft:6}}>🎟 {e.bp.num}x (−€{fmt(e.bp.total)})</span>}{e.splitPartner&&<span style={{fontSize:10,background:'#dde8f5',color:'#1a3a6e',padding:'1px 5px',borderRadius:4,marginLeft:4}}>50%</span>}</div><span style={{display:'inline-block',marginTop:2,padding:'1px 7px',borderRadius:4,fontSize:10,fontWeight:500,background:(CAT_COLORS[e.cat]||'#888')+'22',color:CAT_COLORS[e.cat]||'#888'}}>{e.cat}</span></div><span style={{color:'#a32d2d',fontWeight:500}}>− € {fmt(e.amount)}</span><button style={S.xbtn} onClick={()=>{const u=expenses.filter(x=>x.id!==e.id);setExpenses(u);saveExp(u);showToast('Eliminata');}}>×</button></div>))}
+                {me.map(e=>(<div key={e.id} style={S.erow} className='rsp-exp-row'><span style={S.dlbl}>{fmtDate(e.date)}</span><div><div style={{color:'#333',lineHeight:1.4}}>{e.desc}{e.bp&&<span style={{fontSize:10,color:'#0F6E56',marginLeft:6}}>🎟 {e.bp.num}x (−€{fmt(e.bp.total)})</span>}{e.splitPartner&&<span style={{fontSize:10,background:'#dde8f5',color:'#1a3a6e',padding:'1px 5px',borderRadius:4,marginLeft:4}}>50%</span>}</div><span style={{display:'inline-block',marginTop:2,padding:'1px 7px',borderRadius:4,fontSize:10,fontWeight:500,background:(CAT_COLORS[e.cat]||'#888')+'22',color:CAT_COLORS[e.cat]||'#888'}}>{e.cat}</span></div><span style={{color:'#a32d2d',fontWeight:500}}>− € {fmt(e.amount)}</span><button style={S.xbtn} onClick={()=>{const u=expenses.filter(x=>x.id!==e.id);setExpenses(u);saveExp(u);showToast('Eliminata');}}>×</button></div>))}
               </div>
             </div>
           );
@@ -421,7 +434,6 @@ function App() {
     </div>
   );
 
-  /* ── TAB 3: RIEPILOGO ── */
   const renderRiepilogo = () => {
     const totE=expenses.reduce((s,e)=>s+e.amount,0), totI=incomes.reduce((s,i)=>s+i.amount,0);
     const byMonth={};
@@ -430,7 +442,7 @@ function App() {
     const nM=Math.max(Object.keys(byMonth).length,1);
     const toggleCatOpen = uid => setOpenCats(prev=>({...prev,[uid]:!prev[uid]}));
     return (
-      <div style={S.page}>
+      <div style={S.page} className='rsp-page'>
         <div style={S.kpiGrid}>
           <KpiCard label="Totale entrate" value={'€ '+fmt(totI)} color="#085041" bg="#E1F5EE"/>
           <KpiCard label="Totale spese" value={'€ '+fmt(totE)} color="#711B0B" bg="#FCEBEB"/>
@@ -454,14 +466,14 @@ function App() {
                   <span style={{color:bM>=0?'#0F6E56':'#a32d2d',fontWeight:500}}>Saldo: {bM>=0?'+':''}€ {fmt(bM)}</span>
                 </div>
               </div>
-              <div style={S.card}>
+              <div style={S.card} className='rsp-card'>
                 {mi.length>0&&(
                   <div style={{marginBottom:8}}>
                     <div onClick={()=>toggleCatOpen(incUid)} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'7px 10px',background:'#E1F5EE',borderRadius:7,fontSize:13,fontWeight:500,cursor:'pointer',userSelect:'none'}}>
                       <div style={{display:'flex',alignItems:'center',gap:8,color:'#085041'}}><span style={{width:9,height:9,borderRadius:'50%',background:'#0F6E56',display:'inline-block'}}/>Entrate</div>
                       <div style={{display:'flex',alignItems:'center',gap:12}}><span style={{color:'#085041',fontWeight:500}}>+ € {fmt(tI)}</span><span style={{fontSize:12,color:'#0F6E56',display:'inline-block',transform:incOpen?'rotate(180deg)':'rotate(0deg)'}}>▾</span></div>
                     </div>
-                    {incOpen&&<div style={{paddingTop:2}}>{mi.map(i=>(<div key={i.id} style={S.irow}><span style={S.dlbl}>{fmtDate(i.date)}</span><span style={{color:'#333'}}>{i.desc}{i.bp&&<span style={{fontSize:10,color:'#0F6E56',marginLeft:6}}>🎟 {i.bp.num}x</span>}</span><span style={{color:'#0F6E56',fontWeight:500}}>+ € {fmt(i.amount)}</span><button style={S.xbtn} onClick={()=>{const u=incomes.filter(x=>x.id!==i.id);setIncomes(u);saveInc(u);showToast('Eliminata');}}>×</button></div>))}</div>}
+                    {incOpen&&<div style={{paddingTop:2}}>{mi.map(i=>(<div key={i.id} style={S.irow} className='rsp-exp-row'><span style={S.dlbl}>{fmtDate(i.date)}</span><span style={{color:'#333'}}>{i.desc}{i.bp&&<span style={{fontSize:10,color:'#0F6E56',marginLeft:6}}>🎟 {i.bp.num}x</span>}</span><span style={{color:'#0F6E56',fontWeight:500}}>+ € {fmt(i.amount)}</span><button style={S.xbtn} onClick={()=>{const u=incomes.filter(x=>x.id!==i.id);setIncomes(u);saveInc(u);showToast('Eliminata');}}>×</button></div>))}</div>}
                   </div>
                 )}
                 {cats.map(([cat,tot])=>{
@@ -475,7 +487,7 @@ function App() {
                         <div style={{display:'flex',alignItems:'center',gap:12}}><span style={{fontSize:11,color:'#bbb'}}>{pct}%</span><span style={{fontWeight:500}}>€ {fmt(tot)}</span><span style={{fontSize:12,color:'#888',display:'inline-block',transform:isOpen?'rotate(180deg)':'rotate(0deg)'}}>▾</span></div>
                       </div>
                       <div style={{height:4,background:'#f0f0ea',borderRadius:3,overflow:'hidden',margin:'3px 10px 4px'}}><div style={{height:'100%',width:pct+'%',background:CAT_COLORS[cat]||'#888',borderRadius:3}}/></div>
-                      {isOpen&&<div style={{paddingTop:2}}>{catItems.map(e=>(<div key={e.id} style={S.erow}><span style={S.dlbl}>{fmtDate(e.date)}</span><span style={{color:'#555'}}>{e.desc}{e.bp&&<span style={{fontSize:10,color:'#0F6E56',marginLeft:6}}>🎟 {e.bp.num}x (−€{fmt(e.bp.total)})</span>}{e.splitPartner&&<span style={{fontSize:10,background:'#dde8f5',color:'#1a3a6e',padding:'1px 5px',borderRadius:4,marginLeft:4}}>50%</span>}</span><span style={{color:'#a32d2d',fontWeight:500}}>€ {fmt(e.amount)}</span><button style={S.xbtn} onClick={()=>{const u=expenses.filter(x=>x.id!==e.id);setExpenses(u);saveExp(u);showToast('Eliminata');}}>×</button></div>))}</div>}
+                      {isOpen&&<div style={{paddingTop:2}}>{catItems.map(e=>(<div key={e.id} style={S.erow} className='rsp-exp-row'><span style={S.dlbl}>{fmtDate(e.date)}</span><span style={{color:'#555'}}>{e.desc}{e.bp&&<span style={{fontSize:10,color:'#0F6E56',marginLeft:6}}>🎟 {e.bp.num}x (−€{fmt(e.bp.total)})</span>}{e.splitPartner&&<span style={{fontSize:10,background:'#dde8f5',color:'#1a3a6e',padding:'1px 5px',borderRadius:4,marginLeft:4}}>50%</span>}</span><span style={{color:'#a32d2d',fontWeight:500}}>€ {fmt(e.amount)}</span><button style={S.xbtn} onClick={()=>{const u=expenses.filter(x=>x.id!==e.id);setExpenses(u);saveExp(u);showToast('Eliminata');}}>×</button></div>))}</div>}
                     </div>
                   );
                 })}
@@ -487,14 +499,12 @@ function App() {
     );
   };
 
-  /* ── TAB 4: DEBITI/CREDITI ── */
   const renderPartner = () => {
     const {cred,deb,saldo}=partnerSaldo;
     const pName=profile==='marco'?'Anna':'Marco';
     const byMonth={};
     partnerItems.forEach(a=>{const k=mKey(a.date);if(!byMonth[k])byMonth[k]=[];byMonth[k].push(a);});
     const toggleSec = k => setOpenSections(p=>({...p,[k]:!p[k]}));
-
     const SectionHeader = ({id, label, icon, accentCol, accentBg, children}) => {
       const open = !!openSections[id];
       return (
@@ -514,73 +524,41 @@ function App() {
         </div>
       );
     };
-
     return (
-      <div style={S.page}>
+      <div style={S.page} className='rsp-page'>
         <div style={S.kpiGrid}>
           <KpiCard label={`Tu devi a ${pName}`} value={'€ '+fmt(deb)} color="#711B0B" bg="#FCEBEB"/>
           <KpiCard label={`${pName} ti deve`} value={'€ '+fmt(cred)} color="#085041" bg="#E1F5EE"/>
           <KpiCard label="Saldo netto" value={(saldo>=0?'+':'')+'€ '+fmt(Math.abs(saldo))} color={saldo>=0?'#085041':'#a32d2d'} bg={saldo>=0?'#E1F5EE':'#FCEBEB'}/>
         </div>
-
         <SectionHeader id="sec_pay" label={`Registra pagamento di ${pName}`} icon="↔" accentCol="#0F6E56" accentBg="#E8F7F2">
-          <div style={S.grid}>
-            <div style={S.fg}>
-              <label style={S.lbl}>Importo (€)</label>
-              <div style={{fontSize:10,color:'#bbb',marginBottom:4}}>positivo = {pName} paga te · negativo = tu paghi {pName}</div>
-              <input style={S.inp} type="number" step="0.01" placeholder="es. 25,00 o -10,00" value={payf.amount} onChange={e=>setPayf(p=>({...p,amount:e.target.value}))}/>
-            </div>
-            <div style={S.fg}>
-              <label style={S.lbl}>Saldo dopo pagamento</label>
-              <div style={{padding:'9px 11px',background:'#f5f5f0',borderRadius:8,fontSize:14,color:payPreview?.color||'#999',minHeight:40,display:'flex',alignItems:'center'}}>{payPreview?.text||'— inserisci importo'}</div>
-            </div>
+          <div style={S.grid} className='rsp-grid-2'>
+            <div style={S.fg}><label style={S.lbl}>Importo (€)</label><div style={{fontSize:10,color:'#bbb',marginBottom:4}}>positivo = {pName} paga te · negativo = tu paghi {pName}</div><input style={S.inp} type="number" step="0.01" placeholder="es. 25,00 o -10,00" value={payf.amount} onChange={e=>setPayf(p=>({...p,amount:e.target.value}))}/></div>
+            <div style={S.fg}><label style={S.lbl}>Saldo dopo pagamento</label><div style={{padding:'9px 11px',background:'#f5f5f0',borderRadius:8,fontSize:14,color:payPreview?.color||'#999',minHeight:40,display:'flex',alignItems:'center'}}>{payPreview?.text||'— inserisci importo'}</div></div>
             <div style={{...S.fg,...S.full}}><label style={S.lbl}>Descrizione (opzionale)</label><input style={S.inp} type="text" placeholder="Es. Bonifico, Contanti..." value={payf.desc} onChange={e=>setPayf(p=>({...p,desc:e.target.value}))}/></div>
           </div>
           <div style={S.actions}><button style={S.btnS} onClick={addPayment}>Registra pagamento</button></div>
         </SectionHeader>
-
         <SectionHeader id="sec_deb" label={`Aggiungi debito — tu devi a ${pName}`} icon="↑" accentCol="#a32d2d" accentBg="#FDF0F0">
-          <div style={S.grid}>
+          <div style={S.grid} className='rsp-grid-2'>
             <div style={{...S.fg,...S.full}}><label style={S.lbl}>Descrizione</label><input style={S.inp} type="text" placeholder="Es. Spesa supermercato..." value={pf.tipo==='debito'?pf.desc:''} onChange={e=>setPf(p=>({...p,desc:e.target.value,tipo:'debito'}))}/></div>
             <div style={S.fg}><label style={S.lbl}>Importo (€)</label><input style={S.inp} type="number" min="0" step="0.01" placeholder="0,00" value={pf.tipo==='debito'?pf.amount:''} onChange={e=>setPf(p=>({...p,amount:e.target.value,tipo:'debito'}))}/></div>
             <div style={S.fg}><label style={S.lbl}>Data</label><input style={S.inp} type="date" value={pf.date} onChange={e=>setPf(p=>({...p,date:e.target.value}))}/></div>
-            <div style={{...S.fg,...S.full}}>
-              <label style={S.lbl}>Categoria</label>
-              <select style={S.sel} value={pf.tipo==='debito'?pf.cat:''} onChange={e=>setPf(p=>({...p,cat:e.target.value,tipo:'debito'}))}>
-                <option value="">— Seleziona —</option>{CATS.map(c=><option key={c}>{c}</option>)}
-              </select>
-            </div>
-            <div style={{...S.fg,...S.full}}>
-              <label style={{display:'flex',alignItems:'center',gap:8,fontSize:13,color:'#555',background:th.accentLight,padding:'10px 12px',borderRadius:8,cursor:'pointer',userSelect:'none'}}>
-                <input type="checkbox" checked={pf.addToStorico} onChange={e=>setPf(p=>({...p,addToStorico:e.target.checked}))} style={{width:15,height:15,accentColor:th.accent}}/>
-                Imputare spesa nello storico
-              </label>
-            </div>
+            <div style={{...S.fg,...S.full}}><label style={S.lbl}>Categoria</label><select style={S.sel} value={pf.tipo==='debito'?pf.cat:''} onChange={e=>setPf(p=>({...p,cat:e.target.value,tipo:'debito'}))}><option value="">— Seleziona —</option>{CATS.map(c=><option key={c}>{c}</option>)}</select></div>
+            <div style={{...S.fg,...S.full}}><label style={{display:'flex',alignItems:'center',gap:8,fontSize:13,color:'#555',background:th.accentLight,padding:'10px 12px',borderRadius:8,cursor:'pointer',userSelect:'none'}}><input type="checkbox" checked={pf.addToStorico} onChange={e=>setPf(p=>({...p,addToStorico:e.target.checked}))} style={{width:15,height:15,accentColor:th.accent}}/>Imputare spesa nello storico</label></div>
           </div>
           <div style={S.actions}><button style={S.btnP} onClick={()=>{setPf(p=>({...p,tipo:'debito'}));addPartnerItem();}}>Aggiungi debito</button></div>
         </SectionHeader>
-
         <SectionHeader id="sec_cred" label={`Aggiungi credito — ${pName} ti deve`} icon="↓" accentCol="#085041" accentBg="#E1F5EE">
-          <div style={S.grid}>
+          <div style={S.grid} className='rsp-grid-2'>
             <div style={{...S.fg,...S.full}}><label style={S.lbl}>Descrizione</label><input style={S.inp} type="text" placeholder="Es. Cena condivisa..." value={pf.tipo==='credito'?pf.desc:''} onChange={e=>setPf(p=>({...p,desc:e.target.value,tipo:'credito'}))}/></div>
             <div style={S.fg}><label style={S.lbl}>Importo (€)</label><input style={S.inp} type="number" min="0" step="0.01" placeholder="0,00" value={pf.tipo==='credito'?pf.amount:''} onChange={e=>setPf(p=>({...p,amount:e.target.value,tipo:'credito'}))}/></div>
             <div style={S.fg}><label style={S.lbl}>Data</label><input style={S.inp} type="date" value={pf.date} onChange={e=>setPf(p=>({...p,date:e.target.value}))}/></div>
-            <div style={{...S.fg,...S.full}}>
-              <label style={S.lbl}>Categoria</label>
-              <select style={S.sel} value={pf.tipo==='credito'?pf.cat:''} onChange={e=>setPf(p=>({...p,cat:e.target.value,tipo:'credito'}))}>
-                <option value="">— Seleziona —</option>{CATS.map(c=><option key={c}>{c}</option>)}
-              </select>
-            </div>
-            <div style={{...S.fg,...S.full}}>
-              <label style={{display:'flex',alignItems:'center',gap:8,fontSize:13,color:'#555',background:'#E1F5EE',padding:'10px 12px',borderRadius:8,cursor:'pointer',userSelect:'none'}}>
-                <input type="checkbox" checked={pf.addToStorico} onChange={e=>setPf(p=>({...p,addToStorico:e.target.checked}))} style={{width:15,height:15,accentColor:'#0F6E56'}}/>
-                Imputare entrata nello storico
-              </label>
-            </div>
+            <div style={{...S.fg,...S.full}}><label style={S.lbl}>Categoria</label><select style={S.sel} value={pf.tipo==='credito'?pf.cat:''} onChange={e=>setPf(p=>({...p,cat:e.target.value,tipo:'credito'}))}><option value="">— Seleziona —</option>{CATS.map(c=><option key={c}>{c}</option>)}</select></div>
+            <div style={{...S.fg,...S.full}}><label style={{display:'flex',alignItems:'center',gap:8,fontSize:13,color:'#555',background:'#E1F5EE',padding:'10px 12px',borderRadius:8,cursor:'pointer',userSelect:'none'}}><input type="checkbox" checked={pf.addToStorico} onChange={e=>setPf(p=>({...p,addToStorico:e.target.checked}))} style={{width:15,height:15,accentColor:'#0F6E56'}}/>Imputare entrata nello storico</label></div>
           </div>
           <div style={S.actions}><button style={S.btnS} onClick={()=>{setPf(p=>({...p,tipo:'credito'}));addPartnerItem();}}>Aggiungi credito</button></div>
         </SectionHeader>
-
         {!Object.keys(byMonth).length
           ? <div style={{textAlign:'center',padding:'3rem',color:'#bbb',fontSize:14}}>Nessuna voce registrata</div>
           : Object.keys(byMonth).sort().reverse().map(mk=>{
@@ -591,17 +569,14 @@ function App() {
             const sM=mC-mD-mP;
             return (
               <div key={mk} style={{marginBottom:20}}>
-                <div style={S.mhdr}>
-                  <span style={{fontSize:15,fontWeight:500}}>{mLabel(mk)}</span>
-                  <span style={{fontSize:12,fontWeight:500,color:sM>=0?'#0F6E56':'#a32d2d'}}>Saldo: {sM>=0?'+':''}€ {fmt(sM)}</span>
-                </div>
-                <div style={S.card}>
+                <div style={S.mhdr}><span style={{fontSize:15,fontWeight:500}}>{mLabel(mk)}</span><span style={{fontSize:12,fontWeight:500,color:sM>=0?'#0F6E56':'#a32d2d'}}>Saldo: {sM>=0?'+':''}€ {fmt(sM)}</span></div>
+                <div style={S.card} className='rsp-card'>
                   {items.map(a=>{
                     const isPay=a.type==='pagamento', isD=a.type==='debito';
                     const dispAmt=isPay&&a.signed!==undefined?(a.signed<0?'− ':'+ ')+'€ '+fmt(Math.abs(a.signed)):(isD?'− ':'+ ')+'€ '+fmt(a.amount);
                     const dispCol=isPay&&a.signed!==undefined?(a.signed<0?'#a32d2d':'#0F6E56'):(isD?'#a32d2d':'#0F6E56');
                     return (
-                      <div key={a.id} style={{display:'grid',gridTemplateColumns:'54px 1fr auto auto 24px',gap:8,alignItems:'center',padding:'8px 10px',fontSize:13,borderBottom:'0.5px solid rgba(0,0,0,.05)'}}>
+                      <div key={a.id} style={{display:'grid',gridTemplateColumns:'54px 1fr auto auto 24px',gap:8,alignItems:'center',padding:'8px 10px',fontSize:13,borderBottom:'0.5px solid rgba(0,0,0,.05)'}} className='rsp-partner-row'>
                         <span style={S.dlbl}>{fmtDate(a.date)}</span>
                         <div><div style={{color:'#333',lineHeight:1.4}}>{a.desc}</div>{a.cat&&<span style={{display:'inline-block',marginTop:2,padding:'1px 7px',borderRadius:4,fontSize:10,fontWeight:500,background:(CAT_COLORS[a.cat]||'#888')+'22',color:CAT_COLORS[a.cat]||'#888'}}>{a.cat}</span>}</div>
                         <span style={{fontSize:10,fontWeight:500,padding:'2px 7px',borderRadius:5,background:isD?'#FCEBEB':'#E1F5EE',color:isD?'#a32d2d':'#085041',whiteSpace:'nowrap'}}>{isD?'Debito':isPay?'Pagamento':'Credito'}</span>
@@ -619,7 +594,6 @@ function App() {
     );
   };
 
-  /* ── TAB 5: ANDAMENTI ── */
   const renderAndamenti = () => {
     const n=monthData.length||1;
     const avgSav=Math.round((monthData.reduce((s,d)=>s+d.entrate,0)-monthData.reduce((s,d)=>s+d.uscite,0))/n*100)/100;
@@ -645,9 +619,8 @@ function App() {
     const hmMax={};
     hmCats.forEach(cat=>{const vals=allMonthKeys.map(mk=>expenses.filter(e=>mKey(e.date)===mk&&e.cat===cat).reduce((s,e)=>s+e.amount,0));hmMax[cat]=Math.max(...vals,1);});
     const monthSel=(<select style={{...S.sel,maxWidth:160,fontSize:11,padding:'4px 8px'}} value={selMk} onChange={e=>setDashMonth(e.target.value)}>{allMonthKeys.slice().reverse().map(k=><option key={k} value={k}>{mLabel(k)}</option>)}</select>);
-
     return (
-      <div style={S.page}>
+      <div style={S.page} className='rsp-page'>
         <div style={S.kpiGrid}>
           <KpiCard label="Media entrate/mese" value={'€ '+fmt(avgI)} color="#085041" bg="#E1F5EE"/>
           <KpiCard label="Media uscite/mese" value={'€ '+fmt(avgE)} color="#711B0B" bg="#FCEBEB"/>
@@ -655,17 +628,13 @@ function App() {
           <KpiCard label="Mese migliore" value={bestMk?mShort(bestMk):'-'} color={th.accent} bg={th.accentLight}/>
           <KpiCard label="Mese più costoso" value={worstMk?mShort(worstMk):'-'} color="#711B0B" bg="#FCEBEB"/>
         </div>
-        <div style={{display:'grid',gridTemplateColumns:'2fr 1fr',gap:16,marginBottom:16}}>
+        <div style={{display:'grid',gridTemplateColumns:'2fr 1fr',gap:16,marginBottom:16}} className='rsp-grid-2'>
           <div style={S.andCard}>
-            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}}>
-              <span style={S.andTitle}>Spese per categoria</span>{monthSel}
-            </div>
-            <div style={{position:'relative',height:220}}><ChartCanvas key={'donut_'+selMk} config={donutConfig} height={220}/></div>
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}}><span style={S.andTitle}>Spese per categoria</span>{monthSel}</div>
+            <div style={{position:'relative',height:220}} className='rsp-chart-h'><ChartCanvas key={'donut_'+selMk} config={donutConfig} height={220}/></div>
           </div>
           <div style={{...S.andCard,display:'flex',flexDirection:'column',gap:12}}>
-            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:2}}>
-              <span style={S.andTitle}>Tasso di risparmio</span>{monthSel}
-            </div>
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:2}}><span style={S.andTitle}>Tasso di risparmio</span>{monthSel}</div>
             <div style={{textAlign:'center',padding:'8px 0'}}>
               <div style={{fontSize:42,fontWeight:500,color:gaugeColor}}>{savRate}%</div>
               <div style={{fontSize:12,color:'#999',marginTop:4}}>del reddito risparmiato</div>
@@ -688,13 +657,11 @@ function App() {
         </div>
         <div style={S.andCard}>
           <div style={S.andTitle}>Andamento mensile — entrate, uscite e risparmio cumulato</div>
-          <div style={{position:'relative',height:240}}><ChartCanvas config={barConfig} height={240}/></div>
+          <div style={{position:'relative',height:240}} className='rsp-chart-h'><ChartCanvas config={barConfig} height={240}/></div>
         </div>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16}}>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16}} className='rsp-grid-2'>
           <div style={S.andCard}>
-            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}}>
-              <span style={S.andTitle}>Top 5 spese del mese</span>{monthSel}
-            </div>
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}}><span style={S.andTitle}>Top 5 spese del mese</span>{monthSel}</div>
             {top5.length===0
               ? <div style={{color:'#bbb',fontSize:13,textAlign:'center',padding:'1rem'}}>Nessuna spesa</div>
               : top5.map((e,i)=>{
@@ -712,7 +679,7 @@ function App() {
           </div>
           <div style={S.andCard}>
             <div style={{...S.andTitle,marginBottom:10}}>Heatmap spese — mese × categoria</div>
-            <div style={{overflowX:'auto'}}>
+            <div style={{overflowX:'auto'}} className='rsp-heatmap'>
               <table style={{width:'100%',borderCollapse:'separate',borderSpacing:'2px',fontSize:10}}>
                 <thead><tr><td style={{padding:'2px 4px',color:'#bbb'}}></td>{allMonthKeys.map(mk=><th key={mk} style={{padding:'2px 4px',fontWeight:500,color:'#888',whiteSpace:'nowrap'}}>{mShort(mk)}</th>)}</tr></thead>
                 <tbody>
@@ -740,10 +707,8 @@ function App() {
         </div>
         <div style={S.andCard}>
           <div style={{...S.andTitle,marginBottom:10}}>Andamento per categoria</div>
-          <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:14}}>
-            {CATS.map(cat=>(<button key={cat} onClick={()=>toggleCat(cat)} style={S.chip(activeCats.includes(cat),cat)}>{cat}</button>))}
-          </div>
-          <div style={{position:'relative',height:280}}>
+          <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:14}}>{CATS.map(cat=>(<button key={cat} onClick={()=>toggleCat(cat)} style={S.chip(activeCats.includes(cat),cat)}>{cat}</button>))}</div>
+          <div style={{position:'relative',height:280}} className='rsp-chart-h'>
             <ChartCanvas key={'catline_'+activeCats.join()} config={{type:'line',data:{labels:allMonthKeys.map(mShort),datasets:activeCats.map(cat=>({label:cat,data:allMonthKeys.map(mk=>Math.round(expenses.filter(e=>mKey(e.date)===mk&&e.cat===cat).reduce((s,e)=>s+e.amount,0)*100)/100),borderColor:CAT_COLORS[cat]||'#888',backgroundColor:(CAT_COLORS[cat]||'#888')+'22',borderWidth:2,tension:.35,pointRadius:3,pointBackgroundColor:CAT_COLORS[cat]||'#888',fill:false}))},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12,padding:8}},tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: € ${fmt(ctx.parsed.y)}`}}},scales:{y:{ticks:{callback:v=>'€'+Math.round(v),font:{size:11}},grid:{color:'rgba(0,0,0,.05)'},border:{display:false}},x:{ticks:{font:{size:11}},grid:{display:false},border:{display:false}}}}}} height={280}/>
           </div>
         </div>
@@ -754,7 +719,7 @@ function App() {
   return (
     <div style={S.wrap}>
       <div style={S.app}>
-        <div style={S.hdr}>
+        <div style={S.hdr} className='rsp-header'>
           <div style={S.htitle}>
             <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke={th.accent} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"><path d="M21 12V7H5a2 2 0 010-4h14v4M21 12v5H5a2 2 0 000 4h16v-5M21 12H5"/></svg>
             Gestore spese
@@ -765,10 +730,10 @@ function App() {
             <button style={S.pbtn(profile==='anna','anna')} onClick={()=>switchProfile('anna')}>Anna</button>
           </div>
         </div>
-        <div style={S.tabbar}>
+        <div style={S.tabbar} className='rsp-tabbar'>
           {TABS.map((label,i)=>{
             const displayLabel=(i===4)?`Debiti/Crediti ${profile==='marco'?'Anna':'Marco'}`:label;
-            return <button key={i} style={S.tab(tab===i)} onClick={()=>setTab(i)}>{displayLabel}</button>;
+            return <button key={i} style={S.tab(tab===i)} onClick={()=>setTab(i)} className='rsp-tab'>{displayLabel}</button>;
           })}
         </div>
         {loading
