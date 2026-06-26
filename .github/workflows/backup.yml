@@ -2,8 +2,8 @@ name: Backup giornaliero DB
 
 on:
   schedule:
-    - cron: '0 2 * * *'   # ogni notte alle 02:00 UTC (04:00 ora italiana)
-  workflow_dispatch:        # permette di lanciarlo manualmente dal sito GitHub
+    - cron: '0 2 * * *'
+  workflow_dispatch:
 
 jobs:
   backup:
@@ -33,6 +33,7 @@ jobs:
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
+          git pull --rebase origin main
           git add backups/
           git diff --staged --quiet || git commit -m "Backup automatico $(date +%Y-%m-%d)"
           git push
