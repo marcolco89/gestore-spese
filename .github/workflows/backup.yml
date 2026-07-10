@@ -13,22 +13,31 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
           fetch-depth: 0
 
-      - name: Sveglia Render
+      - name: Sveglia Render e attendi
         run: |
           echo "Warm-up Render..."
-          curl --max-time 60 --retry 3 --retry-delay 10 \
-            "${{ secrets.RENDER_URL }}/" || true
-          sleep 15
-          echo "Render pronto"
+          curl --max-time 90 --retry 5 --retry-delay 15 --retry-all-errors \
+            "${{ secrets.RENDER_URL }}/" -o /dev/null -w "HTTP status: %{http_code}\n" || true
+          echo "Attendo 20 secondi..."
+          sleep 20
+          echo "Pronto"
 
       - name: Scarica backup dal server
         run: |
-          curl --retry 5 --retry-delay 15 --retry-all-errors \
+          echo "Scarico il backup..."
+          HTTP_CODE=$(curl --retry 5 --retry-delay 20 --retry-all-errors \
             --max-time 120 --connect-timeout 30 \
-            -f "${{ secrets.RENDER_URL }}/api/backup/all?secret=${{ secrets.BACKUP_SECRET }}" \
-            -o backup_temp.json
+            -w "%{http_code}" \
+            "${{ secrets.RENDER_URL }}/api/backup/all?secret=${{ secrets.BACKUP_SECRET }}" \
+            -o backup_temp.json)
+          echo "HTTP response: $HTTP_CODE"
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "Errore! Risposta del server:"
+            cat backup_temp.json
+            exit 1
+          fi
           echo "Backup scaricato con successo"
-          cat backup_temp.json | python3 -c "import sys,json; d=json.load(sys.stdin); print('Chiavi nel backup:', len(d.get('keys',[])))"
+          python3 -c "import json; d=json.load(open('backup_temp.json')); print('Chiavi nel backup:', len(d.get('keys',[])))"
 
       - name: Salva backup con data
         run: |
