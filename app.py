@@ -1,13 +1,12 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-import os, json, sqlite3
+import os, json, sqlite3, datetime
 
 app = Flask(__name__, static_folder='static')
 CORS(app)
 
 DATABASE_URL = os.environ.get('DATABASE_URL', '')
 
-# Render fornisce URL con prefisso "postgres://" ma psycopg2 vuole "postgresql://"
 if DATABASE_URL.startswith('postgres://'):
     DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
 
@@ -107,6 +106,8 @@ else:
 
 init_db()
 
+# ── Routes ────────────────────────────────────────────────────────────────────
+
 @app.route('/')
 def index():
     return send_from_directory('static', 'index.html')
@@ -135,11 +136,6 @@ def storage_list():
     prefix = request.args.get('prefix', '')
     return jsonify({'keys': db_list(prefix)})
 
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
-
-# ── Endpoint backup completo ──────────────────────────────────────────────────
 @app.route('/api/backup/all', methods=['GET'])
 def backup_all():
     """Restituisce tutti i dati del DB in un unico JSON — usato da GitHub Actions"""
@@ -147,7 +143,7 @@ def backup_all():
     if secret != os.environ.get('BACKUP_SECRET', 'backup2026'):
         return jsonify({'error': 'unauthorized'}), 401
 
-    # Chiavi esplicite da includere sempre nel backup
+    # Chiavi fisse da includere sempre
     BACKUP_KEYS = [
         'expenses_marco', 'incomes_marco', 'partner_marco',
         'expenses_anna', 'incomes_anna', 'partner_anna',
@@ -156,7 +152,7 @@ def backup_all():
         'mezzi_veicoli', 'mezzi_smart', 'mezzi_people', 'mezzi_panda',
     ]
 
-    # Aggiunge anche eventuali chiavi dinamiche non previste (es. nuovi veicoli)
+    # Aggiunge anche eventuali chiavi dinamiche (es. nuovi veicoli)
     all_keys = db_list('')
     extra_keys = [k for k in all_keys if k not in BACKUP_KEYS]
     keys_to_backup = BACKUP_KEYS + extra_keys
@@ -168,7 +164,13 @@ def backup_all():
             data[key] = value
 
     return jsonify({
-        'timestamp': __import__('datetime').datetime.utcnow().isoformat(),
+        'timestamp': datetime.datetime.utcnow().isoformat(),
         'keys': list(data.keys()),
         'data': data
     })
+
+# ── Avvio locale ──────────────────────────────────────────────────────────────
+
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
