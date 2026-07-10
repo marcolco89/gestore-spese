@@ -146,12 +146,29 @@ def backup_all():
     secret = request.args.get('secret', '')
     if secret != os.environ.get('BACKUP_SECRET', 'backup2026'):
         return jsonify({'error': 'unauthorized'}), 401
-    keys = db_list('')
+
+    # Chiavi esplicite da includere sempre nel backup
+    BACKUP_KEYS = [
+        'expenses_marco', 'incomes_marco', 'partner_marco',
+        'expenses_anna', 'incomes_anna', 'partner_anna',
+        'bollette_luce_ver', 'bollette_luce', 'bollette_acqua',
+        'bollette_internet', 'bollette_sky', 'bollette_tari',
+        'mezzi_veicoli', 'mezzi_smart', 'mezzi_people', 'mezzi_panda',
+    ]
+
+    # Aggiunge anche eventuali chiavi dinamiche non previste (es. nuovi veicoli)
+    all_keys = db_list('')
+    extra_keys = [k for k in all_keys if k not in BACKUP_KEYS]
+    keys_to_backup = BACKUP_KEYS + extra_keys
+
     data = {}
-    for key in keys:
-        data[key] = db_get(key)
+    for key in keys_to_backup:
+        value = db_get(key)
+        if value is not None:
+            data[key] = value
+
     return jsonify({
         'timestamp': __import__('datetime').datetime.utcnow().isoformat(),
-        'keys': keys,
+        'keys': list(data.keys()),
         'data': data
     })
