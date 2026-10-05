@@ -136,6 +136,21 @@ def storage_list():
     prefix = request.args.get('prefix', '')
     return jsonify({'keys': db_list(prefix)})
 
+@app.route('/api/storage_all', methods=['GET'])
+def storage_all():
+    """Restituisce tutte le chiavi richieste in una sola chiamata (velocizza il caricamento).
+    Uso: /api/storage_all?keys=expenses_marco,incomes_marco,..."""
+    keys_param = request.args.get('keys', '')
+    if not keys_param:
+        return jsonify({})
+    keys = [k.strip() for k in keys_param.split(',') if k.strip()]
+    result = {}
+    for key in keys:
+        value = db_get(key)
+        if value is not None:
+            result[key] = value
+    return jsonify(result)
+
 @app.route('/api/backup/all', methods=['GET'])
 def backup_all():
     """Restituisce tutti i dati del DB in un unico JSON — usato da GitHub Actions"""
