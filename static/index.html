@@ -94,22 +94,33 @@ var _storageCache = {};
   } catch(e) { console.warn('[Storage] Shim fallito:', e); }
 })();
 
-function loadKeyWithRetry(ak, attempt, maxAttempts, onDone) {
-  fetch('/api/storage/' + encodeURIComponent(ak))
+// Caricamento veloce: una sola chiamata per tutte le chiavi, con retry
+function loadAllWithRetry(keys, attempt, maxAttempts, onDone) {
+  var qs = keys.map(function(k){ return encodeURIComponent(k); }).join(',');
+  fetch('/api/storage_all?keys=' + qs)
     .then(function(r){ return r.ok ? r.json() : null; })
     .then(function(data){
-      if (data && data.value !== undefined && data.value !== null) {
-        _storageCache['gs_' + ak] = data.value;
+      if (data && typeof data === 'object' && Object.keys(data).length > 0) {
+        keys.forEach(function(ak){
+          if (data[ak] !== undefined && data[ak] !== null) {
+            _storageCache['gs_' + ak] = data[ak];
+          }
+        });
+        console.log('[Storage] Caricate', Object.keys(data).length, 'chiavi in una chiamata');
+        onDone();
       } else if (attempt < maxAttempts) {
-        setTimeout(function(){ loadKeyWithRetry(ak, attempt+1, maxAttempts, onDone); }, 2000);
-        return;
+        console.warn('[Storage] Risposta vuota, riprovo (' + (attempt+1) + '/' + maxAttempts + ')');
+        setTimeout(function(){ loadAllWithRetry(keys, attempt+1, maxAttempts, onDone); }, 2500);
+      } else {
+        onDone();
       }
-      onDone();
     })
     .catch(function(e){
       if (attempt < maxAttempts) {
-        setTimeout(function(){ loadKeyWithRetry(ak, attempt+1, maxAttempts, onDone); }, 2000);
+        console.warn('[Storage] Errore, riprovo (' + (attempt+1) + '/' + maxAttempts + '):', e);
+        setTimeout(function(){ loadAllWithRetry(keys, attempt+1, maxAttempts, onDone); }, 2500);
       } else {
+        console.error('[Storage] Caricamento fallito dopo ' + maxAttempts + ' tentativi');
         onDone();
       }
     });
@@ -129,43 +140,35 @@ var _t = setInterval(function() {
       'mezzi_ver_smart','mezzi_ver_people','mezzi_ver_panda',
       'viaggi','viaggi_ver','rifornimenti'
     ];
-    var loaded = 0;
-    var total = keys.length;
-    function onKeyDone() {
-      loaded++;
-      if (rootEl) rootEl.innerHTML = '<div style="padding:20px;color:#666;font-size:14px">Caricamento dati (' + loaded + '/' + total + ')...</div>';
-      if (loaded === total) {
-        console.log('[App] Dati caricati:', Object.keys(_storageCache).length, 'chiavi');
-        ['expenses_marco','expenses_anna','incomes_marco','incomes_anna'].forEach(function(kk) {
-          var cached = _storageCache['gs_' + kk];
-          if (!cached) return;
-          try {
-            var arr = JSON.parse(cached);
-            var modified = false;
-            arr = arr.map(function(item) {
-              if (!item.createdAt && item.date) {
-                item.createdAt = item.date + 'T00:00:00.000Z';
-                modified = true;
-              }
-              return item;
-            });
-            if (modified) {
-              var newVal = JSON.stringify(arr);
-              _storageCache['gs_' + kk] = newVal;
-              fetch('/api/storage/' + encodeURIComponent(kk), {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({value: newVal})
-              }).catch(function(e){ console.warn('[createdAt] Errore:', e); });
+    function onAllDone() {
+      console.log('[App] Dati caricati:', Object.keys(_storageCache).length, 'chiavi');
+      ['expenses_marco','expenses_anna','incomes_marco','incomes_anna'].forEach(function(kk) {
+        var cached = _storageCache['gs_' + kk];
+        if (!cached) return;
+        try {
+          var arr = JSON.parse(cached);
+          var modified = false;
+          arr = arr.map(function(item) {
+            if (!item.createdAt && item.date) {
+              item.createdAt = item.date + 'T00:00:00.000Z';
+              modified = true;
             }
-          } catch(e) {}
-        });
-        runApp();
-      }
+            return item;
+          });
+          if (modified) {
+            var newVal = JSON.stringify(arr);
+            _storageCache['gs_' + kk] = newVal;
+            fetch('/api/storage/' + encodeURIComponent(kk), {
+              method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({value: newVal})
+            }).catch(function(e){ console.warn('[createdAt] Errore:', e); });
+          }
+        } catch(e) {}
+      });
+      runApp();
     }
-    keys.forEach(function(ak) {
-      loadKeyWithRetry(ak, 0, 5, onKeyDone);
-    });
+    loadAllWithRetry(keys, 0, 5, onAllDone);
   }
 }, 30);
 </script>
