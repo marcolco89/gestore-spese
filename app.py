@@ -155,7 +155,9 @@ def backup_all():
         'mezzi_veicoli', 'mezzi_smart', 'mezzi_people', 'mezzi_panda',
         'mezzi_ver_smart', 'mezzi_ver_people', 'mezzi_ver_panda',
         # Viaggi
-        'viaggi',
+        'viaggi', 'viaggi_ver',
+        # Rifornimenti (benzina)
+        'rifornimenti',
     ]
 
     # Aggiunge anche eventuali chiavi dinamiche non previste (es. nuovi veicoli)
