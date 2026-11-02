@@ -3,6 +3,8 @@ on:
   schedule:
     - cron: '0 2 * * *'
   workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   backup:
     runs-on: ubuntu-latest
@@ -10,34 +12,36 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GH_TOKEN }}
           fetch-depth: 0
 
-      - name: Sveglia Render e attendi
+      - name: Scarica backup da Supabase
+        env:
+          SUPABASE_URL: https://kvbnutackqlekkvlgnno.supabase.co
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: |
-          echo "Warm-up Render..."
-          curl --max-time 90 --retry 5 --retry-delay 15 --retry-all-errors \
-            "${{ secrets.RENDER_URL }}/" -o /dev/null -w "HTTP status: %{http_code}\n" || true
-          echo "Attendo 20 secondi..."
-          sleep 20
-          echo "Pronto"
-
-      - name: Scarica backup dal server
-        run: |
-          echo "Scarico il backup..."
-          HTTP_CODE=$(curl --retry 5 --retry-delay 20 --retry-all-errors \
-            --max-time 120 --connect-timeout 30 \
-            -w "%{http_code}" \
-            "${{ secrets.RENDER_URL }}/api/backup/all?secret=${{ secrets.BACKUP_SECRET }}" \
-            -o backup_temp.json)
+          HTTP_CODE=$(curl --retry 5 --retry-delay 10 --retry-all-errors \
+            --max-time 60 -w "%{http_code}" \
+            -H "apikey: $SUPABASE_KEY" -H "Authorization: Bearer $SUPABASE_KEY" \
+            "$SUPABASE_URL/rest/v1/storage?select=key,value" \
+            -o rows.json)
           echo "HTTP response: $HTTP_CODE"
-          if [ "$HTTP_CODE" != "200" ]; then
-            echo "Errore! Risposta del server:"
-            cat backup_temp.json
-            exit 1
-          fi
-          echo "Backup scaricato con successo"
-          python3 -c "import json; d=json.load(open('backup_temp.json')); print('Chiavi nel backup:', len(d.get('keys',[])))"
+          if [ "$HTTP_CODE" != "200" ]; then cat rows.json; exit 1; fi
+
+      - name: Converti nel formato di backup
+        run: |
+          python3 - <<'EOF'
+          import json, datetime
+          rows = json.load(open('rows.json'))
+          if len(rows) < 10:
+              raise SystemExit('Troppe poche chiavi (%d): backup scartato, non sovrascrivo' % len(rows))
+          out = {
+              'data': {r['key']: r['value'] for r in rows},
+              'keys': [r['key'] for r in rows],
+              'timestamp': datetime.datetime.utcnow().isoformat(),
+          }
+          json.dump(out, open('backup_temp.json', 'w'), ensure_ascii=False)
+          print('Chiavi nel backup:', len(rows))
+          EOF
 
       - name: Salva backup con data
         run: |
@@ -45,7 +49,6 @@ jobs:
           DATE=$(date +%Y-%m-%d)
           cp backup_temp.json backups/backup_${DATE}.json
           cp backup_temp.json backups/backup_latest.json
-          echo "File salvati: backup_${DATE}.json e backup_latest.json"
 
       - name: Commit e push del backup
         run: |
